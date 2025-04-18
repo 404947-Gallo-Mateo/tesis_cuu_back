@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Custom Spring REST Ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
+    <description>
+        Reglas PMD personalizadas para proyectos Spring Boot + REST API.
+    </description>
+
+    <!-- Buenas prácticas generales -->
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="AvoidUsingShortType" />
+    </rule>
+
+    <!--  Estilo de código -->
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="VariableNamingConventions" />
+        <exclude name="MethodArgumentCouldBeFinal" />
+    </rule>
+
+    <!--  Posibles errores -->
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="CloseResource" />
+    </rule>
+
+    <!-- Performance -->
+    <rule ref="category/java/performance.xml" />
+
+    <!-- Limpieza de código -->
+    <rule ref="category/java/unnecessary.xml" />
+
+    <!-- Seguridad -->
+    <rule ref="category/java/security.xml">
+        <exclude name="SystemPrintln" /> <!-- Si estás logueando temporalmente -->
+    </rule>
+
+    <!-- Reglas específicas útiles en REST / Spring -->
+    <rule ref="rulesets/java/design.xml/UseUtilityClass" /> <!-- para clases estáticas de utilidades -->
+    <rule ref="rulesets/java/design.xml/SimplifyBooleanReturns" />
+    <rule ref="rulesets/java/design.xml/UnnecessaryLocalBeforeReturn" />
+    <rule ref="rulesets/java/design.xml/SimplifiedTernary" />
+    <rule ref="rulesets/java/basic.xml/EmptyCatchBlock" />
+    <rule ref="rulesets/java/basic.xml/EmptyIfStmt" />
+    <rule ref="rulesets/java/basic.xml/EmptyWhileStmt" />
+    <rule ref="rulesets/java/basic.xml/UnnecessaryConstructor" />
+</ruleset>
