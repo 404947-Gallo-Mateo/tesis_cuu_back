@@ -1,4 +1,4 @@
-package com.cuu.backend.disciplinas_service.Entities;
+package com.cuu.backend.disciplinas_service.Models.Entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +15,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class StudentInscription {
-
 
     @Id
     @GeneratedValue(generator = "UUID")

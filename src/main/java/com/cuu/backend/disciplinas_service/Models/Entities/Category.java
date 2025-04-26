@@ -1,7 +1,7 @@
-package com.cuu.backend.disciplinas_service.Entities;
+package com.cuu.backend.disciplinas_service.Models.Entities;
 
-import com.cuu.backend.disciplinas_service.Entities.Embeddables.AgeRange;
-import com.cuu.backend.disciplinas_service.Entities.Embeddables.Schedule;
+import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.AgeRange;
+import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.Schedule;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import org.hibernate.annotations.UuidGenerator;
@@ -14,12 +14,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "categories")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "categories")
 public class Category {
     @Id
     @GeneratedValue(generator = "UUID")

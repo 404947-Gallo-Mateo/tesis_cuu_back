@@ -1,4 +1,4 @@
-package com.cuu.backend.disciplinas_service.Entities.Embeddables;
+package com.cuu.backend.disciplinas_service.Models.Entities.Embeddables;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

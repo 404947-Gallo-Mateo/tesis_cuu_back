@@ -1,13 +1,11 @@
-package com.cuu.backend.disciplinas_service.Entities;
+package com.cuu.backend.disciplinas_service.Models.Entities;
 
-import com.cuu.backend.disciplinas_service.Enums.Role;
+import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.net.PasswordAuthentication;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,27 +23,31 @@ public class User {
     @UuidGenerator()
     private UUID id;
 
+    //El campo sub (aca llamado: keycloakId) del token de Keycloak es un identificador unico global por User.
+    @Column(nullable = false, unique = true)
+    private String keycloakId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private List<Role> roles;
 
     @Column(nullable = false, unique = true)
     private String username;
-
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
 
     @Email
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "phone_number", nullable = false)
-    private String phoneNumber;
+    @Column(nullable = false)
+    private String firstName;
 
-    private boolean active;
+    @Column(nullable = false)
+    private String lastName;
+
+//    @Column(name = "phone_number", nullable = false)
+//    private String phoneNumber;
+//
+//    private boolean active;
 
     @ManyToMany
     @JoinTable(

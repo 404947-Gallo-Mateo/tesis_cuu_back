@@ -1,4 +1,4 @@
-package com.cuu.backend.disciplinas_service.Entities;
+package com.cuu.backend.disciplinas_service.Models.Entities;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -11,12 +11,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "disciplines")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "disciplines")
 public class Discipline {
 
     @Id
