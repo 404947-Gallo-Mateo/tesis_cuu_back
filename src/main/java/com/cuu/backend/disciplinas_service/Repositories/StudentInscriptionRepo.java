@@ -22,11 +22,16 @@ public interface StudentInscriptionRepo extends JpaRepository<StudentInscription
     List<StudentInscription> findAllByDisciplineId(@Param("disciplineId") UUID disciplineId);
 
     @Query("SELECT si FROM StudentInscription si WHERE si.category.id = :categoryId")
-    List<StudentInscription> findAllByCategoryIdAndDisciplineId(@Param("categoryId") UUID categoryId);
+    List<StudentInscription> findAllByCategoryId(@Param("categoryId") UUID categoryId);
+
+    @Query("SELECT COUNT(si) FROM StudentInscription si WHERE si.category.id = :categoryId")
+    long countByCategoryId(@Param("categoryId") UUID categoryId);
 
     @Query("SELECT si FROM StudentInscription si WHERE si.category.id = :categoryId AND si.discipline.id = :disciplineId AND si.student.keycloakId =:studentKeycloakId")
-
     Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(@Param("studentKeycloakId") String studentKeycloakId, @Param("disciplineId") UUID disciplineId, @Param("categoryId") UUID categoryId);
+
+    @Query("SELECT si FROM StudentInscription si WHERE si.discipline.id = :disciplineId AND si.student.keycloakId =:studentKeycloakId")
+    Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineId(@Param("studentKeycloakId") String studentKeycloakId, @Param("disciplineId") UUID disciplineId);
 
     //traen solo el ID de StudentInscription
 //    @Query("SELECT si.id FROM StudentInscription si WHERE si.student.id = :studentId")

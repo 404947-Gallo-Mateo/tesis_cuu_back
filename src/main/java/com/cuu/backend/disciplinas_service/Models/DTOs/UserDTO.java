@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
@@ -38,5 +39,7 @@ public class UserDTO {
     private String lastName;
 
     private List<DisciplineDTO> teacherDisciplines;
+
+    private LocalDate birthDate;
 
 }

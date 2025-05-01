@@ -55,11 +55,15 @@ public class DisciplineServiceImpl implements DisciplineService {
     }
 
     @Override
-    public void deleteDiscipline(DisciplineDTO disciplineDTO) {
+    public boolean deleteDiscipline(DisciplineDTO disciplineDTO) {
         Optional<Discipline> discipline = disciplineRepo.findByName(disciplineDTO.getName());
 
-        discipline.ifPresent(value -> disciplineRepo.delete(value));
-    }
+        if (discipline.isPresent()) {
+            disciplineRepo.delete(discipline.get());
+            return true;
+        }
+
+        return false;        }
 
     @Override
     public DisciplineDTO findByName(String name) {

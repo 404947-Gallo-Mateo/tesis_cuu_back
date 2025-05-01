@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,4 +52,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "discipline_id")
     )
     private List<Discipline> teacherDisciplines;
+
+    @Column(nullable = false)
+    private LocalDate birthDate;
 }

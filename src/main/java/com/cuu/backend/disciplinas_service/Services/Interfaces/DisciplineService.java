@@ -13,7 +13,7 @@ public interface DisciplineService {
 
     DisciplineDTO updateDiscipline(DisciplineDTO disciplineDTO);
 
-    void deleteDiscipline(DisciplineDTO disciplineDTO);
+    boolean deleteDiscipline(DisciplineDTO disciplineDTO);
 
     DisciplineDTO findByName(String name);
 

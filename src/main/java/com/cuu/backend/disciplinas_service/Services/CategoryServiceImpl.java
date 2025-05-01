@@ -50,12 +50,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(CategoryDTO categoryDTO) {
+    public boolean deleteCategory(CategoryDTO categoryDTO) {
         //deberia encontrar 1 sola Category, caso contrario no hay nada q borrar
         Optional<Category> category = categoryRepo.findById(categoryDTO.getId());
 
-        category.ifPresent(value -> categoryRepo.delete(value));
-    }
+        if (category.isPresent()) {
+            categoryRepo.delete(category.get());
+            return true;
+        }
+
+        return false;        }
 
     @Override
     public List<CategoryDTO> findAllByDisciplineId(UUID disciplineId) {

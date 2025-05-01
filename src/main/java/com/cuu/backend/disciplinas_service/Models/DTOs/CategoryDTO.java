@@ -33,6 +33,8 @@ public class CategoryDTO {
     //@JoinColumn(name = "discipline_id", nullable = false)
     private DisciplineDTO discipline;
 
+    private Long availablePlaces;
+
     private AgeRange ageRange;
 
     //@CollectionTable( joinColumns = @JoinColumn(name = "category_id") )

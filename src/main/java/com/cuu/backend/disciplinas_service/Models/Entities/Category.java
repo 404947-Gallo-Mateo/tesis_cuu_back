@@ -14,8 +14,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -38,6 +37,9 @@ public class Category {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "discipline_id", nullable = false)
     private Discipline discipline;
+
+    @Column(nullable = true)
+    private Long availableSpaces;
 
     @Embedded
     private AgeRange ageRange;

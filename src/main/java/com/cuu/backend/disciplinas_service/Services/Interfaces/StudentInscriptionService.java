@@ -13,7 +13,7 @@ public interface StudentInscriptionService {
 
     StudentInscriptionDTO updateStudentInscription (StudentInscriptionDTO studentInscriptionDTO);
 
-    void deleteStudentInscription (StudentInscriptionDTO studentInscriptionDTO);
+    boolean deleteStudentInscription (StudentInscriptionDTO studentInscriptionDTO);
 
     List<StudentInscriptionDTO> findAllByStudentKeycloakId(String studentKeycloakId);
 
@@ -22,5 +22,7 @@ public interface StudentInscriptionService {
     List<StudentInscriptionDTO> findAllByCategoryId(UUID categoryId);
 
     Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(String studentKeycloakId, UUID disciplineId, UUID categoryId);
+
+    Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineId(String studentKeycloakId, UUID disciplineId);
 
 }

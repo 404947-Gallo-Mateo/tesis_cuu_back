@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Embeddable
 @Getter
