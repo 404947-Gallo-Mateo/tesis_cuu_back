@@ -6,14 +6,15 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
-@Entity
-@Table(name = "student_inscriptions",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "discipline_id"}))
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "student_inscriptions",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "discipline_id"}))
 public class StudentInscription {
 
     @Id
@@ -21,15 +22,15 @@ public class StudentInscription {
     @UuidGenerator()
     private UUID id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "student_id", nullable = false)
     private User student;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "discipline_id", nullable = false)
     private Discipline discipline;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 }

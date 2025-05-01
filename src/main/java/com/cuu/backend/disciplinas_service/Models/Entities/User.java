@@ -44,11 +44,6 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-//    @Column(name = "phone_number", nullable = false)
-//    private String phoneNumber;
-//
-//    private boolean active;
-
     @ManyToMany
     @JoinTable(
             name = "teacher_disciplines",

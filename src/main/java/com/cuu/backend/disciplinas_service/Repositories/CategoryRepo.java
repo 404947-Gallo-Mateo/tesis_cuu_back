@@ -12,9 +12,6 @@ import java.util.UUID;
 @Repository
 public interface CategoryRepo extends JpaRepository<Category, UUID> {
 
-    @Query("SELECT c FROM Category c WHERE c.name = :name")
-    Category findByName(@Param("name") String name);
-
     @Query("SELECT c FROM Category c WHERE c.discipline.id = :disciplineId")
     List<Category> findAllByDisciplineId(@Param("disciplineId") UUID disciplineId);
 

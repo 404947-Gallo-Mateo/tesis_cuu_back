@@ -9,19 +9,24 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface StudentInscriptionRepo extends JpaRepository<StudentInscription, UUID> {
     //traen el objeto entero
-    @Query("SELECT si FROM StudentInscription si WHERE si.student.id = :studentId")
-    List<StudentInscription> findAllByStudentId(@Param("studentId") UUID studentId);
+    @Query("SELECT si FROM StudentInscription si WHERE si.student.keycloakId = :studentKeycloakId")
+    List<StudentInscription> findAllByStudentKeycloakId(@Param("studentKeycloakId") String studentKeycloakId);
 
     @Query("SELECT si FROM StudentInscription si WHERE si.discipline.id = :disciplineId")
     List<StudentInscription> findAllByDisciplineId(@Param("disciplineId") UUID disciplineId);
 
     @Query("SELECT si FROM StudentInscription si WHERE si.category.id = :categoryId")
-    List<StudentInscription> findAllByCategoryId(@Param("categoryId") UUID categoryId);
+    List<StudentInscription> findAllByCategoryIdAndDisciplineId(@Param("categoryId") UUID categoryId);
+
+    @Query("SELECT si FROM StudentInscription si WHERE si.category.id = :categoryId AND si.discipline.id = :disciplineId AND si.student.keycloakId =:studentKeycloakId")
+
+    Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(@Param("studentKeycloakId") String studentKeycloakId, @Param("disciplineId") UUID disciplineId, @Param("categoryId") UUID categoryId);
 
     //traen solo el ID de StudentInscription
 //    @Query("SELECT si.id FROM StudentInscription si WHERE si.student.id = :studentId")

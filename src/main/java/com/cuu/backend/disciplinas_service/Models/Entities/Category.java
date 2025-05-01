@@ -35,7 +35,7 @@ public class Category {
     @Column(nullable = false)
     private BigDecimal monthlyFee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "discipline_id", nullable = false)
     private Discipline discipline;
 
