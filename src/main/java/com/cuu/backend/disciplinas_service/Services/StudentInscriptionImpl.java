@@ -1,5 +1,6 @@
 package com.cuu.backend.disciplinas_service.Services;
 
+import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
@@ -11,6 +12,8 @@ import com.cuu.backend.disciplinas_service.Repositories.StudentInscriptionRepo;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.StudentInscriptionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class StudentInscriptionImpl implements StudentInscriptionService {
 
     @Autowired
@@ -34,19 +38,28 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     @Override
     public StudentInscriptionDTO createStudentInscription(StudentInscriptionDTO studentInscriptionDTO) {
         //todo validar
-        Optional<StudentInscription> studentInscription = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentInscriptionDTO.getStudent().getKeycloakId(), studentInscriptionDTO.getDiscipline().getId());
+        Optional<StudentInscription> inscriptionExists = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentInscriptionDTO.getStudent().getKeycloakId(), studentInscriptionDTO.getDiscipline().getId());
 
-        if(studentInscription.isPresent()){
+        if(inscriptionExists.isPresent()){
             //tirar excepcion indicando q el Alumno YA esta inscripto en otra Category de la misma Discipline
+            String categoryName = inscriptionExists.get().getCategory().getName();
+            String disciplineName = inscriptionExists.get().getDiscipline().getName();
+            throw new CustomException("Usted ya está registrado en la Disciplina " + disciplineName + ", en la Categoría " + categoryName + ". Solo puede estar en una sola Categoría de cada Disciplina.", HttpStatus.BAD_REQUEST);
 
         }
 
         if (!isInAgeRange(studentInscriptionDTO.getStudent(), studentInscriptionDTO.getCategory())){
             //tirar excepcion indicando q no el usuario no esta dentro del rango de edad de la Category
+            long minAge = studentInscriptionDTO.getCategory().getAgeRange().getMinAge();
+            long maxAge = studentInscriptionDTO.getCategory().getAgeRange().getMaxAge();
+            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría. Mínimo: " + minAge + " | Máximo: " + maxAge, HttpStatus.CONFLICT);
+
         }
 
         if (!thereAreAvailablePlaces(studentInscriptionDTO.getCategory())){
             //tirar excepcion indicando q no hay cupos disponibles en esa Category
+            throw new CustomException("Ya no hay cupos disponibles en esta Categoría", HttpStatus.CONFLICT);
+
         }
 
         Optional<CategoryDTO> clashWithCategoryDTOSchedule = doesNotClashWithOtherSchedules(studentInscriptionDTO.getStudent(), studentInscriptionDTO.getCategory());
@@ -54,6 +67,8 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
         if (clashWithCategoryDTOSchedule.isPresent()){
             //tirar excepcion indicando q otra los horarios (Schedule), de otra Category donde esta inscripto el ALumno,
             // coincide con los horarios de la Category a la cual se quiere inscribir
+            String categoryName = clashWithCategoryDTOSchedule.get().getName();
+            throw new CustomException("Usted está inscripto en otra Disciplina donde chocan los horarios con la Categoría a la cual se quiere inscribir. Categoría: " + categoryName, HttpStatus.CONFLICT);
         }
 
         StudentInscription newStudentInscription = mapper.map(studentInscriptionDTO, StudentInscription.class);
@@ -73,6 +88,9 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
         //todo validar
         if (oldStudentInscription.isEmpty()){
             //tirar excepcion indicando q no el usuario no estaba en otra Category de esa Discipline
+            String disciplineName = studentInscriptionDTO.getDiscipline().getName();
+            String categoryName = studentInscriptionDTO .getCategory().getName();
+            throw new CustomException("Usted NO está registrado en la Disciplina " + disciplineName + ", no lo podemos promover a la Categoría " + categoryName, HttpStatus.BAD_REQUEST);
         }
 
         StudentInscription updatedStudentInscription = mapper.map(studentInscriptionDTO, StudentInscription.class);
@@ -138,13 +156,27 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     }
 
     @Override
-    public Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(String studentKeycloakId, UUID disciplineId, UUID categoryId){
-        return studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineIdAndCategoryId(studentKeycloakId, disciplineId, categoryId);
+    public Optional<StudentInscriptionDTO> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(String studentKeycloakId, UUID disciplineId, UUID categoryId){
+        Optional<StudentInscription> studentInscriptionOpt = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineIdAndCategoryId(studentKeycloakId, disciplineId, categoryId);
+
+        if (studentInscriptionOpt.isEmpty()){
+            throw new CustomException("No se pudo encontrar StudentInscription con los 3 atributos indicados", HttpStatus.BAD_REQUEST);
+
+        }
+
+        return Optional.of(mapper.map(studentInscriptionOpt.get(), StudentInscriptionDTO.class));
     }
 
     @Override
-    public Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineId(String studentKeycloakId, UUID disciplineId) {
-        return studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentKeycloakId, disciplineId);
+    public Optional<StudentInscriptionDTO> findByStudentKeycloakIdAndDisciplineId(String studentKeycloakId, UUID disciplineId) {
+        Optional<StudentInscription> studentInscriptionOpt = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentKeycloakId, disciplineId);
+
+        if (studentInscriptionOpt.isEmpty()){
+            throw new CustomException("No se pudo encontrar StudentInscription con los 2 atributos indicados", HttpStatus.BAD_REQUEST);
+
+        }
+
+        return Optional.of(mapper.map(studentInscriptionOpt.get(), StudentInscriptionDTO.class));
     }
 
     //metodos de validacion para la inscripcion de un alumno (User) a una Category
@@ -182,19 +214,21 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
         }
 
         // todos los horarios del user actual
-        List<Schedule> userSchedules = userInscriptions.stream()
-                .flatMap(inscription -> inscription.getCategory().getSchedule().stream())
-                .toList();
+        List<Schedule> userSchedules = new ArrayList<>();
+
+        for(StudentInscription si : userInscriptions){
+            userSchedules.addAll(si.getCategory().getSchedule());
+        }
 
         for (Schedule newSchedule : categoryDTO.getSchedule()) {
             for (Schedule existingSchedule : userSchedules) {
-                if (newSchedule.getDay() == existingSchedule.getDay()
+                if (newSchedule.getDayOfWeek() == existingSchedule.getDayOfWeek()
                         && newSchedule.getStartHour().isBefore(existingSchedule.getEndHour())
                         && newSchedule.getEndHour().isAfter(existingSchedule.getStartHour())) {
 
                     // Encontrar la categoría que tiene ese horario en conflicto
                     List<Category> category = categoryRepo.findBySchedule(
-                            existingSchedule.getDay(),
+                            existingSchedule.getDayOfWeek(),
                             existingSchedule.getStartHour(),
                             existingSchedule.getEndHour()
                     );

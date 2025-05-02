@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public interface CategoryService {
 
-    CategoryDTO registerCategory(CategoryDTO categoryDTO);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
     CategoryDTO updateCategory(CategoryDTO categoryDTO);
 
     boolean deleteCategory(CategoryDTO categoryDTO);
 
-    List<CategoryDTO> findAllByDisciplineId(UUID disciplineName);
+    List<CategoryDTO> findAllByDisciplineId(UUID disciplineId);
 }

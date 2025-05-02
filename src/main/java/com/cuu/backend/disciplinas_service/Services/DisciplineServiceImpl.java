@@ -26,7 +26,7 @@ public class DisciplineServiceImpl implements DisciplineService {
 
 
     @Override
-    public DisciplineDTO registerDiscipline(DisciplineDTO disciplineDTO) {
+    public DisciplineDTO createDiscipline(DisciplineDTO disciplineDTO) {
         //todo validar
 
         Discipline newDiscipline = mapper.map(disciplineDTO, Discipline.class);

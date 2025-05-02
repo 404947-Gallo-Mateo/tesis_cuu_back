@@ -21,8 +21,8 @@ public interface StudentInscriptionService {
 
     List<StudentInscriptionDTO> findAllByCategoryId(UUID categoryId);
 
-    Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(String studentKeycloakId, UUID disciplineId, UUID categoryId);
+    Optional<StudentInscriptionDTO> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(String studentKeycloakId, UUID disciplineId, UUID categoryId);
 
-    Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineId(String studentKeycloakId, UUID disciplineId);
+    Optional<StudentInscriptionDTO> findByStudentKeycloakIdAndDisciplineId(String studentKeycloakId, UUID disciplineId);
 
 }

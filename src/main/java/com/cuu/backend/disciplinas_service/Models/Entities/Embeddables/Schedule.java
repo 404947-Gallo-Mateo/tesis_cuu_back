@@ -1,13 +1,10 @@
 package com.cuu.backend.disciplinas_service.Models.Entities.Embeddables;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Embeddable
 @Getter
@@ -16,10 +13,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class Schedule {
-    @Enumerated(EnumType.STRING)
-    private DayOfWeek day;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week")
+    private DayOfWeek dayOfWeek;
+
+    @Column(name = "start_hour")
     private LocalTime startHour;
 
+    @Column(name = "end_hour")
     private LocalTime endHour;
 }
+
+

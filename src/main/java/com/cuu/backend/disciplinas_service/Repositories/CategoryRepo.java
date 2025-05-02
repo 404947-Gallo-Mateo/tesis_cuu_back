@@ -17,11 +17,8 @@ public interface CategoryRepo extends JpaRepository<Category, UUID> {
     @Query("SELECT c FROM Category c WHERE c.discipline.id = :disciplineId")
     List<Category> findAllByDisciplineId(@Param("disciplineId") UUID disciplineId);
 
-    @Query("""
-        SELECT c FROM Category c JOIN c.schedule s 
-        WHERE s.day = :day AND s.startHour = :startHour AND s.endHour = :endHour
-        """)
-    List<Category> findBySchedule(@Param("day") DayOfWeek day,
+    @Query("SELECT c FROM Category c JOIN c.schedule s WHERE s.dayOfWeek = :dayOfWeek AND s.startHour = :startHour AND s.endHour = :endHour ")
+    List<Category> findBySchedule(@Param("dayOfWeek") DayOfWeek dayOfWeek,
                                   @Param("startHour") LocalTime startHour,
                                   @Param("endHour") LocalTime endHour);
 

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface DisciplineService {
 
-    DisciplineDTO registerDiscipline(DisciplineDTO disciplineDTO);
+    DisciplineDTO createDiscipline(DisciplineDTO disciplineDTO);
 
     DisciplineDTO updateDiscipline(DisciplineDTO disciplineDTO);
 

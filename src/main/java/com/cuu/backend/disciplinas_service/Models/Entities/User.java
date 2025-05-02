@@ -25,7 +25,7 @@ public class User {
     private UUID id;
 
     //El campo sub (aca llamado: keycloakId) del token de Keycloak es un identificador unico global por User.
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, name = "keycloak_id")
     private String keycloakId;
 
     @Enumerated(EnumType.STRING)
@@ -39,10 +39,10 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "first_name")
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "lastName")
     private String lastName;
 
     @ManyToMany
@@ -53,6 +53,6 @@ public class User {
     )
     private List<Discipline> teacherDisciplines;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "birth_date")
     private LocalDate birthDate;
 }

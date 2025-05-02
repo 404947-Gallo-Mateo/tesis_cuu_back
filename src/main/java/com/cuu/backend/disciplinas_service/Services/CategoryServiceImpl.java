@@ -23,7 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper mapper;
 
     @Override
-    public CategoryDTO registerCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
 
         //todo validar
 

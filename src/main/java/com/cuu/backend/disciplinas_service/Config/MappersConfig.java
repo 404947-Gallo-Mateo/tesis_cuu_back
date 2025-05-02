@@ -6,6 +6,7 @@ import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * ModelMapper and ObjectMapper configuration class.
@@ -18,6 +19,7 @@ public class MappersConfig {
      * @return the ModelMapper by default.
      */
     @Bean
+    @Primary
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
