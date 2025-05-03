@@ -1,7 +1,6 @@
 package com.cuu.backend.disciplinas_service.Services.Interfaces;
 
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
-import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,7 @@ public interface StudentInscriptionService {
 
     StudentInscriptionDTO updateStudentInscription (StudentInscriptionDTO studentInscriptionDTO);
 
-    boolean deleteStudentInscription (StudentInscriptionDTO studentInscriptionDTO);
+    boolean deleteStudentInscriptionByMultipleIDs (String studentKeycloaId, UUID disciplineId, UUID categoryId);
 
     List<StudentInscriptionDTO> findAllByStudentKeycloakId(String studentKeycloakId);
 

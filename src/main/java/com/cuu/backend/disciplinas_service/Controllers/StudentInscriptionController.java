@@ -33,9 +33,9 @@ public class StudentInscriptionController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> deleteStudentInscription(@RequestBody StudentInscriptionDTO studentInscriptionDTO){
+    public ResponseEntity<Boolean> deleteStudentInscriptionByMultipleIDs(@PathVariable String studentKeycloakId, @PathVariable UUID disciplineId, @PathVariable UUID categoryId){
 
-        return ResponseEntity.ok(studentInscriptionService.deleteStudentInscription(studentInscriptionDTO));
+        return ResponseEntity.ok(studentInscriptionService.deleteStudentInscriptionByMultipleIDs(studentKeycloakId, disciplineId, categoryId));
     }
 
     @GetMapping("/find-all/by-student-keycloak-id")

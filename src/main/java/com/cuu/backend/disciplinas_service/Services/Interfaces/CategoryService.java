@@ -11,7 +11,7 @@ public interface CategoryService {
 
     CategoryDTO updateCategory(CategoryDTO categoryDTO);
 
-    boolean deleteCategory(CategoryDTO categoryDTO);
+    boolean deleteCategoryById(UUID categoryId);
 
     List<CategoryDTO> findAllByDisciplineId(UUID disciplineId);
 }

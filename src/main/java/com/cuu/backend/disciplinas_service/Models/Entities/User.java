@@ -1,5 +1,6 @@
 package com.cuu.backend.disciplinas_service.Models.Entities;
 
+import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -29,10 +30,10 @@ public class User {
     private String keycloakId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private List<Role> roles;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String username;
 
     @Email
@@ -53,6 +54,9 @@ public class User {
     )
     private List<Discipline> teacherDisciplines;
 
-    @Column(nullable = false, name = "birth_date")
+    @Column(nullable = true, name = "birth_date")
     private LocalDate birthDate;
-}
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private Genre genre;}

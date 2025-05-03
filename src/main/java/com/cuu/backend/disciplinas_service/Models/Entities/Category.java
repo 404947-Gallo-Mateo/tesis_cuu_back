@@ -2,8 +2,7 @@ package com.cuu.backend.disciplinas_service.Models.Entities;
 
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.AgeRange;
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.Schedule;
-import com.cuu.backend.disciplinas_service.Models.Enums.AllowedGenre;
-import com.cuu.backend.disciplinas_service.Models.Enums.Role;
+import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import org.hibernate.annotations.UuidGenerator;
@@ -56,5 +55,5 @@ public class Category {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "allowed_genre")
-    private AllowedGenre allowedGenre;
+    private Genre allowedGenre;
 }

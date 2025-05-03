@@ -1,9 +1,8 @@
 package com.cuu.backend.disciplinas_service.Models.DTOs;
 
-import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.AgeRange;
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.Schedule;
-import com.cuu.backend.disciplinas_service.Models.Enums.AllowedGenre;
+import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,5 +40,5 @@ public class CategoryDTO {
 
     @Enumerated(EnumType.STRING)
     //@Column(nullable = false)
-    private AllowedGenre allowedGenre;
+    private Genre allowedGenre;
 }

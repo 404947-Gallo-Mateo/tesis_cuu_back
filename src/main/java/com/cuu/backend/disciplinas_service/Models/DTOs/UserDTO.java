@@ -1,6 +1,7 @@
 package com.cuu.backend.disciplinas_service.Models.DTOs;
 
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
+import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -40,4 +41,5 @@ public class UserDTO {
 
     private LocalDate birthDate;
 
+    private Genre genre;
 }

@@ -32,9 +32,9 @@ public class CategoryController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> deleteCategory(@RequestBody CategoryDTO categoryDTO){
+    public ResponseEntity<Boolean> deleteCategoryById(@PathVariable UUID categoryId){
 
-        return ResponseEntity.ok(categoryService.deleteCategory(categoryDTO));
+        return ResponseEntity.ok(categoryService.deleteCategoryById(categoryId));
     }
 
     @GetMapping("/find-all/by-discipline-id")

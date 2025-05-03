@@ -33,9 +33,9 @@ public class DisciplineController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> deleteDiscipline(@RequestBody DisciplineDTO disciplineDTO){
+    public ResponseEntity<Boolean> deleteDisciplineById(@PathVariable UUID disciplineId){
 
-        return ResponseEntity.ok(disciplineService.deleteDiscipline(disciplineDTO));
+        return ResponseEntity.ok(disciplineService.deleteDisciplineById(disciplineId));
     }
 
     @GetMapping("/find-one/by-name")

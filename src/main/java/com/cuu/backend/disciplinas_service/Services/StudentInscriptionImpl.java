@@ -102,8 +102,8 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     }
 
     @Override
-    public boolean deleteStudentInscription(StudentInscriptionDTO studentInscriptionDTO) {
-        Optional<StudentInscription> studentInscription = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineIdAndCategoryId(studentInscriptionDTO.getStudent().getKeycloakId(), studentInscriptionDTO.getDiscipline().getId(), studentInscriptionDTO.getCategory().getId());
+    public boolean deleteStudentInscriptionByMultipleIDs(String studentKeycloakId, UUID disciplineId, UUID categoryId) {
+        Optional<StudentInscription> studentInscription = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineIdAndCategoryId(studentKeycloakId, disciplineId, categoryId);
 
         if (studentInscription.isPresent()) {
             studentInscriptionRepo.delete(studentInscription.get());
