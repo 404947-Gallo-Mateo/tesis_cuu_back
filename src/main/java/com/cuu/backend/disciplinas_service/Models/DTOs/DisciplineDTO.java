@@ -14,16 +14,9 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DisciplineDTO {
-
     private UUID id;
-
-    //@Column(nullable = false, unique = true)
     private String name;
-
-    //@Column(length = 1500)
     private String description;
-
     private List<UserDTO> teachers;
-
     private List<CategoryDTO> categories;
 }

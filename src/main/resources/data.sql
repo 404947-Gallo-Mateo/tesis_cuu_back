@@ -20,6 +20,7 @@ VALUES
   ('bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Recreativo', 'Recreativo básica para niños.', 12000.00, '22222222-2222-2222-2222-222222222222', 0, 10, 18, 'MIXED'),
   ('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Competitivo', 'Competitivo avanzado para adultos.', 15000.00, '22222222-2222-2222-2222-222222222222', 0, 18, 55, 'MIXED');
 
+
 -- SCHEDULES
 DELETE FROM category_schedule;
 
@@ -52,12 +53,10 @@ VALUES
   ('aaaaaaa6-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'THURSDAY', '22:15:00', '23:30:00'),
 
 
-
 -- boxeo Recreativo
   ('bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'MONDAY', '19:00:00', '20:00:00'),
   ('bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'WEDNESDAY', '19:00:00', '20:00:00'),
   ('bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'FRIDAY', '19:00:00', '20:00:00'),
-
 
 -- boxeo Competitivo
   ('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'MONDAY', '19:00:00', '20:00:00'),

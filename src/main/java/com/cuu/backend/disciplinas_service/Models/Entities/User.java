@@ -31,7 +31,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
-    private List<Role> roles;
+    private Role role;
 
     @Column(nullable = true, unique = true)
     private String username;
@@ -46,6 +46,13 @@ public class User {
     @Column(nullable = false, name = "lastName")
     private String lastName;
 
+    @Column(nullable = true, name = "birth_date")
+    private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private Genre genre;
+
     @ManyToMany
     @JoinTable(
             name = "teacher_disciplines",
@@ -53,10 +60,4 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "discipline_id")
     )
     private List<Discipline> teacherDisciplines;
-
-    @Column(nullable = true, name = "birth_date")
-    private LocalDate birthDate;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    private Genre genre;}
+}

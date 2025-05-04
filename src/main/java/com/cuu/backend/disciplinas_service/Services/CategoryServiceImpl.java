@@ -1,6 +1,7 @@
 package com.cuu.backend.disciplinas_service.Services;
 
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostCategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.CategoryService;
@@ -23,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper mapper;
 
     @Override
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO createCategory(PostCategoryDTO categoryDTO) {
 
         //todo validar
 

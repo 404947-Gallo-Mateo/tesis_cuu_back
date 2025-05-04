@@ -183,13 +183,13 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
 
     //segun atributo availablePlaces (cupos) de la Category, se verifica si hay espacio o no
     private boolean thereAreAvailablePlaces(CategoryDTO categoryDTO){
-        if (categoryDTO.getAvailablePlaces() == null || categoryDTO.getAvailablePlaces() < 1){
+        if (categoryDTO.getAvailableSpaces() == null || categoryDTO.getAvailableSpaces() < 1){
             return true;
         }
 
         long occupiedPlaces = studentInscriptionRepo.countByCategoryId(categoryDTO.getId());
 
-        return categoryDTO.getAvailablePlaces() < occupiedPlaces;
+        return categoryDTO.getAvailableSpaces() < occupiedPlaces;
     }
 
     private boolean isInAgeRange(UserDTO userDTO, CategoryDTO categoryDTO){

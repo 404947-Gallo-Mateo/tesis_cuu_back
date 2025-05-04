@@ -1,5 +1,7 @@
 package com.cuu.backend.disciplinas_service.Config;
 
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.modelmapper.Conditions;
@@ -7,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.ui.Model;
 
 /**
  * ModelMapper and ObjectMapper configuration class.
@@ -21,6 +24,12 @@ public class MappersConfig {
     @Bean
     @Primary
     public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+
+        modelMapper.typeMap(PostDisciplineDTO.class, Discipline.class)
+                .addMappings(mapper -> mapper.skip(Discipline::setId));
+
+
         return new ModelMapper();
     }
 

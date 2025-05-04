@@ -7,6 +7,7 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*")
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/student_inscription")
 public class StudentInscriptionController {
 
@@ -33,7 +35,7 @@ public class StudentInscriptionController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> deleteStudentInscriptionByMultipleIDs(@PathVariable String studentKeycloakId, @PathVariable UUID disciplineId, @PathVariable UUID categoryId){
+    public ResponseEntity<Boolean> deleteStudentInscriptionByMultipleIDs(@RequestParam String studentKeycloakId, @PathVariable UUID disciplineId, @PathVariable UUID categoryId){
 
         return ResponseEntity.ok(studentInscriptionService.deleteStudentInscriptionByMultipleIDs(studentKeycloakId, disciplineId, categoryId));
     }

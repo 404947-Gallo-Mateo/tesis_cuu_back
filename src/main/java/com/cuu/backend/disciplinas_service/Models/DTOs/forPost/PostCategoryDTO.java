@@ -1,9 +1,10 @@
-package com.cuu.backend.disciplinas_service.Models.DTOs;
+package com.cuu.backend.disciplinas_service.Models.DTOs.forPost;
 
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.AgeRange;
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.Schedule;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,8 +16,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class CategoryDTO {
-    private UUID id;
+public class PostCategoryDTO {
     private String name;
     private String description;
     private BigDecimal monthlyFee;
