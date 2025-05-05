@@ -2,6 +2,7 @@ package com.cuu.backend.disciplinas_service.Models.Entities;
 
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -47,6 +48,7 @@ public class User {
     private String lastName;
 
     @Column(nullable = true, name = "birth_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)

@@ -20,7 +20,7 @@ public class PostCategoryDTO {
     private String name;
     private String description;
     private BigDecimal monthlyFee;
-    private String disciplineId;
+    private UUID disciplineId;
     private String disciplineName;
     private Long availableSpaces;
     private AgeRange ageRange;
