@@ -19,10 +19,6 @@ public class DisciplineValidatorImpl {
 
     @Autowired
     private DisciplineRepo disciplineRepo;
-    @Autowired
-    private UserRepo userRepo;
-    @Autowired
-    private CategoryRepo categoryRepo;
 
     public void validatePostDisciplineDTO(PostDisciplineDTO disciplineDTO) {
         if (disciplineDTO.getName().length() > 100){
@@ -30,7 +26,7 @@ public class DisciplineValidatorImpl {
         }
 
         if (disciplineDTO.getDescription().length() > 1000){
-            throw new CustomException("la descripción de la Disciplina no debe superar los 1000 caracteres", HttpStatus.BAD_REQUEST);
+            throw new CustomException("La descripción de la Disciplina no debe superar los 1000 caracteres", HttpStatus.BAD_REQUEST);
         }
 
         List<Discipline> allDisciplines = disciplineRepo.findAll();
@@ -54,7 +50,7 @@ public class DisciplineValidatorImpl {
         }
 
         if (disciplineDTO.getDescription().length() > 1000){
-            throw new CustomException("la descripción de la Disciplina no debe superar los 1000 caracteres", HttpStatus.BAD_REQUEST);
+            throw new CustomException("La descripción de la Disciplina no debe superar los 1000 caracteres", HttpStatus.BAD_REQUEST);
         }
 
         List<Discipline> allDisciplines = disciplineRepo.findAll();

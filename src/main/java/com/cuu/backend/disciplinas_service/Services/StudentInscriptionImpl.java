@@ -2,9 +2,14 @@ package com.cuu.backend.disciplinas_service.Services;
 
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.CategorySummaryDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
+import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
+import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
 import com.cuu.backend.disciplinas_service.Repositories.StudentInscriptionRepo;
+import com.cuu.backend.disciplinas_service.Repositories.UserRepo;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.StudentInscriptionService;
 import com.cuu.backend.disciplinas_service.Services.Validators.StudentInscriptionValidatorImpl;
 import org.modelmapper.ModelMapper;
@@ -24,6 +29,10 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     private StudentInscriptionRepo studentInscriptionRepo;
     @Autowired
     private CategoryRepo categoryRepo;
+    @Autowired
+    private DisciplineRepo disciplineRepo;
+    @Autowired
+    private UserRepo userRepo;
 
     @Autowired
     private ModelMapper mapper;
@@ -32,13 +41,16 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
 
     @Override
     public StudentInscriptionDTO createStudentInscription(StudentInscriptionDTO studentInscriptionDTO) {
-        validator.validatePostStudentInscriptionDTO(studentInscriptionDTO);
+        StudentInscription newStudentInscription = validator.validatePostStudentInscriptionDTO(studentInscriptionDTO);
 
-        StudentInscription newStudentInscription = mapper.map(studentInscriptionDTO, StudentInscription.class);
+        StudentInscription savedStudentInscription = studentInscriptionRepo.save(newStudentInscription);
 
-        StudentInscription createdStudentInscription = studentInscriptionRepo.save(newStudentInscription);
+        StudentInscriptionDTO savedStudentInscriptionDTO = mapper.map(savedStudentInscription, StudentInscriptionDTO.class);
 
-        return mapper.map(createdStudentInscription, StudentInscriptionDTO.class);
+        savedStudentInscriptionDTO.setDiscipline(new DisciplineSummaryDTO(savedStudentInscriptionDTO.getDiscipline().getId(), savedStudentInscriptionDTO.getDiscipline().getName()));
+        savedStudentInscriptionDTO.setCategory(new CategorySummaryDTO(savedStudentInscriptionDTO.getCategory().getId(), savedStudentInscriptionDTO.getCategory().getName(), savedStudentInscriptionDTO.getDiscipline().getId(), savedStudentInscriptionDTO.getDiscipline().getName()));
+
+        return savedStudentInscriptionDTO;
     }
 
     //se usa SOLO para cambiar de Category a un Alumno, ya q sigue dentro de la misma Discipline.
@@ -46,14 +58,16 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     //  en vez de DELETE la original y CREATE otra nueva actualizada)
     @Override
     public StudentInscriptionDTO updateStudentInscription(StudentInscriptionDTO studentInscriptionDTO) {
-        StudentInscription oldStudentInscription = validator.validatePutStudentInscriptionDTO(studentInscriptionDTO);
-
-        StudentInscription updatedStudentInscription = mapper.map(studentInscriptionDTO, StudentInscription.class);
-        updatedStudentInscription.setId(oldStudentInscription.getId());
+        StudentInscription updatedStudentInscription = validator.validatePutStudentInscriptionDTO(studentInscriptionDTO);
 
         StudentInscription savedStudentInscription = studentInscriptionRepo.save(updatedStudentInscription);
 
-        return mapper.map(savedStudentInscription, StudentInscriptionDTO.class);
+        StudentInscriptionDTO savedStudentInscriptionDTO = mapper.map(savedStudentInscription, StudentInscriptionDTO.class);
+
+        savedStudentInscriptionDTO.setDiscipline(new DisciplineSummaryDTO(savedStudentInscriptionDTO.getDiscipline().getId(), savedStudentInscriptionDTO.getDiscipline().getName()));
+        savedStudentInscriptionDTO.setCategory(new CategorySummaryDTO(savedStudentInscriptionDTO.getCategory().getId(), savedStudentInscriptionDTO.getCategory().getName(), savedStudentInscriptionDTO.getDiscipline().getId(), savedStudentInscriptionDTO.getDiscipline().getName()));
+
+        return savedStudentInscriptionDTO;
     }
 
     @Override
@@ -75,7 +89,12 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
         List<StudentInscriptionDTO> studentInscriptionDTOList = new ArrayList<>();
 
         for (StudentInscription si : studentInscriptions){
-            studentInscriptionDTOList.add(mapper.map(si, StudentInscriptionDTO.class));
+            StudentInscriptionDTO studentInscriptionDTO = mapper.map(si, StudentInscriptionDTO.class);
+
+            studentInscriptionDTO.setDiscipline(new DisciplineSummaryDTO(si.getDiscipline().getId(), si.getDiscipline().getName()));
+            studentInscriptionDTO.setCategory(new CategorySummaryDTO(si.getCategory().getId(), si.getCategory().getName(), si.getDiscipline().getId(), si.getDiscipline().getName()));
+
+            studentInscriptionDTOList.add(studentInscriptionDTO);
 
         }
 
@@ -89,7 +108,12 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
         List<StudentInscriptionDTO> studentInscriptionDTOList = new ArrayList<>();
 
         for (StudentInscription si : studentInscriptions){
-            studentInscriptionDTOList.add(mapper.map(si, StudentInscriptionDTO.class));
+            StudentInscriptionDTO studentInscriptionDTO = mapper.map(si, StudentInscriptionDTO.class);
+
+            studentInscriptionDTO.setDiscipline(new DisciplineSummaryDTO(si.getDiscipline().getId(), si.getDiscipline().getName()));
+            studentInscriptionDTO.setCategory(new CategorySummaryDTO(si.getCategory().getId(), si.getCategory().getName(), si.getDiscipline().getId(), si.getDiscipline().getName()));
+
+            studentInscriptionDTOList.add(studentInscriptionDTO);
 
         }
 
@@ -103,7 +127,12 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
         List<StudentInscriptionDTO> studentInscriptionDTOList = new ArrayList<>();
 
         for (StudentInscription si : studentInscriptions){
-            studentInscriptionDTOList.add(mapper.map(si, StudentInscriptionDTO.class));
+            StudentInscriptionDTO studentInscriptionDTO = mapper.map(si, StudentInscriptionDTO.class);
+
+            studentInscriptionDTO.setDiscipline(new DisciplineSummaryDTO(si.getDiscipline().getId(), si.getDiscipline().getName()));
+            studentInscriptionDTO.setCategory(new CategorySummaryDTO(si.getCategory().getId(), si.getCategory().getName(), si.getDiscipline().getId(), si.getDiscipline().getName()));
+
+            studentInscriptionDTOList.add(studentInscriptionDTO);
 
         }
 
@@ -111,7 +140,7 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     }
 
     @Override
-    public Optional<StudentInscriptionDTO> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(String studentKeycloakId, UUID disciplineId, UUID categoryId){
+    public StudentInscriptionDTO findByStudentKeycloakIdAndDisciplineIdAndCategoryId(String studentKeycloakId, UUID disciplineId, UUID categoryId){
         Optional<StudentInscription> studentInscriptionOpt = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineIdAndCategoryId(studentKeycloakId, disciplineId, categoryId);
 
         if (studentInscriptionOpt.isEmpty()){
@@ -119,18 +148,32 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
 
         }
 
-        return Optional.of(mapper.map(studentInscriptionOpt.get(), StudentInscriptionDTO.class));
+        StudentInscription si = studentInscriptionOpt.get();
+
+        StudentInscriptionDTO studentInscriptionDTO = mapper.map(si, StudentInscriptionDTO.class);
+
+        studentInscriptionDTO.setDiscipline(new DisciplineSummaryDTO(si.getDiscipline().getId(), si.getDiscipline().getName()));
+        studentInscriptionDTO.setCategory(new CategorySummaryDTO(si.getCategory().getId(), si.getCategory().getName(), si.getDiscipline().getId(), si.getDiscipline().getName()));
+
+        return studentInscriptionDTO;
     }
 
     @Override
-    public Optional<StudentInscriptionDTO> findByStudentKeycloakIdAndDisciplineId(String studentKeycloakId, UUID disciplineId) {
+    public StudentInscriptionDTO findByStudentKeycloakIdAndDisciplineId(String studentKeycloakId, UUID disciplineId) {
         Optional<StudentInscription> studentInscriptionOpt = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentKeycloakId, disciplineId);
 
         if (studentInscriptionOpt.isEmpty()){
             throw new CustomException("No se pudo encontrar StudentInscription con los 2 atributos indicados", HttpStatus.BAD_REQUEST);
         }
 
-        return Optional.of(mapper.map(studentInscriptionOpt.get(), StudentInscriptionDTO.class));
+        StudentInscription si = studentInscriptionOpt.get();
+
+        StudentInscriptionDTO studentInscriptionDTO = mapper.map(si, StudentInscriptionDTO.class);
+
+        studentInscriptionDTO.setDiscipline(new DisciplineSummaryDTO(si.getDiscipline().getId(), si.getDiscipline().getName()));
+        studentInscriptionDTO.setCategory(new CategorySummaryDTO(si.getCategory().getId(), si.getCategory().getName(), si.getDiscipline().getId(), si.getDiscipline().getName()));
+
+        return studentInscriptionDTO;
     }
 
 

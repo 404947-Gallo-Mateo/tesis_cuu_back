@@ -27,7 +27,7 @@ public interface StudentInscriptionRepo extends JpaRepository<StudentInscription
     @Query("SELECT COUNT(si) FROM StudentInscription si WHERE si.category.id = :categoryId")
     long countByCategoryId(@Param("categoryId") UUID categoryId);
 
-    @Query("SELECT si FROM StudentInscription si WHERE si.category.id = :categoryId AND si.discipline.id = :disciplineId AND si.student.keycloakId =:studentKeycloakId")
+    @Query("SELECT si FROM StudentInscription si WHERE si.student.keycloakId =:studentKeycloakId AND si.discipline.id = :disciplineId AND si.category.id = :categoryId")
     Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(@Param("studentKeycloakId") String studentKeycloakId, @Param("disciplineId") UUID disciplineId, @Param("categoryId") UUID categoryId);
 
     @Query("SELECT si FROM StudentInscription si WHERE si.discipline.id = :disciplineId AND si.student.keycloakId =:studentKeycloakId")

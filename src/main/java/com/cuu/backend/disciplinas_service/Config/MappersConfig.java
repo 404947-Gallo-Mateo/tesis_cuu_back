@@ -26,10 +26,6 @@ public class MappersConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
-        modelMapper.typeMap(PostDisciplineDTO.class, Discipline.class)
-                .addMappings(mapper -> mapper.skip(Discipline::setId));
-
-
         return new ModelMapper();
     }
 

@@ -1,7 +1,9 @@
 package com.cuu.backend.disciplinas_service.Services.Mappers;
 
+import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.ICategorySummary;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostCategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
@@ -12,6 +14,7 @@ import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
 import com.cuu.backend.disciplinas_service.Repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -145,35 +148,42 @@ public class ComplexMapper {
     private List<Category> getCategoriesFromDiscipline(DisciplineDTO updatedDisciplineDTO, Discipline oldDiscipline) {
         List<Category> categories = new ArrayList<>();
 
-        for (CategoryDTO categoryDTO : updatedDisciplineDTO.getCategories()) {
+        for (ICategorySummary categoryDTO : updatedDisciplineDTO.getCategories()) {
             Optional<Category> optionalCategory = categoryRepo.findById(categoryDTO.getId());
 
-            Category category;
-            if (optionalCategory.isPresent()) {
-                category = optionalCategory.get();
-                // actualiza sus valores
-                category.setName(categoryDTO.getName());
-                category.setDescription(categoryDTO.getDescription());
-                category.setMonthlyFee(categoryDTO.getMonthlyFee());
-                category.setAvailableSpaces(categoryDTO.getAvailableSpaces());
-                category.setAgeRange(categoryDTO.getAgeRange());
-                category.setSchedule(categoryDTO.getSchedule());
-                category.setAllowedGenre(categoryDTO.getAllowedGenre());
-            } else {
-                category = new Category(
-                        null,
-                        categoryDTO.getName(),
-                        categoryDTO.getDescription(),
-                        categoryDTO.getMonthlyFee(),
-                        oldDiscipline,
-                        categoryDTO.getAvailableSpaces(),
-                        categoryDTO.getAgeRange(),
-                        categoryDTO.getSchedule(),
-                        categoryDTO.getAllowedGenre()
-                );
-            }
+            if (categoryDTO instanceof CategoryDTO) {
+                CategoryDTO fullCategoryDTO = (CategoryDTO) categoryDTO;
 
-            categories.add(category);
+                Category category;
+                if (optionalCategory.isPresent()) {
+                    category = optionalCategory.get();
+                    // actualiza sus valores
+                    category.setName(fullCategoryDTO.getName());
+                    category.setDescription(fullCategoryDTO.getDescription());
+                    category.setMonthlyFee(fullCategoryDTO.getMonthlyFee());
+                    category.setAvailableSpaces(fullCategoryDTO.getAvailableSpaces());
+                    category.setAgeRange(fullCategoryDTO.getAgeRange());
+                    category.setSchedule(fullCategoryDTO.getSchedule());
+                    category.setAllowedGenre(fullCategoryDTO.getAllowedGenre());
+                } else {
+                    category = new Category(
+                            null,
+                            fullCategoryDTO.getName(),
+                            fullCategoryDTO.getDescription(),
+                            fullCategoryDTO.getMonthlyFee(),
+                            oldDiscipline,
+                            fullCategoryDTO.getAvailableSpaces(),
+                            fullCategoryDTO.getAgeRange(),
+                            fullCategoryDTO.getSchedule(),
+                            fullCategoryDTO.getAllowedGenre()
+                    );
+                }
+
+                categories.add(category);
+            }
+            else{
+                throw new CustomException("el objeto Category NO es un CategoryDTO, le falta info. obj dto: " + categoryDTO, HttpStatus.BAD_REQUEST);
+            }
         }
 
         return categories;

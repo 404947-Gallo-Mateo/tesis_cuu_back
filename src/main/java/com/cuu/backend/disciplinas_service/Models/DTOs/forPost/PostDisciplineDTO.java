@@ -1,6 +1,7 @@
 package com.cuu.backend.disciplinas_service.Models.DTOs.forPost;
 
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import lombok.*;
 

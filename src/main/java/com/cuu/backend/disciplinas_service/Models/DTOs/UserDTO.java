@@ -1,5 +1,6 @@
 package com.cuu.backend.disciplinas_service.Models.DTOs;
 
+import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;

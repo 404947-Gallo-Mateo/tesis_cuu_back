@@ -35,7 +35,7 @@ public class StudentInscriptionController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> deleteStudentInscriptionByMultipleIDs(@RequestParam String studentKeycloakId, @PathVariable UUID disciplineId, @PathVariable UUID categoryId){
+    public ResponseEntity<Boolean> deleteStudentInscriptionByMultipleIDs(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
 
         return ResponseEntity.ok(studentInscriptionService.deleteStudentInscriptionByMultipleIDs(studentKeycloakId, disciplineId, categoryId));
     }
@@ -59,13 +59,13 @@ public class StudentInscriptionController {
     }
 
     @GetMapping("/find-one/by-student-keycloak-id-and-discipline-id-and-category-id")
-    public ResponseEntity<Optional<StudentInscriptionDTO>> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
+    public ResponseEntity<StudentInscriptionDTO> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
 
         return ResponseEntity.ok(studentInscriptionService.findByStudentKeycloakIdAndDisciplineIdAndCategoryId(studentKeycloakId, disciplineId, categoryId));
     }
 
     @GetMapping("/find-one/by-student-keycloak-id-and-discipline-id")
-    public ResponseEntity<Optional<StudentInscriptionDTO>> findByStudentKeycloakIdAndDisciplineId(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId){
+    public ResponseEntity<StudentInscriptionDTO> findByStudentKeycloakIdAndDisciplineId(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId){
 
         return ResponseEntity.ok(studentInscriptionService.findByStudentKeycloakIdAndDisciplineId(studentKeycloakId, disciplineId));
     }

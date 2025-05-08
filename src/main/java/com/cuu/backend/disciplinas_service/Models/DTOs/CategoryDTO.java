@@ -1,5 +1,7 @@
 package com.cuu.backend.disciplinas_service.Models.DTOs;
 
+import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.CategorySummaryDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.ICategorySummary;
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.AgeRange;
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.Schedule;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
@@ -15,7 +17,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class CategoryDTO {
+public class CategoryDTO implements ICategorySummary {
     private UUID id;
     private String name;
     private String description;

@@ -1,4 +1,4 @@
-package com.cuu.backend.disciplinas_service.Models.DTOs;
+package com.cuu.backend.disciplinas_service.Models.DTOs.Summary;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DisciplineSummaryDTO {
+public class DisciplineSummaryDTO implements IDisciplineSummary{
     private UUID id;
     private String name;
 }

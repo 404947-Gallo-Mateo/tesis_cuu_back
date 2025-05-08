@@ -64,3 +64,22 @@ VALUES
   ('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'WEDNESDAY', '19:00:00', '20:00:00'),
   ('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'THURSDAY', '19:00:00', '20:00:00'),
   ('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'FRIDAY', '19:00:00', '20:00:00');
+
+
+-- USERS
+INSERT INTO users (id, keycloak_id, role, username, email, first_name, last_name, birth_date, genre)
+VALUES
+  ('33333333-3333-3333-3333-333333333333', 'kc-student-uuid-11111111', 'STUDENT', 'juanjo', 'Juan@example.com', 'Juan', 'Pérez', '2010-04-15', 'MALE'),
+  ('44444444-4444-4444-4444-444444444444', 'kc-teacher-uuid-22222222', 'TEACHER', 'Profe Lucia', 'Lucia@example.com', 'Lucía', 'Gómez', '1985-09-30', 'FEMALE');
+
+-- STUDENT INSCRIPTIONS
+INSERT INTO student_inscriptions (id, student_id, discipline_id, category_id)
+VALUES
+  ('55555555-5555-5555-5555-555555555555', '33333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111', 'aaaaaaa6-aaaa-aaaa-aaaa-aaaaaaaaaaaa'), -- Basquet Primera
+  ('66666666-6666-6666-6666-666666666666', '44444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222222', 'bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb'); -- Boxeo Recreativo
+
+-- TEACHER DISCIPLINES
+INSERT INTO teacher_disciplines (teacher_id, discipline_id)
+VALUES
+  ('44444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111'), -- Basquet
+  ('44444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222222'); -- Boxeo

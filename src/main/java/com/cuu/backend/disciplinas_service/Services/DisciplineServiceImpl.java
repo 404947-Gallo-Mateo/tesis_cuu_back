@@ -2,17 +2,14 @@ package com.cuu.backend.disciplinas_service.Services;
 
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
-import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
-import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostCategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
-import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
-import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
 import com.cuu.backend.disciplinas_service.Repositories.UserRepo;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.DisciplineService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
+import com.cuu.backend.disciplinas_service.Services.Validators.CategoryValidatorImpl;
 import com.cuu.backend.disciplinas_service.Services.Validators.DisciplineValidatorImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +28,9 @@ public class DisciplineServiceImpl implements DisciplineService {
     private CategoryRepo categoryRepo;
 
     @Autowired
-    private DisciplineValidatorImpl validator;
+    private DisciplineValidatorImpl disciplineValidator;
+    @Autowired
+    private CategoryValidatorImpl categoryValidator;
     @Autowired
     private ComplexMapper complexMapper;
 
@@ -41,7 +40,8 @@ public class DisciplineServiceImpl implements DisciplineService {
 
     @Override
     public DisciplineDTO createDiscipline(PostDisciplineDTO disciplineDTO) {
-        validator.validatePostDisciplineDTO(disciplineDTO);
+        disciplineValidator.validatePostDisciplineDTO(disciplineDTO);
+        categoryValidator.validatePostCategoryDTO(disciplineDTO.getCategories());
 
         Discipline newDiscipline = complexMapper.mapPostDTOToDiscipline(disciplineDTO);
 
@@ -53,7 +53,9 @@ public class DisciplineServiceImpl implements DisciplineService {
 
     @Override
     public DisciplineDTO updateDiscipline(DisciplineDTO disciplineDTO) {
-        Discipline oldDiscipline = validator.validatePutDisciplineDTO(disciplineDTO);
+        Discipline oldDiscipline = disciplineValidator.validatePutDisciplineDTO(disciplineDTO);
+
+        categoryValidator.validatePutCategoryDTO(disciplineDTO.getCategories());
 
         Discipline updatedDiscipline =complexMapper.mapDisciplineDTOToDiscipline(disciplineDTO, oldDiscipline);
 

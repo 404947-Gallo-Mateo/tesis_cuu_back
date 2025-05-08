@@ -22,23 +22,23 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/create")
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody PostCategoryDTO categoryDTO){
-
-        return ResponseEntity.ok(categoryService.createCategory(categoryDTO));
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO){
-
-        return ResponseEntity.ok(categoryService.updateCategory(categoryDTO));
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> deleteCategoryById(@RequestParam UUID categoryId){
-
-        return ResponseEntity.ok(categoryService.deleteCategoryById(categoryId));
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<CategoryDTO> createCategory(@RequestBody PostCategoryDTO categoryDTO){
+//
+//        return ResponseEntity.ok(categoryService.createCategory(categoryDTO));
+//    }
+//
+//    @PutMapping("/update")
+//    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO){
+//
+//        return ResponseEntity.ok(categoryService.updateCategory(categoryDTO));
+//    }
+//
+//    @DeleteMapping("/delete")
+//    public ResponseEntity<Boolean> deleteCategoryById(@RequestParam UUID categoryId){
+//
+//        return ResponseEntity.ok(categoryService.deleteCategoryById(categoryId));
+//    }
 
     @GetMapping("/find-all/by-discipline-id")
     public ResponseEntity<List<CategoryDTO>> findAllByDisciplineId(@RequestParam UUID disciplineId){
