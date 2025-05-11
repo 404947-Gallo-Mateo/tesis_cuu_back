@@ -10,7 +10,6 @@ import org.springframework.security.config.Customizer;
 @Configuration
 @Profile("dev")
 public class DevSecurityConfig {
-
     @Bean
     public SecurityFilterChain devFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -18,6 +17,7 @@ public class DevSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 )
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .cors(Customizer.withDefaults())
                 .build();
     }

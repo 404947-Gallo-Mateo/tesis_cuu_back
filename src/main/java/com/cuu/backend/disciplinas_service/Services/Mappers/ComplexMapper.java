@@ -63,7 +63,7 @@ public class ComplexMapper {
                     newDiscipline,
                     postCategoryDTO.getAvailableSpaces(),
                     postCategoryDTO.getAgeRange(),
-                    postCategoryDTO.getSchedule(),
+                    postCategoryDTO.getSchedules(),
                     postCategoryDTO.getAllowedGenre()
             );
 
@@ -163,7 +163,7 @@ public class ComplexMapper {
                     category.setMonthlyFee(fullCategoryDTO.getMonthlyFee());
                     category.setAvailableSpaces(fullCategoryDTO.getAvailableSpaces());
                     category.setAgeRange(fullCategoryDTO.getAgeRange());
-                    category.setSchedule(fullCategoryDTO.getSchedule());
+                    category.setSchedules(fullCategoryDTO.getSchedules());
                     category.setAllowedGenre(fullCategoryDTO.getAllowedGenre());
                 } else {
                     category = new Category(
@@ -174,7 +174,7 @@ public class ComplexMapper {
                             oldDiscipline,
                             fullCategoryDTO.getAvailableSpaces(),
                             fullCategoryDTO.getAgeRange(),
-                            fullCategoryDTO.getSchedule(),
+                            fullCategoryDTO.getSchedules(),
                             fullCategoryDTO.getAllowedGenre()
                     );
                 }

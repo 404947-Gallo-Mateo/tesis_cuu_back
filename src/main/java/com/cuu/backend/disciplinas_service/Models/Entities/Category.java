@@ -53,7 +53,7 @@ public class Category {
             name = "category_schedule",
             joinColumns = @JoinColumn(name = "category_id")
     )
-    private List<Schedule> schedule;
+    private List<Schedule> schedules;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "allowed_genre")

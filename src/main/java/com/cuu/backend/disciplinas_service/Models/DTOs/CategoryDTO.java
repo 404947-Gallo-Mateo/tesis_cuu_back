@@ -26,7 +26,7 @@ public class CategoryDTO implements ICategorySummary {
     private String disciplineName;
     private Long availableSpaces;
     private AgeRange ageRange;
-    private List<Schedule> schedule;
+    private List<Schedule> schedules;
     @Enumerated(EnumType.STRING)
     private Genre allowedGenre;
 }

@@ -196,11 +196,11 @@ public class StudentInscriptionValidatorImpl {
         for(StudentInscription si : userInscriptions){
             //NO agrega la List<Schedule> de la vieja Category q esta reemplazando la NUEVA Category
             if (!si.getDiscipline().getId().equals(newCategory.getDiscipline().getId())){
-                userSchedules.addAll(si.getCategory().getSchedule());
+                userSchedules.addAll(si.getCategory().getSchedules());
             }
         }
 
-        for (Schedule newSchedule : newCategory.getSchedule()) {
+        for (Schedule newSchedule : newCategory.getSchedules()) {
             for (Schedule existingSchedule : userSchedules) {
                 if (newSchedule.getDayOfWeek() == existingSchedule.getDayOfWeek()
                         && newSchedule.getStartHour().isBefore(existingSchedule.getEndHour())

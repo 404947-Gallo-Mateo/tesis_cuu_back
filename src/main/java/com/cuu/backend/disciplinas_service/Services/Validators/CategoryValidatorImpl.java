@@ -44,7 +44,7 @@ public class CategoryValidatorImpl {
             if (dto.getAgeRange().getMinAge() > dto.getAgeRange().getMaxAge()){
                 throw new CustomException("La edad mínima, del Rango de Edad de la Categoría, no puede ser mayor que la edad máxima", HttpStatus.BAD_REQUEST);
             }
-            for (Schedule s : dto.getSchedule()){
+            for (Schedule s : dto.getSchedules()){
                 if (s.getStartHour().isAfter(s.getEndHour())){
                     throw new CustomException("La Hora de Inicio, del Horario día" + s.getDayOfWeek() + ", no puede ser mayor que la Hora de Fin", HttpStatus.BAD_REQUEST);
                 }
@@ -74,7 +74,7 @@ public class CategoryValidatorImpl {
                 if (fullCategoryDTO.getAgeRange().getMinAge() > fullCategoryDTO.getAgeRange().getMaxAge()){
                     throw new CustomException("La edad mínima, del Rango de Edad de la Categoría, no puede ser mayor que la edad máxima", HttpStatus.BAD_REQUEST);
                 }
-                for (Schedule s : fullCategoryDTO.getSchedule()){
+                for (Schedule s : fullCategoryDTO.getSchedules()){
                     if (s.getStartHour().isAfter(s.getEndHour())){
                         throw new CustomException("La Hora de Inicio, del Horario día" + s.getDayOfWeek() + ", no puede ser mayor que la Hora de Fin", HttpStatus.BAD_REQUEST);
                     }
