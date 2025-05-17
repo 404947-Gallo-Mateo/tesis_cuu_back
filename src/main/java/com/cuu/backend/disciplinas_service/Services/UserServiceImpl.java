@@ -41,6 +41,15 @@ public class UserServiceImpl implements UserService {
     private ModelMapper mapper;
 
     @Override
+    public UserDTO updateKeycloakUser(UserDTO userDTO){
+        return null;
+    }
+
+    @Override
+    public boolean deleteKeycloakUserByKeycloakId(String userKeycloakId){
+        return false;
+    }
+    @Override
     public ExpandedUserDTO syncUserFromKeycloak(Jwt jwt) {
         //datos (por defecto de keycloak) del User q se devuelve luego del login
         String keycloakId = jwt.getClaimAsString("sub");

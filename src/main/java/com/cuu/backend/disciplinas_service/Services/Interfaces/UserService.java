@@ -6,4 +6,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 public interface UserService {
     ExpandedUserDTO syncUserFromKeycloak(Jwt jwt);
+
+    UserDTO updateKeycloakUser(UserDTO userDTO);
+
+    boolean deleteKeycloakUserByKeycloakId(String userKeycloakId);
+
 }

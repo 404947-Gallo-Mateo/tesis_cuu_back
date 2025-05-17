@@ -28,5 +28,4 @@ public class UserDTO {
     private LocalDate birthDate;
     private Genre genre;
     private List<DisciplineSummaryDTO> teacherDisciplines;
-
 }
