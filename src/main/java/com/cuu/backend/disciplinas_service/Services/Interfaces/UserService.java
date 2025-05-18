@@ -4,11 +4,15 @@ import com.cuu.backend.disciplinas_service.Models.DTOs.DisplayOnFrontend.Expande
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.util.List;
+
 public interface UserService {
     ExpandedUserDTO syncUserFromKeycloak(Jwt jwt);
 
-    UserDTO updateKeycloakUser(UserDTO userDTO);
+    ExpandedUserDTO updateKeycloakUser(String keycloakId, UserDTO userDTO);
 
     boolean deleteKeycloakUserByKeycloakId(String userKeycloakId);
+
+    List<ExpandedUserDTO> getAllUsers();
 
 }
