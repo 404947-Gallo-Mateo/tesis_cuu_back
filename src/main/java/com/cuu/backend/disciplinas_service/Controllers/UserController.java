@@ -49,8 +49,8 @@ public class UserController {
     }
 
     @PutMapping("/update/{keycloakId}")
-    public ResponseEntity<ExpandedUserDTO> updateUser(@PathVariable String keycloakId, @RequestBody UserDTO userDto) {
-        ExpandedUserDTO resp = userService.updateKeycloakUser(keycloakId, userDto);
+    public ResponseEntity<ExpandedUserDTO> updateUser(@PathVariable String keycloakId, @RequestBody ExpandedUserDTO expandedUserDTO) {
+        ExpandedUserDTO resp = userService.updateKeycloakUser(keycloakId, expandedUserDTO);
 
         return ResponseEntity.ok(resp);
     }

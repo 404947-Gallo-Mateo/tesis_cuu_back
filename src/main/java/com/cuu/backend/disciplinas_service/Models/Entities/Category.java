@@ -27,34 +27,26 @@ public class Category {
     @GeneratedValue(generator = "UUID")
     @UuidGenerator()
     private UUID id;
-
     @Column(nullable = false)
     private String name;
-
     @Column(length = 1500)
     private String description;
-
     @Column(nullable = false, name = "monthly_fee")
     private BigDecimal monthlyFee;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "discipline_id", nullable = false)
     @JsonBackReference
     private Discipline discipline;
-
     @Column(nullable = true, name = "available_spaces")
     private Long availableSpaces;
-
     @Embedded
     private AgeRange ageRange;
-
     @ElementCollection
     @CollectionTable(
             name = "category_schedule",
             joinColumns = @JoinColumn(name = "category_id")
     )
     private List<Schedule> schedules;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "allowed_genre")
     private Genre allowedGenre;

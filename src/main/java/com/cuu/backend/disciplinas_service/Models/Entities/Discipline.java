@@ -20,18 +20,14 @@ import lombok.*;
 @Builder
 @Table(name = "disciplines")
 public class Discipline {
-
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator()
     private UUID id;
-
     @Column(nullable = false, unique = true)
     private String name;
-
     @Column(length = 1500)
     private String description;
-
     @ManyToMany
     @JoinTable(
             name = "discipline_teachers",
@@ -39,7 +35,6 @@ public class Discipline {
             inverseJoinColumns = @JoinColumn(name = "teacher_id")
     )
     private List<User> teachers;
-
     @OneToMany(mappedBy = "discipline", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Category> categories;

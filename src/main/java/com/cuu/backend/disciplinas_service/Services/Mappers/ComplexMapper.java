@@ -3,6 +3,7 @@ package com.cuu.backend.disciplinas_service.Services.Mappers;
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.ICategorySummary;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostCategoryDTO;
@@ -31,6 +32,47 @@ public class ComplexMapper {
     @Autowired
     private CategoryRepo categoryRepo;
 
+    public DisciplineDTO mapDisciplineEntityToDisciplineDTO(Discipline discipline){
+        List<ICategorySummary> categoriesDTOList = this.getCategoriesDTOFromDiscipline(discipline.getCategories());
+        List<UserDTO> teachersList = this.getTeachersDTOFromDiscipline(discipline.getTeachers());
+
+        return new DisciplineDTO(discipline.getId(), discipline.getName(), discipline.getDescription(), teachersList, categoriesDTOList);
+    }
+
+    private List<ICategorySummary> getCategoriesDTOFromDiscipline(List<Category> disciplineCategories){
+        List<ICategorySummary> categoriesDTOList = new ArrayList<>();
+
+        for (Category c : disciplineCategories){
+            CategoryDTO dto = new CategoryDTO(c.getId(), c.getName(), c.getDescription(), c.getMonthlyFee(), c.getDiscipline().getId(), c.getDiscipline().getName(), c.getAvailableSpaces(), c.getAgeRange(), c.getSchedules(), c.getAllowedGenre());
+            categoriesDTOList.add(dto);
+        }
+
+        return categoriesDTOList;
+    }
+
+    private List<UserDTO> getTeachersDTOFromDiscipline(List<User> disciplineTeachers){
+        List<UserDTO> teachersDTOList = new ArrayList<>();
+
+        for (User u : disciplineTeachers){
+            List<DisciplineSummaryDTO> teacherDisciplineSummaryDTOList = getDisciplineSummaryDTOListFromTeacherUser(u.getTeacherDisciplines());
+
+            UserDTO teacherDTO = new UserDTO(u.getKeycloakId(), u.getRole(), u.getUsername(), u.getEmail(), u.getFirstName(), u.getLastName(), u.getBirthDate(), u.getGenre(), teacherDisciplineSummaryDTOList);
+            teachersDTOList.add(teacherDTO);
+        }
+        return teachersDTOList;
+    }
+
+    private List<DisciplineSummaryDTO> getDisciplineSummaryDTOListFromTeacherUser(List<Discipline> teacherDisciplines){
+        List<DisciplineSummaryDTO> disciplineSummaryDTOList = new ArrayList<>();
+
+        for (Discipline d : teacherDisciplines){
+            DisciplineSummaryDTO summaryDTO = new DisciplineSummaryDTO(d.getId(), d.getName());
+            disciplineSummaryDTOList.add(summaryDTO);
+        }
+
+        return disciplineSummaryDTOList;
+    }
+
     public Discipline mapPostDTOToDiscipline(PostDisciplineDTO postDTO) {
         Discipline newDiscipline = new Discipline();
         newDiscipline.setName(postDTO.getName());
@@ -38,10 +80,10 @@ public class ComplexMapper {
 
         newDiscipline = disciplineRepo.save(newDiscipline);
 //      obteniendo teachers
-        List<User> teachers = getTeachersFromPostDiscipline(postDTO, newDiscipline);
+        List<User> teachers = this.getTeachersFromPostDiscipline(postDTO, newDiscipline);
 
 //      obteniendo categories
-        List<Category> newCategories = getCategoriesFromPostDiscipline(postDTO, newDiscipline);
+        List<Category> newCategories = this.getCategoriesFromPostDiscipline(postDTO, newDiscipline);
 
 //      creando nueva Discipline
         newDiscipline.setTeachers(teachers);

@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ExpandedUserDTO updateKeycloakUser(String keycloakId ,UserDTO userDTO) {
+    public ExpandedUserDTO updateKeycloakUser(String keycloakId ,ExpandedUserDTO expandedUserDTO) {
         String token = keycloakAdminClient.getAdminToken();
 
         HttpHeaders headers = new HttpHeaders();
@@ -61,19 +61,19 @@ public class UserServiceImpl implements UserService {
 
         // arma la estructura que espera Keycloak
         Map<String, Object> body = new HashMap<>();
-        body.put("firstName", userDTO.getFirstName());
-        body.put("lastName", userDTO.getLastName());
-        body.put("email", userDTO.getEmail());
+        body.put("firstName", expandedUserDTO.getFirstName());
+        body.put("lastName", expandedUserDTO.getLastName());
+        body.put("email", expandedUserDTO.getEmail());
         body.put("enabled", true);
 
         Map<String, String> attributes = new HashMap<>();
-        attributes.put("birthDate", userDTO.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-        attributes.put("genre", userDTO.getGenre().toString().substring(0,1).toUpperCase()); //pasar como M o F
+        attributes.put("birthDate", expandedUserDTO.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        attributes.put("genre", expandedUserDTO.getGenre().toString().substring(0,1).toUpperCase()); //pasar como M o F
         body.put("attributes", attributes);
 
         try {
             ResponseEntity<Void> keycloakResponse = restTemplate.exchange(
-                    "http://localhost:8080/admin/realms/Club_Union_Unquillo/users/" + userDTO.getKeycloakId(),
+                    "http://localhost:8080/admin/realms/Club_Union_Unquillo/users/" + expandedUserDTO.getKeycloakId(),
                     HttpMethod.PUT,
                     new HttpEntity<>(body, headers),
                     Void.class
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
             if (keycloakResponse.getStatusCode().is2xxSuccessful()) {
                 // Solo si se actualiza correctamente en Keycloak, se actualiza en la DB
-                return this.updateKeycloakUserInLocalDb(userDTO);
+                return this.updateKeycloakUserInLocalDb(expandedUserDTO);
             } else {
                 throw new CustomException("Error al eliminar el usuario en Keycloak", HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -125,23 +125,23 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private ExpandedUserDTO updateKeycloakUserInLocalDb(UserDTO userDTO){
-        Optional<User> oldUser = userRepo.findByKeycloakId(userDTO.getKeycloakId());
+    private ExpandedUserDTO updateKeycloakUserInLocalDb(ExpandedUserDTO expandedUserDTO){
+        Optional<User> oldUser = userRepo.findByKeycloakId(expandedUserDTO.getKeycloakId());
 
         if (oldUser.isEmpty()){
             throw new CustomException("No se encontro el Usuario", HttpStatus.BAD_REQUEST);
         }
 
-        User updatedUser = mapper.map(userDTO, User.class);
+        User updatedUser = mapper.map(expandedUserDTO, User.class);
         updatedUser.setId(oldUser.get().getId());
 
         User saved = userRepo.save(updatedUser);
 
-        ExpandedUserDTO expandedUserDTO = mapper.map(saved, ExpandedUserDTO.class);
+        ExpandedUserDTO expandedUserDTOSaved = mapper.map(saved, ExpandedUserDTO.class);
 
-        expandedUserDTO.setStudentCategories(this.getAllStudentCategories(expandedUserDTO.getKeycloakId()));
+        expandedUserDTO.setStudentCategories(this.getAllStudentCategories(expandedUserDTOSaved.getKeycloakId()));
 
-        return expandedUserDTO;
+        return expandedUserDTOSaved;
     }
 
 

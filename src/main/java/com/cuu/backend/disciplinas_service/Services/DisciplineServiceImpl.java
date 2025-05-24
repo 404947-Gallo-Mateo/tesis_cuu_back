@@ -83,8 +83,7 @@ public class DisciplineServiceImpl implements DisciplineService {
         List<DisciplineDTO> disciplineDTOList = new ArrayList<>();
 
         for (Discipline d : disciplines){
-            disciplineDTOList.add(mapper.map(d, DisciplineDTO.class));
-
+            disciplineDTOList.add(complexMapper.mapDisciplineEntityToDisciplineDTO(d));
         }
 
         return disciplineDTOList;
@@ -96,7 +95,7 @@ public class DisciplineServiceImpl implements DisciplineService {
         Optional<Discipline> discipline = disciplineRepo.findByName(name);
 
         if (discipline.isPresent()){
-            return mapper.map(discipline.get(), DisciplineDTO.class);
+            return complexMapper.mapDisciplineEntityToDisciplineDTO(discipline.get());
         }
         else {
             return null;
@@ -109,7 +108,7 @@ public class DisciplineServiceImpl implements DisciplineService {
         Optional<Discipline> discipline = disciplineRepo.findById(id);
 
         if (discipline.isPresent()){
-            return mapper.map(discipline.get(), DisciplineDTO.class);
+            return complexMapper.mapDisciplineEntityToDisciplineDTO(discipline.get());
         }
         else {
             return null;
@@ -124,7 +123,7 @@ public class DisciplineServiceImpl implements DisciplineService {
         List<DisciplineDTO> disciplineDTOList = new ArrayList<>();
 
         for (Discipline d : disciplines){
-            disciplineDTOList.add(mapper.map(d, DisciplineDTO.class));
+            disciplineDTOList.add(complexMapper.mapDisciplineEntityToDisciplineDTO(d));
 
         }
 

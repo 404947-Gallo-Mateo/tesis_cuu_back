@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService {
     ExpandedUserDTO syncUserFromKeycloak(Jwt jwt);
 
-    ExpandedUserDTO updateKeycloakUser(String keycloakId, UserDTO userDTO);
+    ExpandedUserDTO updateKeycloakUser(String keycloakId, ExpandedUserDTO expandedUserDTO);
 
     boolean deleteKeycloakUserByKeycloakId(String userKeycloakId);
 
