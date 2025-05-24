@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public interface StudentInscriptionService {
 
-    StudentInscriptionDTO createStudentInscription (StudentInscriptionDTO studentInscriptionDTO);
+    StudentInscriptionDTO createStudentInscription (String studentKeycloaId, UUID disciplineId, UUID categoryId);
 
-    StudentInscriptionDTO updateStudentInscription (StudentInscriptionDTO studentInscriptionDTO);
+    StudentInscriptionDTO updateStudentInscription (String studentKeycloaId, UUID disciplineId, UUID categoryId);
 
     boolean deleteStudentInscriptionByMultipleIDs (String studentKeycloaId, UUID disciplineId, UUID categoryId);
 

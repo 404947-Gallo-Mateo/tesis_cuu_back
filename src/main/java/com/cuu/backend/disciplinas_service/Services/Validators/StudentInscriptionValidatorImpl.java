@@ -41,8 +41,8 @@ public class StudentInscriptionValidatorImpl {
     private ModelMapper mapper;
 
 
-    public StudentInscription validatePostStudentInscriptionDTO(StudentInscriptionDTO studentInscriptionDTO) {
-        Optional<StudentInscription> inscriptionExists = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentInscriptionDTO.getStudent().getKeycloakId(), studentInscriptionDTO.getDiscipline().getId());
+    public StudentInscription validatePostStudentInscriptionDTO(String studentKeycloaId, UUID disciplineId, UUID categoryId) {
+        Optional<StudentInscription> inscriptionExists = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentKeycloaId, disciplineId);
 
         if(inscriptionExists.isPresent()){
             //tirar excepcion indicando q el Alumno YA esta inscripto en otra Category de la misma Discipline
@@ -51,9 +51,9 @@ public class StudentInscriptionValidatorImpl {
             throw new CustomException("Usted ya está registrado en la Disciplina " + disciplineName + ", en la Categoría " + categoryName + ". Solo puede estar en una sola Categoría de cada Disciplina.", HttpStatus.BAD_REQUEST);
         }
 
-        Optional<User> student = userRepo.findByKeycloakId(studentInscriptionDTO.getStudent().getKeycloakId());
-        Optional<Discipline> discipline = disciplineRepo.findById(studentInscriptionDTO.getDiscipline().getId());
-        Optional<Category> category = categoryRepo.findById(studentInscriptionDTO.getCategory().getId());
+        Optional<User> student = userRepo.findByKeycloakId(studentKeycloaId);
+        Optional<Discipline> discipline = disciplineRepo.findById(disciplineId);
+        Optional<Category> category = categoryRepo.findById(categoryId);
 
         if (student.isEmpty() || discipline.isEmpty() || category.isEmpty()) {
             throw new CustomException("1 o mas entidades no existen (false no existe), student: " + student.isPresent() + " | discipline: " + discipline.isPresent() + " | category: " + category.isPresent(), HttpStatus.BAD_REQUEST);
@@ -80,33 +80,33 @@ public class StudentInscriptionValidatorImpl {
 
         }
 
-        Optional<CategoryDTO> clashWithCategoryDTOSchedule = doesNotClashWithOtherSchedules(studentInscriptionDTO.getStudent(), category.get());
-
-        if (clashWithCategoryDTOSchedule.isPresent()){
-            //tirar excepcion indicando los horarios (Schedule), de otra Category donde esta inscripto el Alumno,
-            // coincide con los horarios de la Category a la cual se quiere inscribir
-            String categoryName = clashWithCategoryDTOSchedule.get().getName();
-            throw new CustomException("Usted está inscripto en otra Disciplina donde chocan los horarios con la Categoría a la cual se quiere inscribir. Categoría: " + categoryName, HttpStatus.CONFLICT);
-        }
+        //Optional<CategoryDTO> clashWithCategoryDTOSchedule = doesNotClashWithOtherSchedules(student.get(), category.get());
+//
+//        if (clashWithCategoryDTOSchedule.isPresent()){
+//            //tirar excepcion indicando los horarios (Schedule), de otra Category donde esta inscripto el Alumno,
+//            // coincide con los horarios de la Category a la cual se quiere inscribir
+//            String categoryName = clashWithCategoryDTOSchedule.get().getName();
+//            throw new CustomException("Usted está inscripto en otra Disciplina donde chocan los horarios con la Categoría a la cual se quiere inscribir. Categoría: " + categoryName, HttpStatus.CONFLICT);
+//        }
 
         return newStudentInscription;
     }
 
-    public StudentInscription validatePutStudentInscriptionDTO(StudentInscriptionDTO studentInscriptionDTO){
-        Optional<StudentInscription> oldStudentInscriptionOpt = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentInscriptionDTO.getStudent().getKeycloakId(), studentInscriptionDTO.getDiscipline().getId());
+    public StudentInscription validatePutStudentInscriptionDTO(String studentKeycloaId, UUID disciplineId, UUID categoryId){
+        Optional<StudentInscription> oldStudentInscriptionOpt = studentInscriptionRepo.findByStudentKeycloakIdAndDisciplineId(studentKeycloaId, disciplineId);
 
         if (oldStudentInscriptionOpt.isEmpty()){
             //tirar excepcion indicando q no el usuario NO estaba en otra Category de esa Discipline
-            String disciplineName = studentInscriptionDTO.getDiscipline().getName();
-            String categoryName = studentInscriptionDTO .getCategory().getName();
+            String disciplineName = disciplineRepo.findById(disciplineId).get().getName();
+            String categoryName = categoryRepo.findById(categoryId).get().getName();
             throw new CustomException("Usted NO está registrado en la Disciplina " + disciplineName + ", no lo podemos promover a la Categoría " + categoryName, HttpStatus.BAD_REQUEST);
         }
 
         UUID oldCategoryId = oldStudentInscriptionOpt.get().getCategory().getId();
 
-        Optional<User> student = userRepo.findByKeycloakId(studentInscriptionDTO.getStudent().getKeycloakId());
-        Optional<Discipline> discipline = disciplineRepo.findById(studentInscriptionDTO.getDiscipline().getId());
-        Optional<Category> category = categoryRepo.findById(studentInscriptionDTO.getCategory().getId());
+        Optional<User> student = userRepo.findByKeycloakId(studentKeycloaId);
+        Optional<Discipline> discipline = disciplineRepo.findById(disciplineId);
+        Optional<Category> category = categoryRepo.findById(categoryId);
 
         //verifica q todas las entities ya existan en la db
         if (student.isEmpty() || discipline.isEmpty() || category.isEmpty()) {
@@ -142,16 +142,16 @@ public class StudentInscriptionValidatorImpl {
 
         }
 
-        Optional<CategoryDTO> clashWithCategoryDTOSchedule = doesNotClashWithOtherSchedules(studentInscriptionDTO.getStudent(), updatedStudentInscription.getCategory());
+        //Optional<CategoryDTO> clashWithCategoryDTOSchedule = doesNotClashWithOtherSchedules(student.get(), updatedStudentInscription.getCategory());
 
-        if (clashWithCategoryDTOSchedule.isPresent()){
-            //tirar excepcion indicando los horarios (Schedule), de otra Category donde esta inscripto el Alumno,
-            // coincide con los horarios de la Category a la cual se quiere inscribir
-            String categoryName = clashWithCategoryDTOSchedule.get().getName();
-            String disciplineName = clashWithCategoryDTOSchedule.get().getDisciplineName();
-
-            throw new CustomException("Usted está inscripto en otra Disciplina donde chocan los horarios con la Categoría a la cual se quiere inscribir. la otra Disciplina y Categoría: " + disciplineName + ", " + categoryName, HttpStatus.CONFLICT);
-        }
+//        if (clashWithCategoryDTOSchedule.isPresent()){
+//            //tirar excepcion indicando los horarios (Schedule), de otra Category donde esta inscripto el Alumno,
+//            // coincide con los horarios de la Category a la cual se quiere inscribir
+//            String categoryName = clashWithCategoryDTOSchedule.get().getName();
+//            String disciplineName = clashWithCategoryDTOSchedule.get().getDisciplineName();
+//
+//            throw new CustomException("Usted está inscripto en otra Disciplina donde chocan los horarios con la Categoría a la cual se quiere inscribir. la otra Disciplina y Categoría: " + disciplineName + ", " + categoryName, HttpStatus.CONFLICT);
+//        }
 
         return updatedStudentInscription;
     }
@@ -183,8 +183,8 @@ public class StudentInscriptionValidatorImpl {
 
     //si coincide con otro schedule, devuelve la Category con la cual choca en horario (Schedule: dia, hora inicio y hora fin)
     // si NO coincide con otra, devuelve optinal vacio
-    private Optional<CategoryDTO> doesNotClashWithOtherSchedules(UserDTO userDTO, Category newCategory) {
-        List<StudentInscription> userInscriptions = studentInscriptionRepo.findAllByStudentKeycloakId(userDTO.getKeycloakId());
+    private Optional<CategoryDTO> doesNotClashWithOtherSchedules(User user, Category newCategory) {
+        List<StudentInscription> userInscriptions = studentInscriptionRepo.findAllByStudentKeycloakId(user.getKeycloakId());
 
         if (userInscriptions.isEmpty()) {
             return Optional.empty();

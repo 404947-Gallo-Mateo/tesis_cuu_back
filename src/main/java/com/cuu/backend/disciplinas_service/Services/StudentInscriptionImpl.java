@@ -40,8 +40,8 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     private StudentInscriptionValidatorImpl validator;
 
     @Override
-    public StudentInscriptionDTO createStudentInscription(StudentInscriptionDTO studentInscriptionDTO) {
-        StudentInscription newStudentInscription = validator.validatePostStudentInscriptionDTO(studentInscriptionDTO);
+    public StudentInscriptionDTO createStudentInscription(String studentKeycloaId, UUID disciplineId, UUID categoryId) {
+        StudentInscription newStudentInscription = validator.validatePostStudentInscriptionDTO(studentKeycloaId, disciplineId, categoryId);
 
         StudentInscription savedStudentInscription = studentInscriptionRepo.save(newStudentInscription);
 
@@ -57,8 +57,8 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     // (y como no puede estar en 2 Categories de una misma Discipline al mismo tiempo, se hace UPDATE en la original,
     //  en vez de DELETE la original y CREATE otra nueva actualizada)
     @Override
-    public StudentInscriptionDTO updateStudentInscription(StudentInscriptionDTO studentInscriptionDTO) {
-        StudentInscription updatedStudentInscription = validator.validatePutStudentInscriptionDTO(studentInscriptionDTO);
+    public StudentInscriptionDTO updateStudentInscription(String studentKeycloaId, UUID disciplineId, UUID categoryId) {
+        StudentInscription updatedStudentInscription = validator.validatePutStudentInscriptionDTO(studentKeycloaId, disciplineId, categoryId);
 
         StudentInscription savedStudentInscription = studentInscriptionRepo.save(updatedStudentInscription);
 

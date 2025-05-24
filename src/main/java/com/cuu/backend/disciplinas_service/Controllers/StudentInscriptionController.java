@@ -23,15 +23,15 @@ public class StudentInscriptionController {
     private StudentInscriptionService studentInscriptionService;
 
     @PostMapping("/create")
-    public ResponseEntity<StudentInscriptionDTO> createStudentInscription(@RequestBody StudentInscriptionDTO studentInscriptionDTO){
+    public ResponseEntity<StudentInscriptionDTO> createStudentInscription(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
 
-        return ResponseEntity.ok(studentInscriptionService.createStudentInscription(studentInscriptionDTO));
+        return ResponseEntity.ok(studentInscriptionService.createStudentInscription(studentKeycloakId, disciplineId, categoryId));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<StudentInscriptionDTO> updateStudentInscription(@RequestBody StudentInscriptionDTO studentInscriptionDTO){
+    public ResponseEntity<StudentInscriptionDTO> updateStudentInscription(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
 
-        return ResponseEntity.ok(studentInscriptionService.updateStudentInscription(studentInscriptionDTO));
+        return ResponseEntity.ok(studentInscriptionService.updateStudentInscription(studentKeycloakId, disciplineId, categoryId));
     }
 
     @DeleteMapping("/delete")
