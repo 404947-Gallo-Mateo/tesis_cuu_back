@@ -261,7 +261,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<ExpandedUserDTO> getAllUsers() {
-        List<User> users = userRepo.findAll();
+        List<User> users = userRepo.getAllOrdered();
         List<ExpandedUserDTO> userDTOList = new ArrayList<>();
 
         for (User u : users){
