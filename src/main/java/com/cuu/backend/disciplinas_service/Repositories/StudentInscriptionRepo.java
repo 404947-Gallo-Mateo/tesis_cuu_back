@@ -15,22 +15,31 @@ import java.util.UUID;
 @Repository
 public interface StudentInscriptionRepo extends JpaRepository<StudentInscription, UUID> {
     //traen el objeto entero
-    @Query("SELECT si FROM StudentInscription si WHERE si.student.keycloakId = :studentKeycloakId")
+    @Query("SELECT si FROM StudentInscription si " +
+            "WHERE si.student.keycloakId = :studentKeycloakId " +
+            "ORDER BY si.discipline.name ASC")
     List<StudentInscription> findAllByStudentKeycloakId(@Param("studentKeycloakId") String studentKeycloakId);
 
-    @Query("SELECT si FROM StudentInscription si WHERE si.discipline.id = :disciplineId")
+    @Query("SELECT si FROM StudentInscription si " +
+            "WHERE si.discipline.id = :disciplineId " +
+            "ORDER BY si.discipline.name ASC, si.category.ageRange.minAge ASC, si.category.ageRange.maxAge ASC")
     List<StudentInscription> findAllByDisciplineId(@Param("disciplineId") UUID disciplineId);
 
-    @Query("SELECT si FROM StudentInscription si WHERE si.category.id = :categoryId")
+    @Query("SELECT si FROM StudentInscription si " +
+            "WHERE si.category.id = :categoryId " +
+            "ORDER BY si.discipline.name ASC, si.student.lastName ASC, si.student.firstName ASC")
     List<StudentInscription> findAllByCategoryId(@Param("categoryId") UUID categoryId);
 
-    @Query("SELECT COUNT(si) FROM StudentInscription si WHERE si.category.id = :categoryId")
+    @Query("SELECT COUNT(si) FROM StudentInscription si " +
+            "WHERE si.category.id = :categoryId")
     long countByCategoryId(@Param("categoryId") UUID categoryId);
 
-    @Query("SELECT si FROM StudentInscription si WHERE si.student.keycloakId =:studentKeycloakId AND si.discipline.id = :disciplineId AND si.category.id = :categoryId")
+    @Query("SELECT si FROM StudentInscription si " +
+            "WHERE si.student.keycloakId =:studentKeycloakId AND si.discipline.id = :disciplineId AND si.category.id = :categoryId")
     Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineIdAndCategoryId(@Param("studentKeycloakId") String studentKeycloakId, @Param("disciplineId") UUID disciplineId, @Param("categoryId") UUID categoryId);
 
-    @Query("SELECT si FROM StudentInscription si WHERE si.discipline.id = :disciplineId AND si.student.keycloakId =:studentKeycloakId")
+    @Query("SELECT si FROM StudentInscription si " +
+            "WHERE si.discipline.id = :disciplineId AND si.student.keycloakId =:studentKeycloakId")
     Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineId(@Param("studentKeycloakId") String studentKeycloakId, @Param("disciplineId") UUID disciplineId);
 
     //traen solo el ID de StudentInscription

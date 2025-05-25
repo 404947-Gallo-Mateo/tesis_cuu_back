@@ -14,10 +14,18 @@ import java.util.UUID;
 @Repository
 public interface CategoryRepo extends JpaRepository<Category, UUID> {
 
-    @Query("SELECT c FROM Category c WHERE c.discipline.id = :disciplineId")
+    //sor 'normal':
+    // ORDER BY c.ageRange.minAge ASC, c.ageRange.maxAge ASC
+    //mismo sort, pero tiene en cuenta nulos:
+    // ORDER BY COALESCE(c.ageRange.minAge, 0) ASC, COALESCE(c.ageRange.maxAge, 0) ASC
+    @Query("SELECT c FROM Category c " +
+            "WHERE c.discipline.id = :disciplineId " +
+            "ORDER BY c.ageRange.minAge ASC, c.ageRange.maxAge ASC")
     List<Category> findAllByDisciplineId(@Param("disciplineId") UUID disciplineId);
 
-    @Query("SELECT c FROM Category c JOIN c.schedules s WHERE s.dayOfWeek = :dayOfWeek AND s.startHour = :startHour AND s.endHour = :endHour ")
+    // Tu otra consulta permanece igual
+    @Query("SELECT c FROM Category c JOIN c.schedules s " +
+            "WHERE s.dayOfWeek = :dayOfWeek AND s.startHour = :startHour AND s.endHour = :endHour")
     List<Category> findBySchedule(@Param("dayOfWeek") DayOfWeek dayOfWeek,
                                   @Param("startHour") LocalTime startHour,
                                   @Param("endHour") LocalTime endHour);

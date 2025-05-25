@@ -78,7 +78,7 @@ public class DisciplineServiceImpl implements DisciplineService {
 
     @Override
     public List<DisciplineDTO> getAll(){
-        List<Discipline> disciplines = disciplineRepo.findAll();
+        List<Discipline> disciplines = disciplineRepo.findAllWithCategoriesOrdered();
 
         List<DisciplineDTO> disciplineDTOList = new ArrayList<>();
 

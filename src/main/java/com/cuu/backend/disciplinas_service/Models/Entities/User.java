@@ -20,41 +20,31 @@ import java.util.UUID;
 @Builder
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator()
     private UUID id;
-
     //El campo sub (aca llamado: keycloakId) del token de Keycloak es un identificador unico global por User.
     @Column(nullable = false, unique = true, name = "keycloak_id")
     private String keycloakId;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private Role role;
-
     @Column(nullable = true, unique = true)
     private String username;
-
     @Email
     @Column(nullable = false, unique = true)
     private String email;
-
     @Column(nullable = false, name = "first_name")
     private String firstName;
-
     @Column(nullable = false, name = "lastName")
     private String lastName;
-
     @Column(nullable = true, name = "birth_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private Genre genre;
-
     @ManyToMany
     @JoinTable(
             name = "teacher_disciplines",

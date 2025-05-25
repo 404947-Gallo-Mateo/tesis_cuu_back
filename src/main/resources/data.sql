@@ -1,7 +1,7 @@
 -- DISCIPLINES
 MERGE INTO disciplines (id, name, description)
 VALUES
-  ('11111111-1111-1111-1111-111111111111', 'Básquet', 'Básquet para todas las edades, con una división de Primera Categoría para los grandes talentos'),
+  ('11111111-1111-1111-1111-111111111111', 'Basquet', 'Básquet para todas las edades, con una división de Primera Categoría para los grandes talentos'),
   ('22222222-2222-2222-2222-222222222222', 'Boxeo', 'Boxeo para recreativo para niños y Boxeo competitivo para los adultos.'),
   ('33333333-3333-3333-3333-333333333333', 'Gimnasia Rítmica', 'Gimnasia Rítmica para todas las edades.'),
   ('44444444-4444-4444-4444-444444444444', 'Karate Do', 'Karate del mejor nivel continental, para todas las edades.');
@@ -26,8 +26,8 @@ VALUES
 -- CATEGORIES Gimnasia Ritmica (33333333-3333-3333-3333-333333333333)
 MERGE INTO categories (id, name, description, monthly_fee, discipline_id, available_spaces, min_age, max_age, allowed_genre)
 VALUES
-  ('ccccccc1-cccc-cccc-cccc-cccccccccccc', 'Inicial', 'Recreativo básica para niños menores de 5 años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 3, 5, 'MIXED'),
   ('ccccccc2-cccc-cccc-cccc-cccccccccccc', 'Medio', 'Intermedio para niños de 6 o más años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 6, 18, 'MIXED'),
+  ('ccccccc1-cccc-cccc-cccc-cccccccccccc', 'Inicial', 'Recreativo básica para niños menores de 5 años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 3, 5, 'MIXED'),
   ('ccccccc3-cccc-cccc-cccc-cccccccccccc', 'Avanzado', 'Nivel avanzado para mayores de 12 años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 18, 55, 'MIXED');
 
 -- CATEGORIES Karate Do (44444444-4444-4444-4444-444444444444)
@@ -115,8 +115,12 @@ VALUES
 INSERT INTO student_inscriptions (id, student_id, discipline_id, category_id)
 VALUES
   ('11111111-5555-5555-5555-555555555555', '33333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111', 'aaaaaaa6-aaaa-aaaa-aaaa-aaaaaaaaaaaa'), -- Basquet Primera
+  ('11111111-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111', 'aaaaaaa5-aaaa-aaaa-aaaa-aaaaaaaaaaaa'), -- Basquet U21
   ('11111111-6666-6666-6666-666666666666', '44444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222222', 'bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb'), -- Boxeo Recreativo
-  ('11111111-7777-7777-7777-777777777777', '11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', 'fffffff1-ffff-ffff-ffff-ffffffffffff'); -- Karate Do Karate Tradicional
+  ('11111111-7777-7777-7777-777777777777', '11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', 'fffffff1-ffff-ffff-ffff-ffffffffffff'), -- Karate Do Karate Tradicional
+  ('11111111-8888-8888-8888-888888888888', '11111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'aaaaaaa6-aaaa-aaaa-aaaa-aaaaaaaaaaaa'), -- Basquet Primera
+  ('11111111-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb'), -- Boxeo Recreativo
+  ('11111111-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', '44444444-4444-4444-4444-444444444444', 'fffffff1-ffff-ffff-ffff-ffffffffffff'); -- Karate Do Karate Tradicional
 
 -- TEACHER DISCIPLINES
 INSERT INTO teacher_disciplines (teacher_id, discipline_id)
