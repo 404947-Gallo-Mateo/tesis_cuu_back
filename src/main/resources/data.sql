@@ -105,8 +105,8 @@ VALUES
 -- USERS
 INSERT INTO users (id, keycloak_id, role, username, email, first_name, last_name, birth_date, genre)
 VALUES
-  ('11111111-1111-1111-1111-111111111111', 'a1d5ca02-e4e8-41d2-9fff-de744a3b782e', 'STUDENT', 'soyAdmin', 'aaaa@example.com', 'no', 'tampoco', '2004-10-16', 'MALE'),
-  ('33333333-3333-3333-3333-333333333333', 'kc-student-uuid-11111111', 'STUDENT', 'juanjo', 'Juan@example.com', 'Juan', 'Pérez', '2010-04-15', 'MALE'),
+  ('11111111-1111-1111-1111-111111111111', 'a1d5ca02-e4e8-41d2-9fff-de744a3b782e', 'ADMIN_CUU', 'soyAdmin', 'aaaa@example.com', 'no', 'tampoco', '2004-10-16', 'MALE'),
+  ('33333333-3333-3333-3333-333333333333', 'd90f9342-cf15-4381-9f46-ad4da1274131', 'STUDENT', 'juanjo', 'Juan@example.com', 'Juan', 'Pérez', '2010-04-15', 'MALE'),
   ('44444444-4444-4444-4444-444444444444', 'kc-teacher-uuid-22222222', 'TEACHER', 'Profe Lucia', 'Lucia@example.com', 'Lucía', 'Gómez', '1985-09-30', 'FEMALE'),
   ('55555555-5555-5555-5555-555555555555', 'f2dddeb8-d5bd-4b89-b4a0-359feaef94e1', 'TEACHER', 'Profe SOR', 'profe@kc.com', 'profe', 'keycloak', '1985-09-30', 'MALE');
 
@@ -131,3 +131,11 @@ VALUES
   ('55555555-5555-5555-5555-555555555555', '33333333-3333-3333-3333-333333333333'), -- gimnasia artisica
   ('55555555-5555-5555-5555-555555555555', '44444444-4444-4444-4444-444444444444'); -- karate
 
+-- Insertamos las relaciones en la tabla intermedia discipline_teachers
+INSERT INTO discipline_teachers (discipline_id, teacher_id)
+VALUES
+    ('11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444'), -- Basquet
+    ('11111111-1111-1111-1111-111111111111', '55555555-5555-5555-5555-555555555555'), -- Basquet
+    ('22222222-2222-2222-2222-222222222222', '55555555-5555-5555-5555-555555555555'), -- Boxeo
+    ('33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555'), -- gimnasia artisica
+    ('44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555');
