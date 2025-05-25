@@ -14,15 +14,12 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class Schedule {
-
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week")
     private DayOfWeek dayOfWeek;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     @Column(name = "start_hour")
     private LocalTime startHour;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     @Column(name = "end_hour")
     private LocalTime endHour;

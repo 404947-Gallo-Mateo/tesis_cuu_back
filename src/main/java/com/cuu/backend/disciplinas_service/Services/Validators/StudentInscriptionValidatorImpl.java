@@ -48,7 +48,8 @@ public class StudentInscriptionValidatorImpl {
             //tirar excepcion indicando q el Alumno YA esta inscripto en otra Category de la misma Discipline
             String categoryName = inscriptionExists.get().getCategory().getName();
             String disciplineName = inscriptionExists.get().getDiscipline().getName();
-            throw new CustomException("Usted ya está registrado en la Disciplina " + disciplineName + ", en la Categoría " + categoryName + ". Solo puede estar en una sola Categoría de cada Disciplina.", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Usted ya está registrado en la Disciplina " + disciplineName + ", en la Categoría " + categoryName + ". Solo puede estar en una sola Categoría de cada Disciplina.",
+                    HttpStatus.BAD_REQUEST);
         }
 
         Optional<User> student = userRepo.findByKeycloakId(studentKeycloaId);
@@ -56,27 +57,31 @@ public class StudentInscriptionValidatorImpl {
         Optional<Category> category = categoryRepo.findById(categoryId);
 
         if (student.isEmpty() || discipline.isEmpty() || category.isEmpty()) {
-            throw new CustomException("1 o mas entidades no existen (false no existe), student: " + student.isPresent() + " | discipline: " + discipline.isPresent() + " | category: " + category.isPresent(), HttpStatus.BAD_REQUEST);
+            throw new CustomException("1 o mas entidades no existen (false no existe), student: " + student.isPresent() + " | discipline: " + discipline.isPresent() + " | category: " + category.isPresent(),
+                    HttpStatus.BAD_REQUEST);
         }
 
         StudentInscription newStudentInscription = new StudentInscription(null, student.get(), discipline.get(), category.get());
 
         //valida q la Category pertenece a la Discipline
         if (!newStudentInscription.getCategory().getDiscipline().getId().equals(newStudentInscription.getDiscipline().getId())){
-            throw new CustomException("La nueva Category " + newStudentInscription.getCategory().getName() + "no es parte de la Discipline" + newStudentInscription.getDiscipline().getName(), HttpStatus.BAD_REQUEST);
+            throw new CustomException("La nueva Category " + newStudentInscription.getCategory().getName() + "no es parte de la Discipline" + newStudentInscription.getDiscipline().getName(),
+                    HttpStatus.BAD_REQUEST);
         }
 
         if (!isInAgeRange(student.get(), category.get())){
             //tirar excepcion indicando q no el usuario no esta dentro del rango de edad de la Category
             long minAge = category.get().getAgeRange().getMinAge();
             long maxAge = category.get().getAgeRange().getMaxAge();
-            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría. Mínimo: " + minAge + " | Máximo: " + maxAge, HttpStatus.CONFLICT);
-
+            int userAge = Period.between(student.get().getBirthDate(), LocalDate.now()).getYears();
+            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría: Mínimo: " + minAge + " | Máximo: " + maxAge + " | Su Edad: " + userAge,
+                    HttpStatus.CONFLICT);
         }
 
         if (!thereAreAvailablePlaces(category.get())){
             //tirar excepcion indicando q no hay cupos disponibles en esa Category
-            throw new CustomException("Ya no hay cupos disponibles en esta Categoría", HttpStatus.CONFLICT);
+            throw new CustomException("Ya no hay cupos disponibles en esta Categoría",
+                    HttpStatus.CONFLICT);
 
         }
 
@@ -86,7 +91,8 @@ public class StudentInscriptionValidatorImpl {
 //            //tirar excepcion indicando los horarios (Schedule), de otra Category donde esta inscripto el Alumno,
 //            // coincide con los horarios de la Category a la cual se quiere inscribir
 //            String categoryName = clashWithCategoryDTOSchedule.get().getName();
-//            throw new CustomException("Usted está inscripto en otra Disciplina donde chocan los horarios con la Categoría a la cual se quiere inscribir. Categoría: " + categoryName, HttpStatus.CONFLICT);
+//            throw new CustomException("Usted está inscripto en otra Disciplina donde chocan los horarios con la Categoría a la cual se quiere inscribir. Categoría: " + categoryName,
+//            HttpStatus.CONFLICT);
 //        }
 
         return newStudentInscription;
@@ -99,7 +105,8 @@ public class StudentInscriptionValidatorImpl {
             //tirar excepcion indicando q no el usuario NO estaba en otra Category de esa Discipline
             String disciplineName = disciplineRepo.findById(disciplineId).get().getName();
             String categoryName = categoryRepo.findById(categoryId).get().getName();
-            throw new CustomException("Usted NO está registrado en la Disciplina " + disciplineName + ", no lo podemos promover a la Categoría " + categoryName, HttpStatus.BAD_REQUEST);
+            throw new CustomException("Usted NO está registrado en la Disciplina " + disciplineName + ", no lo podemos promover a la Categoría " + categoryName,
+                    HttpStatus.BAD_REQUEST);
         }
 
         UUID oldCategoryId = oldStudentInscriptionOpt.get().getCategory().getId();
@@ -110,7 +117,8 @@ public class StudentInscriptionValidatorImpl {
 
         //verifica q todas las entities ya existan en la db
         if (student.isEmpty() || discipline.isEmpty() || category.isEmpty()) {
-            throw new CustomException("1 o mas entidades no existen (false no existe), student: " + student.isPresent() + " | discipline: " + discipline.isPresent() + " | category: " + category.isPresent(), HttpStatus.BAD_REQUEST);
+            throw new CustomException("1 o mas entidades no existen (false no existe), student: " + student.isPresent() + " | discipline: " + discipline.isPresent() + " | category: " + category.isPresent(),
+                    HttpStatus.BAD_REQUEST);
         }
 
         StudentInscription updatedStudentInscription = oldStudentInscriptionOpt.get();
@@ -120,25 +128,29 @@ public class StudentInscriptionValidatorImpl {
 
         //valida q haya un cambio de Category
         if (oldCategoryId.equals(updatedStudentInscription.getCategory().getId())){
-            throw new CustomException("La Category vieja y nueva tienen el mismo ID, no hay nada que actualizar ya que el Alumno no cambio de Category", HttpStatus.BAD_REQUEST);
+            throw new CustomException("La Category vieja y nueva tienen el mismo ID, no hay nada que actualizar ya que el Alumno no cambio de Category",
+                    HttpStatus.BAD_REQUEST);
         }
 
         //valida q la Category pertenece a la Discipline
         if (!updatedStudentInscription.getCategory().getDiscipline().getId().equals(updatedStudentInscription.getDiscipline().getId())){
-            throw new CustomException("La nueva Category " + updatedStudentInscription.getCategory().getName() + " no es parte de la Discipline " + updatedStudentInscription.getDiscipline().getName(), HttpStatus.BAD_REQUEST);
+            throw new CustomException("La nueva Category " + updatedStudentInscription.getCategory().getName() + " no es parte de la Discipline " + updatedStudentInscription.getDiscipline().getName(),
+                    HttpStatus.BAD_REQUEST);
         }
 
-        if (!isInAgeRange(updatedStudentInscription.getStudent(), updatedStudentInscription.getCategory())){
+        if (!isInAgeRange(student.get(), category.get())){
             //tirar excepcion indicando q no el usuario no esta dentro del rango de edad de la Category
-            long minAge = updatedStudentInscription.getCategory().getAgeRange().getMinAge();
-            long maxAge = updatedStudentInscription.getCategory().getAgeRange().getMaxAge();
-            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría. Mínimo: " + minAge + " | Máximo: " + maxAge, HttpStatus.CONFLICT);
-
+            long minAge = category.get().getAgeRange().getMinAge();
+            long maxAge = category.get().getAgeRange().getMaxAge();
+            int userAge = Period.between(student.get().getBirthDate(), LocalDate.now()).getYears();
+            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría: Mínimo: " + minAge + " | Máximo: " + maxAge + " | Su Edad: " + userAge,
+                    HttpStatus.CONFLICT);
         }
 
         if (!thereAreAvailablePlaces(updatedStudentInscription.getCategory())){
             //tirar excepcion indicando q no hay cupos disponibles en esa Category
-            throw new CustomException("Ya no hay cupos disponibles en esta Categoría", HttpStatus.CONFLICT);
+            throw new CustomException("Ya no hay cupos disponibles en esta Categoría",
+                    HttpStatus.CONFLICT);
 
         }
 
@@ -166,7 +178,7 @@ public class StudentInscriptionValidatorImpl {
 
         long occupiedPlaces = studentInscriptionRepo.countByCategoryId(category.getId());
 
-        return category.getAvailableSpaces() < occupiedPlaces;
+        return category.getAvailableSpaces() > occupiedPlaces;
     }
 
     private boolean isInAgeRange(User user, Category category){

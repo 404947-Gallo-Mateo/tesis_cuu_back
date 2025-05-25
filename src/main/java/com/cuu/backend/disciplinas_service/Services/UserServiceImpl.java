@@ -19,6 +19,7 @@ import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
 import com.cuu.backend.disciplinas_service.Services.RestClients.KeycloakAdminClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
@@ -52,14 +54,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ExpandedUserDTO updateKeycloakUser(String keycloakId ,ExpandedUserDTO expandedUserDTO) {
+    public ExpandedUserDTO updateKeycloakUser(String keycloakId, ExpandedUserDTO expandedUserDTO) {
         String token = keycloakAdminClient.getAdminToken();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // arma la estructura que espera Keycloak
+        // 1. Actualizar datos básicos del usuario en Keycloak
         Map<String, Object> body = new HashMap<>();
         body.put("firstName", expandedUserDTO.getFirstName());
         body.put("lastName", expandedUserDTO.getLastName());
@@ -68,10 +70,11 @@ public class UserServiceImpl implements UserService {
 
         Map<String, String> attributes = new HashMap<>();
         attributes.put("birthDate", expandedUserDTO.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-        attributes.put("genre", expandedUserDTO.getGenre().toString().substring(0,1).toUpperCase()); //pasar como M o F
+        attributes.put("genre", expandedUserDTO.getGenre().toString().substring(0, 1).toUpperCase()); // "M" o "F"
         body.put("attributes", attributes);
 
         try {
+            // Actualizar datos básicos
             ResponseEntity<Void> keycloakResponse = restTemplate.exchange(
                     "http://localhost:8080/admin/realms/Club_Union_Unquillo/users/" + expandedUserDTO.getKeycloakId(),
                     HttpMethod.PUT,
@@ -79,17 +82,117 @@ public class UserServiceImpl implements UserService {
                     Void.class
             );
 
-            if (keycloakResponse.getStatusCode().is2xxSuccessful()) {
-                // Solo si se actualiza correctamente en Keycloak, se actualiza en la DB
-                return this.updateKeycloakUserInLocalDb(expandedUserDTO);
-            } else {
-                throw new CustomException("Error al eliminar el usuario en Keycloak", HttpStatus.INTERNAL_SERVER_ERROR);
+            if (!keycloakResponse.getStatusCode().is2xxSuccessful()) {
+                throw new CustomException("Error al actualizar el usuario en Keycloak", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
+            // 2. Actualizar el rol en Keycloak (solo si cambio el Role)
+            //comparacion de Role
+            Role currentUserOldRole = userRepo.findByKeycloakId(expandedUserDTO.getKeycloakId()).get().getRole();
+            Role currentUserNewRole = expandedUserDTO.getRole();
+            if (!currentUserOldRole.equals(currentUserNewRole)){
+                updateKeycloakUserRole(expandedUserDTO.getKeycloakId(), expandedUserDTO.getRole(), token);
+            }
+
+            // 3. Actualizar en la base de datos local
+            return this.updateKeycloakUserInLocalDb(expandedUserDTO);
+
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            throw new CustomException("Error al eliminar el usuario en Keycloak: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("Error en Keycloak: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            throw new CustomException("Error inesperado al eliminar el usuario en Keycloak", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("Error inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Método para actualizar el rol en Keycloak
+    private void updateKeycloakUserRole(String keycloakId, Role newRole, String adminToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            // 1. Eliminar roles actuales (excepto el rol default)
+            removeCurrentRoles(keycloakId, adminToken);
+
+            // 2. Asignar nuevo rol
+            String roleId = getKeycloakRoleId(newRole.name(), adminToken);
+            String roleMappingUrl = "http://localhost:8080/admin/realms/Club_Union_Unquillo/users/" + keycloakId + "/role-mappings/realm";
+
+            List<Map<String, String>> rolesToAdd = List.of(
+                    Map.of("id", roleId, "name", newRole.name())
+            );
+
+            restTemplate.exchange(
+                    roleMappingUrl,
+                    HttpMethod.POST,
+                    new HttpEntity<>(rolesToAdd, headers),
+                    Void.class
+            );
+        } catch (Exception e) {
+            throw new CustomException("Error al actualizar rol en Keycloak: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void removeCurrentRoles(String keycloakId, String adminToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+
+        String roleMappingUrl = "http://localhost:8080/admin/realms/Club_Union_Unquillo/users/" + keycloakId + "/role-mappings/realm";
+
+        // Lista de roles que SÍ deben eliminarse
+        Set<String> rolesToDelete = Set.of("STUDENT", "TEACHER", "SUPER_ADMIN_CUU", "ADMIN_CUU");
+
+        // Obtener roles actuales del usuario
+        ResponseEntity<List<Map<String, Object>>> response = restTemplate.exchange(
+                roleMappingUrl,
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+        );
+
+        if (response.getBody() != null && !response.getBody().isEmpty()) {
+            // Filtrar SOLO los roles que están en la lista rolesToDelete
+            List<Map<String, Object>> rolesToRemove = response.getBody().stream()
+                    .filter(role -> rolesToDelete.contains(role.get("name")))
+                    .collect(Collectors.toList());
+
+            // Eliminar solo los roles filtrados (si hay alguno)
+            if (!rolesToRemove.isEmpty()) {
+                restTemplate.exchange(
+                        roleMappingUrl,
+                        HttpMethod.DELETE,
+                        new HttpEntity<>(rolesToRemove, headers),
+                        Void.class
+                );
+                System.out.println("Roles eliminados: " + rolesToRemove.stream()
+                        .map(role -> role.get("name").toString())
+                        .collect(Collectors.joining(", ")));
+            } else {
+                System.out.println("No se encontraron roles para eliminar");
+            }
+        }
+    }
+
+    // Método para obtener el ID del rol en Keycloak
+    private String getKeycloakRoleId(String roleName, String adminToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+
+        try {
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    "http://localhost:8080/admin/realms/Club_Union_Unquillo/roles/" + roleName,
+                    HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+
+            if (response.getBody() != null && response.getBody().containsKey("id")) {
+                return response.getBody().get("id").toString();
+            } else {
+                throw new CustomException("Rol no encontrado en Keycloak: " + roleName, HttpStatus.NOT_FOUND);
+            }
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new CustomException("Rol no existe en Keycloak: " + roleName, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -165,12 +268,12 @@ public class UserServiceImpl implements UserService {
             List<DisciplineSummaryDTO> teacherDisciplinesSummary = new ArrayList<>();
             List<CategoryDTO> studentCategoriesDto = new ArrayList<>();
 
-            if (u.getRole().equals(Role.TEACHER) || u.getRole().equals(Role.SUPER_ADMIN_CUU) || u.getRole().equals(Role.ADMIN_CUU)){
+            //if (u.getRole().equals(Role.TEACHER) || u.getRole().equals(Role.SUPER_ADMIN_CUU) || u.getRole().equals(Role.ADMIN_CUU)){
                 teacherDisciplinesSummary = this.getAllTeacherDisciplines(u.getTeacherDisciplines());
-            }
-            if (u.getRole().equals(Role.STUDENT) || u.getRole().equals(Role.SUPER_ADMIN_CUU) || u.getRole().equals(Role.ADMIN_CUU)){
+            //}
+            //if (u.getRole().equals(Role.STUDENT) || u.getRole().equals(Role.SUPER_ADMIN_CUU) || u.getRole().equals(Role.ADMIN_CUU)){
                 studentCategoriesDto = this.getAllStudentCategories(u.getKeycloakId());
-            }
+            //}
 
             ExpandedUserDTO expandedUserDTO = new ExpandedUserDTO(u.getKeycloakId(), u.getRole(), u.getUsername(), u.getEmail(), u.getFirstName(), u.getLastName(), u.getBirthDate(), u.getGenre() , teacherDisciplinesSummary, studentCategoriesDto);
 

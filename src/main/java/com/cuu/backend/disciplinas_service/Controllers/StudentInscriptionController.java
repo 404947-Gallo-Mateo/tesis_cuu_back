@@ -1,5 +1,6 @@
 package com.cuu.backend.disciplinas_service.Controllers;
 
+import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Controllers.Response.ApiResponse;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.StudentInscriptionService;
@@ -23,16 +24,29 @@ public class StudentInscriptionController {
     private StudentInscriptionService studentInscriptionService;
 
     @PostMapping("/create")
-    public ResponseEntity<StudentInscriptionDTO> createStudentInscription(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
+    public ResponseEntity<?> createStudentInscription(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
 
-        return ResponseEntity.ok(studentInscriptionService.createStudentInscription(studentKeycloakId, disciplineId, categoryId));
+        try {
+            StudentInscriptionDTO dto = studentInscriptionService.createStudentInscription(studentKeycloakId, disciplineId, categoryId);
+            return ResponseEntity.ok(dto);
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error interno del servidor");
+        }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<StudentInscriptionDTO> updateStudentInscription(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
+    public ResponseEntity<?> updateStudentInscription(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
 
-        return ResponseEntity.ok(studentInscriptionService.updateStudentInscription(studentKeycloakId, disciplineId, categoryId));
-    }
+        try {
+            StudentInscriptionDTO dto = studentInscriptionService.updateStudentInscription(studentKeycloakId, disciplineId, categoryId);
+            return ResponseEntity.ok(dto);
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error interno del servidor");
+        }    }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Boolean> deleteStudentInscriptionByMultipleIDs(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){
