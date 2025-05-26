@@ -1,7 +1,5 @@
 package com.cuu.backend.disciplinas_service.Models.DTOs.forPost;
 
-import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
-import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import lombok.*;
 
@@ -13,9 +11,10 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class PostDisciplineDTO {
+public class PutDisciplineDTO {
+    private UUID id;
     private String name;
     private String description;
     private List<String> teacherIds;//private List<UserDTO> teachers;
-    private List<PostCategoryDTO> categories;
+    private List<PutCategoryDTO> categories;
 }

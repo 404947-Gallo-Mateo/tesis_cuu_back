@@ -3,6 +3,7 @@ package com.cuu.backend.disciplinas_service.Services.Validators;
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutDisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
@@ -38,7 +39,7 @@ public class DisciplineValidatorImpl {
         }
     }
 
-    public Discipline validatePutDisciplineDTO(DisciplineDTO disciplineDTO) {
+    public Discipline validatePutDisciplineDTO(PutDisciplineDTO disciplineDTO) {
         Optional<Discipline> oldDisciplineOpt = disciplineRepo.findById(disciplineDTO.getId());
 
         if (oldDisciplineOpt.isEmpty()){

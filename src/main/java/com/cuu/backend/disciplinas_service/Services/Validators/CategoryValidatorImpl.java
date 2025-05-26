@@ -6,6 +6,7 @@ import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.ICategorySummary;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostCategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutCategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.Schedule;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
@@ -55,37 +56,30 @@ public class CategoryValidatorImpl {
         }
     }
 
-    public void validatePutCategoryDTO(List<ICategorySummary> listDto) {
+    public void validatePutCategoryDTO(List<PutCategoryDTO> listDto) {
 
-        for (ICategorySummary dto : listDto){
-
-            if (dto instanceof CategoryDTO) {
-                CategoryDTO fullCategoryDTO = (CategoryDTO) dto;
+        for (PutCategoryDTO dto : listDto){
 
                 if (dto.getName().length() > 100){
                     throw new CustomException("El nombre de la Categoría no debe superar los 100 caracteres", HttpStatus.BAD_REQUEST);
                 }
-                if (fullCategoryDTO.getDescription().length() > 1000){
+                if (dto.getDescription().length() > 1000){
                     throw new CustomException("La descripción de la Categoría no debe superar los 1000 caracteres", HttpStatus.BAD_REQUEST);
                 }
-                if (fullCategoryDTO.getMonthlyFee().compareTo(BigDecimal.ONE) < 0){
+                if (dto.getMonthlyFee().compareTo(BigDecimal.ONE) < 0){
                     throw new CustomException("El valor de la cuota de la Categoría no debe ser menor que $1", HttpStatus.BAD_REQUEST);
                 }
-                if (fullCategoryDTO.getAgeRange().getMinAge() > fullCategoryDTO.getAgeRange().getMaxAge()){
+                if (dto.getAgeRange().getMinAge() > dto.getAgeRange().getMaxAge()){
                     throw new CustomException("La edad mínima, del Rango de Edad de la Categoría, no puede ser mayor que la edad máxima", HttpStatus.BAD_REQUEST);
                 }
-                for (Schedule s : fullCategoryDTO.getSchedules()){
+                for (Schedule s : dto.getSchedules()){
                     if (s.getStartHour().isAfter(s.getEndHour())){
                         throw new CustomException("La Hora de Inicio, del Horario día" + s.getDayOfWeek() + ", no puede ser mayor que la Hora de Fin", HttpStatus.BAD_REQUEST);
                     }
                 }
-                if (fullCategoryDTO.getAllowedGenre() != Genre.MALE && fullCategoryDTO.getAllowedGenre() != Genre.FEMALE && fullCategoryDTO.getAllowedGenre() != Genre.MIXED){
+                if (dto.getAllowedGenre() != Genre.MALE && dto.getAllowedGenre() != Genre.FEMALE && dto.getAllowedGenre() != Genre.MIXED){
                     throw new CustomException("El Género permitido, de la Categoría, debe ser Masculino, Femenino o Mixto", HttpStatus.BAD_REQUEST);
                 }
-            }
-            else {
-                throw new CustomException("el objeto Category NO es un CategoryDTO, le falta info. obj dto: " + dto, HttpStatus.BAD_REQUEST);
-            }
         }
     }
 }

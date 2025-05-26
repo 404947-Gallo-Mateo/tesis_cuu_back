@@ -8,6 +8,8 @@ import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.ICategorySummary;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostCategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutCategoryDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutDisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
@@ -118,8 +120,8 @@ public class ComplexMapper {
     private List<User> getTeachersFromPostDiscipline(PostDisciplineDTO postDTO, Discipline newDiscipline){
         List<User> teachers = new ArrayList<>();
 
-        for (UserDTO teacherDTO : postDTO.getTeachers()) {
-            Optional<User> teacherOpt = userRepo.findByKeycloakId(teacherDTO.getKeycloakId());
+        for (String teacherKeycloakId : postDTO.getTeacherIds()) {
+            Optional<User> teacherOpt = userRepo.findByKeycloakId(teacherKeycloakId);
 
             if (teacherOpt.isPresent()) {
                 User existingTeacher = teacherOpt.get();
@@ -137,31 +139,11 @@ public class ComplexMapper {
 
                 teachers.add(existingTeacher);
             }
-            else {
-                // nuevo User profesor
-                List<Discipline> teacherDisciplines = new ArrayList<>();
-                teacherDisciplines.add(newDiscipline);
-
-                User newTeacher = User.builder()
-                        .keycloakId(teacherDTO.getKeycloakId())
-                        .role(teacherDTO.getRole())
-                        .username(teacherDTO.getUsername())
-                        .email(teacherDTO.getEmail())
-                        .firstName(teacherDTO.getFirstName())
-                        .lastName(teacherDTO.getLastName())
-                        .birthDate(teacherDTO.getBirthDate())
-                        .genre(teacherDTO.getGenre())
-                        .teacherDisciplines(teacherDisciplines)
-                        .build();
-
-                userRepo.save(newTeacher);
-                teachers.add(newTeacher);
-            }
         }
         return teachers;
     }
 
-    public Discipline mapDisciplineDTOToDiscipline(DisciplineDTO updatedDisciplineDTO, Discipline oldDiscipline) {
+    public Discipline mapDisciplineDTOToDiscipline(PutDisciplineDTO updatedDisciplineDTO, Discipline oldDiscipline) {
         List<User> teachers = getTeachersFromDiscipline(updatedDisciplineDTO, oldDiscipline);
 
         List<Category> newCategories = getCategoriesFromDiscipline(updatedDisciplineDTO, oldDiscipline);
@@ -187,55 +169,49 @@ public class ComplexMapper {
         return oldDiscipline;
     }
 
-    private List<Category> getCategoriesFromDiscipline(DisciplineDTO updatedDisciplineDTO, Discipline oldDiscipline) {
+    private List<Category> getCategoriesFromDiscipline(PutDisciplineDTO updatedDisciplineDTO, Discipline oldDiscipline) {
         List<Category> categories = new ArrayList<>();
 
-        for (ICategorySummary categoryDTO : updatedDisciplineDTO.getCategories()) {
-            Optional<Category> optionalCategory = categoryRepo.findById(categoryDTO.getId());
-
-            if (categoryDTO instanceof CategoryDTO) {
-                CategoryDTO fullCategoryDTO = (CategoryDTO) categoryDTO;
+        for (PutCategoryDTO updatedcategory : updatedDisciplineDTO.getCategories()) {
+            Optional<Category> optionalCategory = categoryRepo.findById(updatedcategory.getId());
 
                 Category category;
+
                 if (optionalCategory.isPresent()) {
                     category = optionalCategory.get();
                     // actualiza sus valores
-                    category.setName(fullCategoryDTO.getName());
-                    category.setDescription(fullCategoryDTO.getDescription());
-                    category.setMonthlyFee(fullCategoryDTO.getMonthlyFee());
-                    category.setAvailableSpaces(fullCategoryDTO.getAvailableSpaces());
-                    category.setAgeRange(fullCategoryDTO.getAgeRange());
-                    category.setSchedules(fullCategoryDTO.getSchedules());
-                    category.setAllowedGenre(fullCategoryDTO.getAllowedGenre());
+                    category.setName(updatedcategory.getName());
+                    category.setDescription(updatedcategory.getDescription());
+                    category.setMonthlyFee(updatedcategory.getMonthlyFee());
+                    category.setAvailableSpaces(updatedcategory.getAvailableSpaces());
+                    category.setAgeRange(updatedcategory.getAgeRange());
+                    category.setSchedules(updatedcategory.getSchedules());
+                    category.setAllowedGenre(updatedcategory.getAllowedGenre());
                 } else {
                     category = new Category(
                             null,
-                            fullCategoryDTO.getName(),
-                            fullCategoryDTO.getDescription(),
-                            fullCategoryDTO.getMonthlyFee(),
+                            updatedcategory.getName(),
+                            updatedcategory.getDescription(),
+                            updatedcategory.getMonthlyFee(),
                             oldDiscipline,
-                            fullCategoryDTO.getAvailableSpaces(),
-                            fullCategoryDTO.getAgeRange(),
-                            fullCategoryDTO.getSchedules(),
-                            fullCategoryDTO.getAllowedGenre()
+                            updatedcategory.getAvailableSpaces(),
+                            updatedcategory.getAgeRange(),
+                            updatedcategory.getSchedules(),
+                            updatedcategory.getAllowedGenre()
                     );
                 }
 
                 categories.add(category);
-            }
-            else{
-                throw new CustomException("el objeto Category NO es un CategoryDTO, le falta info. obj dto: " + categoryDTO, HttpStatus.BAD_REQUEST);
-            }
         }
 
         return categories;
     }
 
-    private List<User> getTeachersFromDiscipline(DisciplineDTO updatedDisciplineDTO, Discipline oldDiscipline) {
+    private List<User> getTeachersFromDiscipline(PutDisciplineDTO updatedDisciplineDTO, Discipline oldDiscipline) {
         List<User> teachers = new ArrayList<>();
 
-        for (UserDTO teacherDTO : updatedDisciplineDTO.getTeachers()) {
-            Optional<User> teacherOpt = userRepo.findByKeycloakId(teacherDTO.getKeycloakId());
+        for (String teacherKeycloakId : updatedDisciplineDTO.getTeacherIds()) {
+            Optional<User> teacherOpt = userRepo.findByKeycloakId(teacherKeycloakId);
 
             if (teacherOpt.isPresent()) {
                 User existingTeacher = teacherOpt.get();
@@ -252,26 +228,6 @@ public class ComplexMapper {
                 }
 
                 teachers.add(existingTeacher);
-            }
-            else {
-                // nuevo User profesor
-                List<Discipline> teacherDisciplines = new ArrayList<>();
-                teacherDisciplines.add(oldDiscipline);
-
-                User newTeacher = User.builder()
-                        .keycloakId(teacherDTO.getKeycloakId())
-                        .role(teacherDTO.getRole())
-                        .username(teacherDTO.getUsername())
-                        .email(teacherDTO.getEmail())
-                        .firstName(teacherDTO.getFirstName())
-                        .lastName(teacherDTO.getLastName())
-                        .birthDate(teacherDTO.getBirthDate())
-                        .genre(teacherDTO.getGenre())
-                        .teacherDisciplines(teacherDisciplines)
-                        .build();
-
-                userRepo.save(newTeacher);
-                teachers.add(newTeacher);
             }
         }
         return teachers;

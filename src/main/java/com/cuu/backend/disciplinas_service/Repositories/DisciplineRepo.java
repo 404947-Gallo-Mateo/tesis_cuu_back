@@ -21,7 +21,7 @@ public interface DisciplineRepo extends JpaRepository<Discipline, UUID> {
 
     @Query("SELECT d FROM Discipline d JOIN d.teachers t LEFT JOIN FETCH d.categories c " +
             "WHERE t.keycloakId = :teacherKeycloakId " +
-            "ORDER BY c.ageRange.minAge ASC, c.ageRange.maxAge ASC")
+            "ORDER BY d.name ASC, c.ageRange.minAge ASC, c.ageRange.maxAge ASC")
     List<Discipline> findAllByTeacherKeycloakId(@Param("teacherKeycloakId") String teacherKeycloakId);
 
     @Query("SELECT DISTINCT d FROM Discipline d LEFT JOIN FETCH d.categories c " +

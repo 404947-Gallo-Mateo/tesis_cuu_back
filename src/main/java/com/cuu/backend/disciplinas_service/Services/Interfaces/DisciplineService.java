@@ -3,6 +3,7 @@ package com.cuu.backend.disciplinas_service.Services.Interfaces;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutDisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface DisciplineService {
 
     DisciplineDTO createDiscipline(PostDisciplineDTO disciplineDTO);
 
-    DisciplineDTO updateDiscipline(DisciplineDTO disciplineDTO);
+    DisciplineDTO updateDiscipline(PutDisciplineDTO disciplineDTO);
 
     boolean deleteDisciplineById(UUID disciplineId);
 

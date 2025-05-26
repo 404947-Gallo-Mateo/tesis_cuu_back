@@ -3,6 +3,7 @@ package com.cuu.backend.disciplinas_service.Services;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutDisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
@@ -47,21 +48,21 @@ public class DisciplineServiceImpl implements DisciplineService {
 
         Discipline createdDiscipline = disciplineRepo.save(newDiscipline);
 
-        return mapper.map(createdDiscipline, DisciplineDTO.class);
+        return complexMapper.mapDisciplineEntityToDisciplineDTO(createdDiscipline);
     }
 
 
     @Override
-    public DisciplineDTO updateDiscipline(DisciplineDTO disciplineDTO) {
+    public DisciplineDTO updateDiscipline(PutDisciplineDTO disciplineDTO) {
         Discipline oldDiscipline = disciplineValidator.validatePutDisciplineDTO(disciplineDTO);
 
         categoryValidator.validatePutCategoryDTO(disciplineDTO.getCategories());
 
-        Discipline updatedDiscipline =complexMapper.mapDisciplineDTOToDiscipline(disciplineDTO, oldDiscipline);
+        Discipline updatedDiscipline = complexMapper.mapDisciplineDTOToDiscipline(disciplineDTO, oldDiscipline);
 
         Discipline savedDiscipline = disciplineRepo.save(updatedDiscipline);
 
-        return mapper.map(savedDiscipline, DisciplineDTO.class);
+        return complexMapper.mapDisciplineEntityToDisciplineDTO(savedDiscipline);
     }
 
     @Override

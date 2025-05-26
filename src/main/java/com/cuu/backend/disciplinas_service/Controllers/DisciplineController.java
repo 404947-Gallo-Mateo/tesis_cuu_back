@@ -4,6 +4,7 @@ import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutDisciplineDTO;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.DisciplineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class DisciplineController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<DisciplineDTO> updateDiscipline(@RequestBody DisciplineDTO disciplineDTO){
+    public ResponseEntity<DisciplineDTO> updateDiscipline(@RequestBody PutDisciplineDTO disciplineDTO){
 
         return ResponseEntity.ok(disciplineService.updateDiscipline(disciplineDTO));
     }
