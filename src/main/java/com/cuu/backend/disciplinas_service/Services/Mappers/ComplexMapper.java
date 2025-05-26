@@ -13,6 +13,7 @@ import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutDisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
 import com.cuu.backend.disciplinas_service.Repositories.UserRepo;
@@ -214,20 +215,23 @@ public class ComplexMapper {
             Optional<User> teacherOpt = userRepo.findByKeycloakId(teacherKeycloakId);
 
             if (teacherOpt.isPresent()) {
+
                 User existingTeacher = teacherOpt.get();
 
-                if (existingTeacher.getTeacherDisciplines() == null) {
-                    existingTeacher.setTeacherDisciplines(new ArrayList<>());
+                if (existingTeacher.getRole().equals(Role.TEACHER)){
+                    if (existingTeacher.getTeacherDisciplines() == null) {
+                        existingTeacher.setTeacherDisciplines(new ArrayList<>());
+                    }
+
+                    boolean alreadyAssigned = existingTeacher.getTeacherDisciplines().stream()
+                            .anyMatch(d -> d.getId() != null && d.getId().equals(oldDiscipline.getId()));
+
+                    if (!alreadyAssigned) {
+                        existingTeacher.getTeacherDisciplines().add(oldDiscipline);
+                    }
+
+                    teachers.add(existingTeacher);
                 }
-
-                boolean alreadyAssigned = existingTeacher.getTeacherDisciplines().stream()
-                        .anyMatch(d -> d.getId() != null && d.getId().equals(oldDiscipline.getId()));
-
-                if (!alreadyAssigned) {
-                    existingTeacher.getTeacherDisciplines().add(oldDiscipline);
-                }
-
-                teachers.add(existingTeacher);
             }
         }
         return teachers;
