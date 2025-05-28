@@ -128,7 +128,7 @@ public class StudentInscriptionValidatorImpl {
 
         //valida q haya un cambio de Category
         if (oldCategoryId.equals(updatedStudentInscription.getCategory().getId())){
-            throw new CustomException("La Category vieja y nueva tienen el mismo ID, no hay nada que actualizar ya que el Alumno no cambio de Category",
+            throw new CustomException("Usted ya está inscripto en " + category.get().getName() + ".",
                     HttpStatus.BAD_REQUEST);
         }
 

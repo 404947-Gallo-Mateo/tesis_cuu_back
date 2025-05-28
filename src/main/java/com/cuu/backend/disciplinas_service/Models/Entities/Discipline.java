@@ -28,7 +28,7 @@ public class Discipline {
     private String name;
     @Column(length = 1500)
     private String description;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "discipline_teachers",
             joinColumns = @JoinColumn(name = "discipline_id"),

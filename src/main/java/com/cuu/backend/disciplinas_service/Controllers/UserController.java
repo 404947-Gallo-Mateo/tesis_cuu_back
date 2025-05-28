@@ -4,6 +4,7 @@ import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomEx
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisplayOnFrontend.ExpandedUserDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.UserService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
 import com.cuu.backend.disciplinas_service.Services.RestClients.KeycloakAdminClient;
@@ -32,6 +33,13 @@ public class UserController {
     @GetMapping("/get-all")
     public ResponseEntity<List<ExpandedUserDTO>> getAllUsers() {
         List<ExpandedUserDTO> resp = userService.getAllUsers();
+
+        return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/get-all/by-role/{role}")
+    public ResponseEntity<List<ExpandedUserDTO>> getAllUsersByRole(@PathVariable Role role) {
+        List<ExpandedUserDTO> resp = userService.getAllUsersByRole(role);
 
         return ResponseEntity.ok(resp);
     }

@@ -2,6 +2,7 @@ package com.cuu.backend.disciplinas_service.Repositories;
 
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +27,8 @@ public interface UserRepo extends JpaRepository<User, UUID> {
     @Query("SELECT DISTINCT u FROM User u " +
             "ORDER BY u.lastName ASC, u.firstName ASC")
     List<User> getAllOrdered();
+    @Query("SELECT DISTINCT u FROM User u " +
+            "Where u.role = :role " +
+            "ORDER BY u.lastName ASC, u.firstName ASC")
+    List<User> getAllByRoleOrdered(@Param("role")Role role);
 }

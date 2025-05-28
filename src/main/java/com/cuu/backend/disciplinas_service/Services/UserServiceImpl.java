@@ -284,6 +284,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<ExpandedUserDTO> getAllUsersByRole(Role role) {
+        List<User> users = userRepo.getAllByRoleOrdered(role);
+        List<ExpandedUserDTO> userDTOList = new ArrayList<>();
+
+        for (User u : users){
+            List<DisciplineSummaryDTO> teacherDisciplinesSummary = new ArrayList<>();
+            List<CategoryDTO> studentCategoriesDto = new ArrayList<>();
+
+            //if (u.getRole().equals(Role.TEACHER) || u.getRole().equals(Role.SUPER_ADMIN_CUU) || u.getRole().equals(Role.ADMIN_CUU)){
+            teacherDisciplinesSummary = this.getAllTeacherDisciplines(u.getTeacherDisciplines());
+            //}
+            //if (u.getRole().equals(Role.STUDENT) || u.getRole().equals(Role.SUPER_ADMIN_CUU) || u.getRole().equals(Role.ADMIN_CUU)){
+            studentCategoriesDto = this.getAllStudentCategories(u.getKeycloakId());
+            //}
+
+            ExpandedUserDTO expandedUserDTO = new ExpandedUserDTO(u.getKeycloakId(), u.getRole(), u.getUsername(), u.getEmail(), u.getFirstName(), u.getLastName(), u.getBirthDate(), u.getGenre() , teacherDisciplinesSummary, studentCategoriesDto);
+
+            userDTOList.add(expandedUserDTO);
+        }
+
+        return userDTOList;    }
+
+    @Override
     public ExpandedUserDTO syncUserFromKeycloak(Jwt jwt) {
         //datos (por defecto de keycloak) del User q se devuelve luego del login
         String keycloakId = jwt.getClaimAsString("sub");
