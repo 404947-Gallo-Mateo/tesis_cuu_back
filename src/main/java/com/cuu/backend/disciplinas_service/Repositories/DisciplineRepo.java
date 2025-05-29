@@ -2,7 +2,9 @@ package com.cuu.backend.disciplinas_service.Repositories;
 
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -27,4 +29,9 @@ public interface DisciplineRepo extends JpaRepository<Discipline, UUID> {
     @Query("SELECT DISTINCT d FROM Discipline d LEFT JOIN FETCH d.categories c " +
             "ORDER BY d.name ASC, c.ageRange.minAge ASC, c.ageRange.maxAge ASC")
     List<Discipline> findAllWithCategoriesOrdered();
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM discipline_teachers WHERE discipline_id = :disciplineId", nativeQuery = true)
+    void deleteDisciplineTeacherRelations(@Param("disciplineId") UUID disciplineId);
 }

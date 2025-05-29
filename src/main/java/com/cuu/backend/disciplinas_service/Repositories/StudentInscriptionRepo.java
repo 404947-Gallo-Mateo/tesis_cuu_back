@@ -3,7 +3,9 @@ package com.cuu.backend.disciplinas_service.Repositories;
 
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -30,6 +32,8 @@ public interface StudentInscriptionRepo extends JpaRepository<StudentInscription
             "ORDER BY si.discipline.name ASC, si.student.lastName ASC, si.student.firstName ASC")
     List<StudentInscription> findAllByCategoryId(@Param("categoryId") UUID categoryId);
 
+    List<StudentInscription> findByCategory(Category category);
+
     @Query("SELECT COUNT(si) FROM StudentInscription si " +
             "WHERE si.category.id = :categoryId")
     long countByCategoryId(@Param("categoryId") UUID categoryId);
@@ -41,6 +45,16 @@ public interface StudentInscriptionRepo extends JpaRepository<StudentInscription
     @Query("SELECT si FROM StudentInscription si " +
             "WHERE si.discipline.id = :disciplineId AND si.student.keycloakId =:studentKeycloakId")
     Optional<StudentInscription> findByStudentKeycloakIdAndDisciplineId(@Param("studentKeycloakId") String studentKeycloakId, @Param("disciplineId") UUID disciplineId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM StudentInscription si WHERE si.discipline.id = :disciplineId")
+    void deleteByDisciplineId(@Param("disciplineId") UUID disciplineId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM StudentInscription si WHERE si.category.id IN (SELECT c.id FROM Category c WHERE c.discipline.id = :disciplineId)")
+    void deleteByDisciplineCategories(@Param("disciplineId") UUID disciplineId);
 
     //traen solo el ID de StudentInscription
 //    @Query("SELECT si.id FROM StudentInscription si WHERE si.student.id = :studentId")
