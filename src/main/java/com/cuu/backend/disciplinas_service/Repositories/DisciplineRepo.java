@@ -34,4 +34,9 @@ public interface DisciplineRepo extends JpaRepository<Discipline, UUID> {
     @Transactional
     @Query(value = "DELETE FROM discipline_teachers WHERE discipline_id = :disciplineId", nativeQuery = true)
     void deleteDisciplineTeacherRelations(@Param("disciplineId") UUID disciplineId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM discipline_teachers WHERE teacher_id = :teacherId", nativeQuery = true)
+    void deleteDisciplineTeacherUserRelations(@Param("teacherId") UUID teacherId);
 }

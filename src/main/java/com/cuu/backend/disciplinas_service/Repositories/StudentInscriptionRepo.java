@@ -56,6 +56,10 @@ public interface StudentInscriptionRepo extends JpaRepository<StudentInscription
     @Query("DELETE FROM StudentInscription si WHERE si.category.id IN (SELECT c.id FROM Category c WHERE c.discipline.id = :disciplineId)")
     void deleteByDisciplineCategories(@Param("disciplineId") UUID disciplineId);
 
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM StudentInscription si WHERE si.student.id = :userId")
+    void deleteByUserId(@Param("userId") UUID userId);
     //traen solo el ID de StudentInscription
 //    @Query("SELECT si.id FROM StudentInscription si WHERE si.student.id = :studentId")
 //    List<UUID> findIdsByStudentId(@Param("studentId") UUID studentId);

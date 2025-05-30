@@ -11,12 +11,11 @@ import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
-import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
-import com.cuu.backend.disciplinas_service.Repositories.StudentInscriptionRepo;
-import com.cuu.backend.disciplinas_service.Repositories.UserRepo;
+import com.cuu.backend.disciplinas_service.Repositories.*;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.UserService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
 import com.cuu.backend.disciplinas_service.Services.RestClients.KeycloakAdminClient;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -40,6 +39,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepo userRepo;
     @Autowired
+    private DisciplineRepo disciplineRepo;
+    @Autowired
+    private DisciplineTeachersRepo disciplineTeachersRepo;
+
+    @Autowired
     private CategoryRepo categoryRepo;
     @Autowired
     private StudentInscriptionRepo studentInscriptionRepo;
@@ -54,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public ExpandedUserDTO updateKeycloakUser(String keycloakId, ExpandedUserDTO expandedUserDTO) {
         String token = keycloakAdminClient.getAdminToken();
 
@@ -105,6 +110,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // Método para actualizar el rol en Keycloak
+    @Transactional
     private void updateKeycloakUserRole(String keycloakId, Role newRole, String adminToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(adminToken);
@@ -133,6 +139,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     private void removeCurrentRoles(String keycloakId, String adminToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(adminToken);
@@ -173,6 +180,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     // Método para obtener el ID del rol en Keycloak
     private String getKeycloakRoleId(String roleName, String adminToken) {
         HttpHeaders headers = new HttpHeaders();
@@ -197,6 +205,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean deleteKeycloakUserByKeycloakId(String userKeycloakId) {
         String token = keycloakAdminClient.getAdminToken();
 
@@ -228,6 +237,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     private ExpandedUserDTO updateKeycloakUserInLocalDb(ExpandedUserDTO expandedUserDTO){
         Optional<User> oldUser = userRepo.findByKeycloakId(expandedUserDTO.getKeycloakId());
 
@@ -248,10 +258,16 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Transactional
     private boolean deleteKeycloakUserInLocalDb(String userKeycloakId){
         Optional<User> user = userRepo.findByKeycloakId(userKeycloakId);
 
         if (user.isPresent()){
+
+           studentInscriptionRepo.deleteByUserId(user.get().getId());
+           disciplineRepo.deleteDisciplineTeacherUserRelations(user.get().getId());
+           disciplineTeachersRepo.deleteTeacherUserDisciplineRelations(user.get().getId());
+
             userRepo.delete(user.get());
             return true;
         }
@@ -307,6 +323,7 @@ public class UserServiceImpl implements UserService {
         return userDTOList;    }
 
     @Override
+    @Transactional
     public ExpandedUserDTO syncUserFromKeycloak(Jwt jwt) {
         //datos (por defecto de keycloak) del User q se devuelve luego del login
         String keycloakId = jwt.getClaimAsString("sub");
@@ -387,6 +404,7 @@ public class UserServiceImpl implements UserService {
 
         return studentCategories;
     }
+
 
     private Role getRoleFromJwt(Jwt jwt){
         // Obtener los roles desde el claim realm_access.roles

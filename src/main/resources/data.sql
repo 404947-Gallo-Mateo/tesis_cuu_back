@@ -108,7 +108,7 @@ VALUES
   ('99999999-1111-1111-1111-111111111111', 'a1d5ca02-e4e8-41d2-9fff-de744a3b782e', 'ADMIN_CUU', 'soyAdmin', 'aaaa@example.com', 'no', 'tampoco', '2004-10-16', 'MALE'),
   ('99999999-3333-3333-3333-333333333333', 'd90f9342-cf15-4381-9f46-ad4da1274131', 'STUDENT', 'juanjo', 'Juan@example.com', 'Juan', 'Pérez', '2010-04-15', 'MALE'),
   ('99999999-4444-4444-4444-444444444444', 'kc-teacher-uuid-22222222', 'TEACHER', 'Profe Lucia', 'Lucia@example.com', 'Lucía', 'Gómez', '1985-09-30', 'FEMALE'),
-  ('99999999-5555-5555-5555-555555555555', 'f2dddeb8-d5bd-4b89-b4a0-359feaef94e1', 'TEACHER', 'Profe SOR', 'profe@kc.com', 'profe', 'keycloak', '1985-09-30', 'MALE');
+  ('99999999-5555-5555-5555-555555555555', '2915b895-b362-4f5f-ac0a-7d1018575c7f', 'TEACHER', 'Profe SOR', 'profe@kc.com', 'profe', 'keycloak', '1985-09-30', 'MALE');
 
 
 -- STUDENT INSCRIPTIONS

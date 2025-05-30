@@ -31,4 +31,6 @@ public interface UserRepo extends JpaRepository<User, UUID> {
             "Where u.role = :role " +
             "ORDER BY u.lastName ASC, u.firstName ASC")
     List<User> getAllByRoleOrdered(@Param("role")Role role);
+
+    Optional<User> findIdByKeycloakId(String keycloakId);
 }
