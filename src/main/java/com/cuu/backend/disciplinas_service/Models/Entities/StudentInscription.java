@@ -16,20 +16,16 @@ import java.util.UUID;
 @Table(name = "student_inscriptions",
         uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "discipline_id"}))
 public class StudentInscription {
-
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator()
     private UUID id;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "student_id", nullable = false)
     private User student;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "discipline_id", nullable = false)
     private Discipline discipline;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
