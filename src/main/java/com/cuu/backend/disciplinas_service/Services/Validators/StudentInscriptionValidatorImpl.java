@@ -61,7 +61,7 @@ public class StudentInscriptionValidatorImpl {
                     HttpStatus.BAD_REQUEST);
         }
 
-        StudentInscription newStudentInscription = new StudentInscription(null, student.get(), discipline.get(), category.get());
+        StudentInscription newStudentInscription = new StudentInscription(null, student.get(), discipline.get(), category.get(), LocalDate.now(), null);
 
         //valida q la Category pertenece a la Discipline
         if (!newStudentInscription.getCategory().getDiscipline().getId().equals(newStudentInscription.getDiscipline().getId())){
@@ -164,7 +164,7 @@ public class StudentInscriptionValidatorImpl {
 //
 //            throw new CustomException("Usted está inscripto en otra Disciplina donde chocan los horarios con la Categoría a la cual se quiere inscribir. la otra Disciplina y Categoría: " + disciplineName + ", " + categoryName, HttpStatus.CONFLICT);
 //        }
-
+        updatedStudentInscription.setUpdatedDate(LocalDate.now());
         return updatedStudentInscription;
     }
 

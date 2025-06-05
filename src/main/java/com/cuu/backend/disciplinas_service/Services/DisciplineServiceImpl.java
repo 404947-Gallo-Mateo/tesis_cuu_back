@@ -58,53 +58,6 @@ public class DisciplineServiceImpl implements DisciplineService {
         return complexMapper.mapDisciplineEntityToDisciplineDTO(createdDiscipline);
     }
 
-
-    //@Override
-    @Transactional
-    public DisciplineDTO updateDisciplineprovisorio(PutDisciplineDTO disciplineDTO) {
-        Discipline oldDiscipline = disciplineValidator.validatePutDisciplineDTO(disciplineDTO);
-        categoryValidator.validatePutCategoryDTO(disciplineDTO.getCategories());
-
-        // Obtener las categorías antes de la actualización
-        List<Category> oldCategories = new ArrayList<>(oldDiscipline.getCategories());
-
-        // Mapear y actualizar la disciplina
-        Discipline updatedDiscipline = complexMapper.mapDisciplineDTOToDiscipline(disciplineDTO, oldDiscipline);
-
-        // Obtener categorías después de la actualización
-        List<Category> updatedCategories = updatedDiscipline.getCategories();
-
-        // Identificar categorías eliminadas (presentes en oldCategories pero no en updatedCategories)
-        List<Category> categoriesToRemove = oldCategories.stream()
-                .filter(oldCat -> updatedCategories.stream()
-                        .noneMatch(updatedCat -> updatedCat.getId() != null && updatedCat.getId().equals(oldCat.getId())))
-                .toList();
-
-        // PRIMERO: Eliminar StudentInscriptions que referencian las categorías a eliminar
-        if (!categoriesToRemove.isEmpty()) {
-            for (Category categoryToRemove : categoriesToRemove) {
-                // Buscar todas las StudentInscriptions que contengan esta categoría
-                List<StudentInscription> inscriptionsToDelete = studentInscriptionRepo
-                        .findByCategory(categoryToRemove);
-
-                // Eliminar las inscripciones encontradas
-                if (!inscriptionsToDelete.isEmpty()) {
-                    studentInscriptionRepo.deleteAll(inscriptionsToDelete);
-                }
-            }
-            // Flush para asegurar que las eliminaciones se ejecuten antes del mapeo
-            studentInscriptionRepo.flush();
-        }
-
-        // SEGUNDO: Ahora mapear y actualizar la disciplina (esto eliminará las categorías)
-        updatedDiscipline = complexMapper.mapDisciplineDTOToDiscipline(disciplineDTO, oldDiscipline);
-
-        // Guardar la disciplina actualizada
-        Discipline savedDiscipline = disciplineRepo.save(updatedDiscipline);
-        return complexMapper.mapDisciplineEntityToDisciplineDTO(savedDiscipline);
-    }
-
-
     //
     @Override
     @Transactional

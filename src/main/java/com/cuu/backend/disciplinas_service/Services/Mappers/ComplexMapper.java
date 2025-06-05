@@ -1,18 +1,14 @@
 package com.cuu.backend.disciplinas_service.Services.Mappers;
 
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
-import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
-import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.*;
 import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.ICategorySummary;
-import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostCategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostDisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutCategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutDisciplineDTO;
-import com.cuu.backend.disciplinas_service.Models.Entities.Category;
-import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
-import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Entities.*;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
@@ -34,6 +30,28 @@ public class ComplexMapper {
     private UserRepo userRepo;
     @Autowired
     private CategoryRepo categoryRepo;
+
+    public FeeDTO mapFeeEntityToFeeDTO(Fee fee){
+        FeeDTO feeDTO = new FeeDTO(fee.getFeeType(), fee.getAmount(), fee.getDueDate(), fee.getPeriod(), null, fee.getUserKeycloakId(), fee.getPayerEmail(), fee.getDisciplineId(), fee.isPaid(), null, fee.getCreatedAt(), fee.getDescription());
+
+        User feeUser = fee.getUser();
+        List<DisciplineSummaryDTO> userDTOTeacherDisciplines = this.getDisciplineSummaryDTOListFromTeacherUser(feeUser.getTeacherDisciplines());
+
+        UserDTO feeDTOUserDTO = new UserDTO();
+        if (fee.getUser() != null){
+            feeDTOUserDTO = new UserDTO(feeUser.getKeycloakId(), feeUser.getRole(), feeUser.getUsername(), feeUser.getEmail(), feeUser.getFirstName(), feeUser.getLastName(), feeUser.getBirthDate(), feeUser.getGenre(), userDTOTeacherDisciplines);
+        }
+
+        if (fee.getPaymentProof() != null){
+            PaymentProof feePaymentProof = fee.getPaymentProof();
+            PaymentProofDTO paymentProofDTO = new PaymentProofDTO(feeDTO, feePaymentProof.getUserKeycloakId(), feePaymentProof.getPaymentDate(), feePaymentProof.getTransactionId(), feePaymentProof.getPaymentMethod(), feePaymentProof.getPaymentProofUrl(), feePaymentProof.getStatus(), feePaymentProof.getPayerEmail());
+
+            feeDTO.setPaymentProof(paymentProofDTO);
+        }
+
+        feeDTO.setUser(feeDTOUserDTO);
+        return feeDTO;
+    }
 
     public DisciplineDTO mapDisciplineEntityToDisciplineDTO(Discipline discipline){
         List<ICategorySummary> categoriesDTOList = this.getCategoriesDTOFromDiscipline(discipline.getCategories());
@@ -68,9 +86,11 @@ public class ComplexMapper {
     private List<DisciplineSummaryDTO> getDisciplineSummaryDTOListFromTeacherUser(List<Discipline> teacherDisciplines){
         List<DisciplineSummaryDTO> disciplineSummaryDTOList = new ArrayList<>();
 
-        for (Discipline d : teacherDisciplines){
-            DisciplineSummaryDTO summaryDTO = new DisciplineSummaryDTO(d.getId(), d.getName());
-            disciplineSummaryDTOList.add(summaryDTO);
+        if (!teacherDisciplines.isEmpty()){
+            for (Discipline d : teacherDisciplines){
+                DisciplineSummaryDTO summaryDTO = new DisciplineSummaryDTO(d.getId(), d.getName());
+                disciplineSummaryDTOList.add(summaryDTO);
+            }
         }
 
         return disciplineSummaryDTOList;

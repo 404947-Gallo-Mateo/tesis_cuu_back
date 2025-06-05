@@ -4,7 +4,6 @@ import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomEx
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisplayOnFrontend.ExpandedUserDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
-import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
@@ -12,6 +11,7 @@ import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.*;
+import com.cuu.backend.disciplinas_service.Services.Interfaces.FeeService;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.UserService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
 import com.cuu.backend.disciplinas_service.Services.RestClients.KeycloakAdminClient;
@@ -31,17 +31,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
-
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserRepo userRepo;
     @Autowired
     private DisciplineRepo disciplineRepo;
     @Autowired
     private DisciplineTeachersRepo disciplineTeachersRepo;
+    @Autowired
+    private FeeService feeService;
 
     @Autowired
     private CategoryRepo categoryRepo;
@@ -371,6 +370,10 @@ public class UserServiceImpl implements UserService {
                     //crea y devuelve el mismo User pero con los datos de la DB de este MS
                     return userRepo.save(newUser);
                 });
+
+        //todo crear cuotas
+        currentUser = feeService.CreateFeesForStudent(currentUser);
+        userRepo.save(currentUser);
 
         //agrega las categories donde esta inscripto el User
         ExpandedUserDTO expandedCurrentUser = mapper.map(currentUser, ExpandedUserDTO.class);

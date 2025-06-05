@@ -1,6 +1,8 @@
 package com.cuu.backend.disciplinas_service.Controllers;
 
+import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.FeeDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PostCategoryDTO;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.CategoryService;
@@ -44,6 +46,7 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDTO>> findAllByDisciplineId(@RequestParam UUID disciplineId){
 
         return ResponseEntity.ok(categoryService.findAllByDisciplineId(disciplineId));
+
     }
 
 }
