@@ -115,7 +115,7 @@ public class FeeServiceImpl implements FeeService {
                 String description = "Cuota Social del Club - " + oldestPeriod.format(PERIOD_FORMATTER);
 
                 Fee newFee = new Fee(null, FeeType.SOCIAL, BigDecimal.valueOf(5000), LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
-                                    oldestPeriod, student, studentKCID, student.getEmail(), null, false,
+                                    oldestPeriod, student, studentKCID, student.getEmail(), null, null, false,
                                     null, LocalDateTime.now(), description);
 
                 Fee savedFee = feeRepo.save(newFee);
@@ -167,11 +167,14 @@ public class FeeServiceImpl implements FeeService {
                 Optional<Discipline> optDiscipline = disciplineRepo.findById(si.getDiscipline().getId());
                 String disciplineName = "{nombre_disciplina}";
                 UUID disciplineId = new UUID(12, 12);
+                UUID categoryId = new UUID(12, 12);
+
                 BigDecimal categoryMonthlyFee = BigDecimal.valueOf(12000);
 
                 if (optDiscipline.isPresent()){
                     disciplineName = optDiscipline.get().getName();
                     disciplineId = optDiscipline.get().getId();
+                    categoryId = si.getCategory().getId();
                     // Buscar la categoría que coincida con el ID de la categoría de la inscripción
                     categoryMonthlyFee = optDiscipline.get().getCategories()
                             .stream()
@@ -186,7 +189,7 @@ public class FeeServiceImpl implements FeeService {
                     String description = "Cuota de la Disciplina " + disciplineName + " - " + oldestPeriod.format(PERIOD_FORMATTER);
 
                     Fee newFee = new Fee(null, FeeType.DISCIPLINE, categoryMonthlyFee, LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
-                            oldestPeriod, student, studentKCID, student.getEmail(), disciplineId, false,
+                            oldestPeriod, student, studentKCID, student.getEmail(), disciplineId, categoryId, false,
                             null, LocalDateTime.now(), description);
 
                     Fee savedFee = feeRepo.save(newFee);
@@ -203,15 +206,18 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public FeeDTO UpdateFeePaidState(String userKeycloakId, UUID disciplineId, YearMonth period, Role userResponsibleRole){
-
-        Optional<Fee> feeOptional = feeRepo.findByUserKeycloakIdAndDisciplineIdAndPeriod(userKeycloakId, disciplineId, period);
+    public FeeDTO UpdateFeePaidState(String userKeycloakId, FeeType feeType, UUID disciplineId, YearMonth period, Role userResponsibleRole){
+        Optional<Fee> feeOptional = feeRepo.findByUserKeycloakIdAndFeeTypeAndDisciplineIdAndPeriod(userKeycloakId, feeType, disciplineId, period);
 
         if (feeOptional.isEmpty()){
             throw new CustomException("No existe Cuota para el ID de usuario, ID de Disciplina y periodo indicado", HttpStatus.BAD_REQUEST);
         }
 
         Fee feeToUpdate = feeOptional.get();
+
+        if (feeToUpdate.isPaid()){
+            throw new CustomException("Esta Cuota ya fue pagada.", HttpStatus.CONFLICT);
+        }
 
         // SI es tipo Discipline pero el usuario q hace la solicitud NO es TEACHER, se cancela el proceso de marcar como pagada
         if (feeToUpdate.getFeeType().equals(FeeType.DISCIPLINE) && !userResponsibleRole.equals(Role.TEACHER)){

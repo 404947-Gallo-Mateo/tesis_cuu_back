@@ -51,7 +51,8 @@ public class Fee {
 
     @Column
     private UUID disciplineId; // Nullable para cuotas sociales
-
+    @Column
+    private UUID categoryId;
     @Column(nullable = false)
     private boolean paid = false;
 

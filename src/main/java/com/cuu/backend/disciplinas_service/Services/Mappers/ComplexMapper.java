@@ -32,7 +32,16 @@ public class ComplexMapper {
     private CategoryRepo categoryRepo;
 
     public FeeDTO mapFeeEntityToFeeDTO(Fee fee){
-        FeeDTO feeDTO = new FeeDTO(fee.getFeeType(), fee.getAmount(), fee.getDueDate(), fee.getPeriod(), null, fee.getUserKeycloakId(), fee.getPayerEmail(), fee.getDisciplineId(), fee.isPaid(), null, fee.getCreatedAt(), fee.getDescription());
+
+        Optional<Discipline> disciplineOpt = Optional.of(new Discipline());
+        Optional<Category> categoryOpt = Optional.of(new Category());
+
+        if (fee.getDisciplineId() != null && fee.getCategoryId() != null){
+            disciplineOpt = disciplineRepo.findById(fee.getDisciplineId());
+            categoryOpt = categoryRepo.findById(fee.getCategoryId());
+        }
+
+        FeeDTO feeDTO = this.getFeeDTO(fee, disciplineOpt, categoryOpt);
 
         User feeUser = fee.getUser();
         List<DisciplineSummaryDTO> userDTOTeacherDisciplines = this.getDisciplineSummaryDTOListFromTeacherUser(feeUser.getTeacherDisciplines());
@@ -44,13 +53,33 @@ public class ComplexMapper {
 
         if (fee.getPaymentProof() != null){
             PaymentProof feePaymentProof = fee.getPaymentProof();
-            PaymentProofDTO paymentProofDTO = new PaymentProofDTO(feeDTO, feePaymentProof.getUserKeycloakId(), feePaymentProof.getPaymentDate(), feePaymentProof.getTransactionId(), feePaymentProof.getPaymentMethod(), feePaymentProof.getPaymentProofUrl(), feePaymentProof.getStatus(), feePaymentProof.getPayerEmail());
+            PaymentProofDTO paymentProofDTO = new PaymentProofDTO(feePaymentProof.getUserKeycloakId(), feePaymentProof.getPaymentDate(), feePaymentProof.getTransactionId(), feePaymentProof.getPaymentMethod(), feePaymentProof.getPaymentProofUrl(), feePaymentProof.getStatus(), feePaymentProof.getPayerEmail());
 
             feeDTO.setPaymentProof(paymentProofDTO);
         }
 
         feeDTO.setUser(feeDTOUserDTO);
         return feeDTO;
+    }
+
+    private FeeDTO getFeeDTO(Fee fee, Optional<Discipline> disciplineOpt, Optional<Category> categoryOpt) {
+        String disciplineName = "{nombre_disc}";
+        String categoryName = "{nombre_cat}";
+
+        if (disciplineOpt.isPresent()){
+            disciplineName = disciplineOpt.get().getName();
+        }
+        if (categoryOpt.isPresent()){
+            categoryName = categoryOpt.get().getName();
+        }
+
+        return new FeeDTO(fee.getFeeType(), fee.getAmount(),
+                fee.getDueDate(), fee.getPeriod(), null,
+                fee.getUserKeycloakId(), fee.getPayerEmail(),
+                fee.getDisciplineId(), fee.getCategoryId(),
+                disciplineName, categoryName,
+                fee.isPaid(), null,
+                fee.getCreatedAt(), fee.getDescription());
     }
 
     public DisciplineDTO mapDisciplineEntityToDisciplineDTO(Discipline discipline){

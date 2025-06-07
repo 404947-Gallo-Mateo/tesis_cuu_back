@@ -30,9 +30,9 @@ public class FeeController {
         return ResponseEntity.ok(feeService.Test_GetAllFees());
     }
     @PutMapping("/update-paid-state")
-    public ResponseEntity<?> UpdateFeePaidState(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam YearMonth period, @RequestParam Role userResponsibleRole){
+    public ResponseEntity<?> UpdateFeePaidState(@RequestParam String studentKeycloakId, @RequestParam FeeType feeType, @RequestParam(required = false) UUID disciplineId, @RequestParam YearMonth period, @RequestParam Role userResponsibleRole){
         try {
-            FeeDTO dto = feeService.UpdateFeePaidState(studentKeycloakId, disciplineId, period, userResponsibleRole);
+            FeeDTO dto = feeService.UpdateFeePaidState(studentKeycloakId, feeType, disciplineId, period, userResponsibleRole);
             return ResponseEntity.ok(dto);
         } catch (CustomException e) {
             return ResponseEntity.status(e.getStatus()).body(e.getMessage());

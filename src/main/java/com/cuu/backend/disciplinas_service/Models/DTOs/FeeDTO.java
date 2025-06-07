@@ -33,6 +33,10 @@ public class FeeDTO {
     private String payerEmail; // Email del pagador
 
     private UUID disciplineId; // Nullable para cuotas sociales
+    private UUID categoryId;
+
+    private String disciplineName;
+    private String categoryName;
 
     private boolean paid = false;
 

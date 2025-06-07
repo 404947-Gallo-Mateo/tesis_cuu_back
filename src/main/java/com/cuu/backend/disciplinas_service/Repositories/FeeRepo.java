@@ -24,6 +24,8 @@ public interface FeeRepo extends JpaRepository<Fee, UUID> {
     List<Fee> findTypeSocialFees();
     List<Fee> findByFeeTypeAndUserKeycloakId(FeeType feeType, String userKeycloakId);
     Optional<Fee> findByUserKeycloakIdAndDisciplineIdAndPeriod(String userKeycloakId, UUID disciplineId, YearMonth period);
+    Optional<Fee> findByUserKeycloakIdAndFeeTypeAndDisciplineIdAndPeriod(String userKeycloakId, FeeType feeType, UUID disciplineId, YearMonth period);
+
     List<Fee> findByUserKeycloakIdAndDisciplineId(String userKeycloakId, UUID disciplineId);
 
     //encuentra la fee (del FeeType indicado, SOCIAL o DISCIPLINE) mas reciente de un Alumno especifico
