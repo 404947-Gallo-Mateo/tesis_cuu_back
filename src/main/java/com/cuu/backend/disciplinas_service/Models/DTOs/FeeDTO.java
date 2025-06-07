@@ -25,7 +25,7 @@ public class FeeDTO {
 
     private LocalDate dueDate; // Fecha de vencimiento
 
-    private YearMonth period; // Período que cubre la cuota
+    private String period; // Período que cubre la cuota
 
     private UserDTO user;
     // campos de respaldo (importante para el historial)
