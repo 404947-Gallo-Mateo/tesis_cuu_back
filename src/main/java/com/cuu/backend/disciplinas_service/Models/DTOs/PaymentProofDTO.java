@@ -17,7 +17,7 @@ public class PaymentProofDTO {
 
     private String userKeycloakId;
 
-    private LocalDateTime paymentDate;
+    private String paymentDate; // LocalDateTime en PaymentProof
 
     private String transactionId; // ID de transacción de Mercado Pago
 

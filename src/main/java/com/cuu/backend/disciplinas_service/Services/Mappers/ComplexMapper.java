@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class ComplexMapper {
 
         if (fee.getPaymentProof() != null){
             PaymentProof feePaymentProof = fee.getPaymentProof();
-            PaymentProofDTO paymentProofDTO = new PaymentProofDTO(feePaymentProof.getUserKeycloakId(), feePaymentProof.getPaymentDate(), feePaymentProof.getTransactionId(), feePaymentProof.getPaymentMethod(), feePaymentProof.getPaymentProofUrl(), feePaymentProof.getStatus(), feePaymentProof.getPayerEmail());
+            PaymentProofDTO paymentProofDTO = new PaymentProofDTO(feePaymentProof.getUserKeycloakId(), feePaymentProof.getPaymentDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")), feePaymentProof.getTransactionId(), feePaymentProof.getPaymentMethod(), feePaymentProof.getPaymentProofUrl(), feePaymentProof.getStatus(), feePaymentProof.getPayerEmail());
 
             feeDTO.setPaymentProof(paymentProofDTO);
         }
@@ -74,13 +75,19 @@ public class ComplexMapper {
             categoryName = categoryOpt.get().getName();
         }
 
+        boolean isDue = LocalDate.now().isAfter(fee.getDueDate());
+
+        if (fee.isPaid()){
+            isDue = false;
+        }
+
         return new FeeDTO(fee.getFeeType(), fee.getAmount(),
-                fee.getDueDate(), fee.getPeriod().format(DateTimeFormatter.ofPattern("yyyy-MM")),
+                fee.getDueDate(), isDue,
+                fee.getPeriod().format(DateTimeFormatter.ofPattern("yyyy-MM")),
                 null, fee.getUserKeycloakId(), fee.getPayerEmail(),
                 fee.getDisciplineId(), fee.getCategoryId(),
-                disciplineName, categoryName,
-                fee.isPaid(), null,
-                fee.getCreatedAt(), fee.getDescription());
+                disciplineName, categoryName, fee.isPaid(),
+                null, fee.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")), fee.getDescription());
     }
 
     public DisciplineDTO mapDisciplineEntityToDisciplineDTO(Discipline discipline){

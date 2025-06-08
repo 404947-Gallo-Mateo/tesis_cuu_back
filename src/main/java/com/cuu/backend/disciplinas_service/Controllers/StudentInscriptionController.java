@@ -2,6 +2,7 @@ package com.cuu.backend.disciplinas_service.Controllers;
 
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Controllers.Response.ApiResponse;
+import com.cuu.backend.disciplinas_service.Models.DTOs.ExpandedStudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.StudentInscriptionService;
 import org.apache.coyote.Response;
@@ -64,6 +65,12 @@ public class StudentInscriptionController {
     public ResponseEntity<List<StudentInscriptionDTO>> findAllByDisciplineId(@RequestParam UUID disciplineId){
 
         return ResponseEntity.ok(studentInscriptionService.findAllByDisciplineId(disciplineId));
+    }
+
+    @GetMapping("/find-all/by-discipline-id-with-fees")
+    public ResponseEntity<List<ExpandedStudentInscriptionDTO>> findAllByDisciplineIdWithFees(@RequestParam UUID disciplineId){
+
+        return ResponseEntity.ok(studentInscriptionService.findAllByDisciplineIdWithFees(disciplineId));
     }
 
     @GetMapping("/find-all/by-category-id")

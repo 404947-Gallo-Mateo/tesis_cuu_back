@@ -1,5 +1,6 @@
 package com.cuu.backend.disciplinas_service.Services.Interfaces;
 
+import com.cuu.backend.disciplinas_service.Models.DTOs.ExpandedStudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public interface StudentInscriptionService {
     List<StudentInscriptionDTO> findAllByStudentKeycloakId(String studentKeycloakId);
 
     List<StudentInscriptionDTO> findAllByDisciplineId(UUID disciplineId);
+
+    List<ExpandedStudentInscriptionDTO> findAllByDisciplineIdWithFees(UUID disciplineId);
+
 
     List<StudentInscriptionDTO> findAllByCategoryId(UUID categoryId);
 

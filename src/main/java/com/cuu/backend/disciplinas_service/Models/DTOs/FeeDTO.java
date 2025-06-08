@@ -24,6 +24,7 @@ public class FeeDTO {
     private BigDecimal amount;
 
     private LocalDate dueDate; // Fecha de vencimiento
+    private boolean isDue;
 
     private String period; // Período que cubre la cuota
 
@@ -42,7 +43,7 @@ public class FeeDTO {
 
     private PaymentProofDTO paymentProof;
 
-    private LocalDateTime createdAt;
+    private String createdAt; // es LocalDateTime en Fee
 
     private String description;
 }
