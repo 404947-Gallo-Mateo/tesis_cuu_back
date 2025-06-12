@@ -3,11 +3,14 @@ package com.cuu.backend.disciplinas_service.Services;
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisplayOnFrontend.ExpandedUserDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.FeeDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.UserWithFeesDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.*;
@@ -293,6 +296,26 @@ public class UserServiceImpl implements UserService {
             ExpandedUserDTO expandedUserDTO = new ExpandedUserDTO(u.getKeycloakId(), u.getRole(), u.getUsername(), u.getEmail(), u.getFirstName(), u.getLastName(), u.getBirthDate(), u.getGenre() , teacherDisciplinesSummary, studentCategoriesDto);
 
             userDTOList.add(expandedUserDTO);
+        }
+
+        return userDTOList;
+    }
+
+    @Override
+    public List<UserWithFeesDTO> getAllUsersWithSocialFees() {
+        List<User> users = userRepo.getAllOrdered();
+        List<UserWithFeesDTO> userDTOList = new ArrayList<>();
+
+        for (User u : users){
+            List<FeeDTO> userFees = feeService.findByFeeTypeAndUserKeycloakId(FeeType.SOCIAL, u.getKeycloakId());
+
+            boolean isDebtor = false;
+
+            for (FeeDTO f : userFees){ if (f.isDue()){ isDebtor = true; break;} }
+
+            UserWithFeesDTO userDTO = new UserWithFeesDTO(isDebtor, u.getKeycloakId(), u.getRole(), u.getUsername(), u.getEmail(), u.getFirstName(), u.getLastName(), u.getBirthDate(), u.getGenre() , userFees);
+
+            userDTOList.add(userDTO);
         }
 
         return userDTOList;

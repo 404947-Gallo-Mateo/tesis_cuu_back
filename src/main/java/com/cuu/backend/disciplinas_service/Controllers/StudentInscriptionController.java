@@ -73,6 +73,12 @@ public class StudentInscriptionController {
         return ResponseEntity.ok(studentInscriptionService.findAllByDisciplineIdWithFees(disciplineId));
     }
 
+    @GetMapping("/find-all/with-fees")
+    public ResponseEntity<List<ExpandedStudentInscriptionDTO>> findAllWithFees(){
+
+        return ResponseEntity.ok(studentInscriptionService.findAllWithFees());
+    }
+
     @GetMapping("/find-all/by-category-id")
     public ResponseEntity<List<StudentInscriptionDTO>> findAllByCategoryId(@RequestParam UUID categoryId){
 

@@ -163,6 +163,41 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
     }
 
     @Override
+    public List<ExpandedStudentInscriptionDTO> findAllWithFees() {
+        List<StudentInscription> studentInscriptions = studentInscriptionRepo.findAll();
+
+        List<ExpandedStudentInscriptionDTO> studentInscriptionDTOList = new ArrayList<>();
+
+        for (StudentInscription si : studentInscriptions){
+            ExpandedStudentInscriptionDTO expandedDTO = mapper.map(si, ExpandedStudentInscriptionDTO.class);
+
+            // se agregan DisciplineSummary y CategorySummary
+            expandedDTO.setDiscipline(new DisciplineSummaryDTO(si.getDiscipline().getId(), si.getDiscipline().getName()));
+            expandedDTO.setCategory(new CategorySummaryDTO(si.getCategory().getId(), si.getCategory().getName(), si.getDiscipline().getId(), si.getDiscipline().getName()));
+
+            //se agregan SOLO laas Fees NO pagadas
+            List<FeeDTO> inscriptionFees = feeService.GetFeesByStudentKeycloakIdAndDisciplineId(si.getStudent().getKeycloakId(), si.getDiscipline().getId());
+            List<FeeDTO> unpaidFees = inscriptionFees.stream()
+                    .filter(fee -> !fee.isPaid())
+                    .toList();
+            expandedDTO.setInscriptionFees(unpaidFees);
+
+            //se determina si el Student de esta Inscription es deudor (debtor == true), si alguna Fee tiene isDue == true, es deudor.
+            boolean isDebtor = false;
+
+            for (FeeDTO f: unpaidFees){
+                if (f.isDue()){{ isDebtor = true; break; }}
+            }
+
+            expandedDTO.setDebtor(isDebtor);
+
+            studentInscriptionDTOList.add(expandedDTO);
+        }
+
+        return studentInscriptionDTOList;
+    }
+
+    @Override
     public List<StudentInscriptionDTO> findAllByCategoryId(UUID categoryId) {
         List<StudentInscription> studentInscriptions = studentInscriptionRepo.findAllByCategoryId(categoryId);
 

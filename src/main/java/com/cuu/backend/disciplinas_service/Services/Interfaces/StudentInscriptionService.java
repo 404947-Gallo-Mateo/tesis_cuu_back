@@ -20,6 +20,8 @@ public interface StudentInscriptionService {
     List<StudentInscriptionDTO> findAllByDisciplineId(UUID disciplineId);
 
     List<ExpandedStudentInscriptionDTO> findAllByDisciplineIdWithFees(UUID disciplineId);
+    List<ExpandedStudentInscriptionDTO> findAllWithFees();
+
 
 
     List<StudentInscriptionDTO> findAllByCategoryId(UUID categoryId);
