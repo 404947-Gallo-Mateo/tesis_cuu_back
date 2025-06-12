@@ -238,6 +238,30 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
+    @Transactional
+    public boolean MPUpdateFeePaidState(Long merchantOrderId, UUID feeId){
+        Optional<Fee> feeOptional = feeRepo.findById(feeId);
+
+        if (feeOptional.isEmpty()){
+            throw new CustomException("No existe Cuota para el ID indicado", HttpStatus.BAD_REQUEST);
+        }
+
+        Fee feeToUpdate = feeOptional.get();
+
+        if (feeToUpdate.isPaid()){
+            throw new CustomException("Esta Cuota ya fue pagada.", HttpStatus.CONFLICT);
+        }
+
+        PaymentProof newPaymentProof = new PaymentProof(null, feeToUpdate, feeToUpdate.getUserKeycloakId(), LocalDateTime.now(), merchantOrderId.toString(), PaymentType.MERCADO_PAGO, null, "approved", feeToUpdate.getPayerEmail());
+        feeToUpdate.setPaid(true);
+        feeToUpdate.setPaymentProof(newPaymentProof);
+
+        Fee savedFee = feeRepo.save(feeToUpdate);
+
+        return savedFee.isPaid();
+    }
+
+    @Override
     public List<FeeDTO> GetFeesByStudentKeycloakId(String userKeycloakId) {
         List<Fee> feeList = feeRepo.findByUserKeycloakId(userKeycloakId);
 

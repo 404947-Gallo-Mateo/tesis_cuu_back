@@ -16,6 +16,7 @@ public interface FeeService {
     List<FeeDTO> Test_GetAllFees();
     User CreateFeesForStudent(User student);
     FeeDTO UpdateFeePaidState(String userKeycloakId, FeeType feeType, UUID disciplineId, YearMonth period, Role userResponsibleRole);
+    boolean MPUpdateFeePaidState(Long merchantOrderId, UUID feeId);
     List<FeeDTO> GetFeesByStudentKeycloakId(String userKeycloakId);
     List<FeeDTO> GetFeesByStudentKeycloakIdAndDisciplineId(String userKeycloakId, UUID disciplineId);
     FeeDTO GetFeesByStudentKeycloakIdAndDisciplineIdAndPeriod(String userKeycloakId, UUID disciplineId, YearMonth period);
