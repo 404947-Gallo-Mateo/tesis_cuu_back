@@ -86,7 +86,7 @@ public class ComplexMapper {
                 fee.getPeriod().format(DateTimeFormatter.ofPattern("yyyy-MM")),
                 null, fee.getUserKeycloakId(), fee.getPayerEmail(),
                 fee.getDisciplineId(), fee.getCategoryId(),
-                disciplineName, categoryName, fee.isPaid(),
+                disciplineName, categoryName, fee.isPaid(), fee.getFeeState(),
                 null, fee.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")), fee.getDescription());
     }
 
