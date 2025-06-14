@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -29,4 +30,8 @@ public class StudentInscription {
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+    @Column(name = "created_date", nullable = false)
+    private LocalDate createdDate;
+    @Column(name = "updated_date", nullable = true)
+    private LocalDate updatedDate;
 }

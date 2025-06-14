@@ -9,7 +9,9 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -52,4 +54,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "discipline_id")
     )
     private List<Discipline> teacherDisciplines;
+    @OneToMany(mappedBy = "user")
+    private Set<Fee> fees;
 }

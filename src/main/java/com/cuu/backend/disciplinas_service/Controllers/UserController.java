@@ -3,6 +3,7 @@ package com.cuu.backend.disciplinas_service.Controllers;
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisplayOnFrontend.ExpandedUserDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.UserWithFeesDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.UserService;
@@ -33,6 +34,13 @@ public class UserController {
     @GetMapping("/get-all")
     public ResponseEntity<List<ExpandedUserDTO>> getAllUsers() {
         List<ExpandedUserDTO> resp = userService.getAllUsers();
+
+        return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/get-all-with-social-fees")
+    public ResponseEntity<List<UserWithFeesDTO>> getAllUsersWithSocialFees() {
+        List<UserWithFeesDTO> resp = userService.getAllUsersWithSocialFees();
 
         return ResponseEntity.ok(resp);
     }
