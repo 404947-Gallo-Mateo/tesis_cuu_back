@@ -1,5 +1,6 @@
 package com.cuu.backend.disciplinas_service.Models.Entities;
 
+import com.cuu.backend.disciplinas_service.Models.Enums.FeeState;
 import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -55,6 +56,9 @@ public class Fee {
     private UUID categoryId;
     @Column(nullable = false)
     private boolean paid = false;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private FeeState feeState;
 
     @OneToOne(mappedBy = "fee", cascade = CascadeType.ALL)
     private PaymentProof paymentProof;

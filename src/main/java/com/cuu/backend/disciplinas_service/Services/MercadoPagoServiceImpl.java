@@ -1,16 +1,15 @@
 package com.cuu.backend.disciplinas_service.Services;
 
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
-import com.cuu.backend.disciplinas_service.Models.DTOs.FeeDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.MPFeeDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.Fee;
+import com.cuu.backend.disciplinas_service.Models.Enums.FeeState;
 import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
 import com.cuu.backend.disciplinas_service.Repositories.FeeRepo;
-import com.cuu.backend.disciplinas_service.Repositories.StudentInscriptionRepo;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.FeeService;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.MercadoPagoService;
 import com.mercadopago.client.merchantorder.MerchantOrderClient;
@@ -24,12 +23,10 @@ import com.mercadopago.resources.merchantorder.MerchantOrder;
 import com.mercadopago.resources.preference.Preference;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +94,12 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
                 .autoReturn("approved")
                 .build();
 
+        try {
+            fee.setFeeState(FeeState.PENDING);
+            feeRepo.save(fee);
+        }
+        catch (Exception ignored){
+        }
 
         return preferenceClient.create(preferenceRequest);
     }
@@ -141,7 +144,11 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
             if ("paid".equalsIgnoreCase(merchantOrder.getOrderStatus())) {
                 //marcar la cuota como pagada y generarle PaymentProof
                 boolean feeIsPaid = feeService.MPUpdateFeePaidState(merchantOrderId, feeId);
-                resp = feeIsPaid ? resp + " | Cuota marcada como pagada" : resp + " | Cuota NO se marco como pagada";
+                resp = feeIsPaid ? resp + " | Cuota marcada como PAGADA" : resp + " | Cuota NO se pudo marcar como PAGADA";
+            }
+            else {
+                boolean feeIsCancelled = feeService.MPUpdateFeePaidStateToCancelled(merchantOrderId, feeId);
+                resp = feeIsCancelled ? resp + " | Cuota marcada como CANCELADA" : resp + " | Cuota NO se pudo marcar como CANCELADA";
             }
         }
 

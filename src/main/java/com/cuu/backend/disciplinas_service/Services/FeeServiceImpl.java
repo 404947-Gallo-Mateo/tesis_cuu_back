@@ -4,6 +4,7 @@ import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomEx
 import com.cuu.backend.disciplinas_service.Models.DTOs.FeeDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.*;
+import com.cuu.backend.disciplinas_service.Models.Enums.FeeState;
 import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import com.cuu.backend.disciplinas_service.Models.Enums.PaymentType;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
@@ -115,7 +116,7 @@ public class FeeServiceImpl implements FeeService {
                 String description = "Cuota Social del Club - " + oldestPeriod.format(PERIOD_FORMATTER);
 
                 Fee newFee = new Fee(null, FeeType.SOCIAL, BigDecimal.valueOf(5000), LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
-                                    oldestPeriod, student, studentKCID, student.getEmail(), null, null, false,
+                                    oldestPeriod, student, studentKCID, student.getEmail(), null, null, false, FeeState.UNPAID,
                                     null, LocalDateTime.now(), description);
 
                 Fee savedFee = feeRepo.save(newFee);
@@ -189,7 +190,7 @@ public class FeeServiceImpl implements FeeService {
                     String description = "Cuota de la Disciplina " + disciplineName + " - " + oldestPeriod.format(PERIOD_FORMATTER);
 
                     Fee newFee = new Fee(null, FeeType.DISCIPLINE, categoryMonthlyFee, LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
-                            oldestPeriod, student, studentKCID, student.getEmail(), disciplineId, categoryId, false,
+                            oldestPeriod, student, studentKCID, student.getEmail(), disciplineId, categoryId, false, FeeState.UNPAID,
                             null, LocalDateTime.now(), description);
 
                     Fee savedFee = feeRepo.save(newFee);
@@ -230,6 +231,7 @@ public class FeeServiceImpl implements FeeService {
 
         PaymentProof newPaymentProof = new PaymentProof(null, feeToUpdate, feeToUpdate.getUserKeycloakId(), LocalDateTime.now(), null, PaymentType.CASH, null, "approved", feeToUpdate.getPayerEmail());
         feeToUpdate.setPaid(true);
+        feeToUpdate.setFeeState(FeeState.PAID);
         feeToUpdate.setPaymentProof(newPaymentProof);
 
         Fee savedFee = feeRepo.save(feeToUpdate);
@@ -254,11 +256,40 @@ public class FeeServiceImpl implements FeeService {
 
         PaymentProof newPaymentProof = new PaymentProof(null, feeToUpdate, feeToUpdate.getUserKeycloakId(), LocalDateTime.now(), merchantOrderId.toString(), PaymentType.MERCADO_PAGO, null, "approved", feeToUpdate.getPayerEmail());
         feeToUpdate.setPaid(true);
+        feeToUpdate.setFeeState(FeeState.PAID);
         feeToUpdate.setPaymentProof(newPaymentProof);
 
         Fee savedFee = feeRepo.save(feeToUpdate);
 
         return savedFee.isPaid();
+    }
+
+    @Override
+    @Transactional
+    public boolean MPUpdateFeePaidStateToCancelled(Long merchantOrderId, UUID feeId){
+        Optional<Fee> feeOptional = feeRepo.findById(feeId);
+
+        if (feeOptional.isEmpty()){
+            throw new CustomException("No existe Cuota para el ID indicado", HttpStatus.BAD_REQUEST);
+        }
+
+        Fee feeToUpdate = feeOptional.get();
+
+        if (feeToUpdate.isPaid()){
+            throw new CustomException("Esta Cuota ya fue pagada.", HttpStatus.CONFLICT);
+        }
+
+        try {
+            feeToUpdate.setPaid(false);
+            feeToUpdate.setFeeState(FeeState.CANCELLED);
+
+            Fee savedFee = feeRepo.save(feeToUpdate);
+        }
+        catch (Exception e){
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -268,7 +299,9 @@ public class FeeServiceImpl implements FeeService {
         List<FeeDTO> feeDTOList = new ArrayList<>();
 
         for(Fee f : feeList){
-            feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            if (f.getFeeState() != FeeState.PENDING){
+                feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            }
         }
 
         return feeDTOList;
@@ -281,7 +314,9 @@ public class FeeServiceImpl implements FeeService {
         List<FeeDTO> feeDTOList = new ArrayList<>();
 
         for(Fee f : feeList){
-            feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            if (f.getFeeState() != FeeState.PENDING){
+                feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            }
         }
 
         return feeDTOList;
@@ -305,7 +340,9 @@ public class FeeServiceImpl implements FeeService {
         List<FeeDTO> feeDTOList = new ArrayList<>();
 
         for(Fee f : feeList){
-            feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            if (f.getFeeState() != FeeState.PENDING){
+                feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            }
         }
 
         return feeDTOList;
@@ -318,7 +355,9 @@ public class FeeServiceImpl implements FeeService {
         List<FeeDTO> feeDTOList = new ArrayList<>();
 
         for(Fee f : feeList){
-            feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            if (f.getFeeState() != FeeState.PENDING){
+                feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            }
         }
 
         return feeDTOList;
@@ -331,7 +370,9 @@ public class FeeServiceImpl implements FeeService {
         List<FeeDTO> feeDTOList = new ArrayList<>();
 
         for(Fee f : feeList){
-            feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            if (f.getFeeState() != FeeState.PENDING){
+                feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
+            }
         }
 
         return feeDTOList;

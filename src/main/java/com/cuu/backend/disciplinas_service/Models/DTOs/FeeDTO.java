@@ -2,6 +2,7 @@ package com.cuu.backend.disciplinas_service.Models.DTOs;
 
 import com.cuu.backend.disciplinas_service.Models.Entities.PaymentProof;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Enums.FeeState;
 import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,6 +41,8 @@ public class FeeDTO {
     private String categoryName;
 
     private boolean paid = false;
+    @Enumerated(EnumType.STRING)
+    private FeeState feeState;
 
     private PaymentProofDTO paymentProof;
 
