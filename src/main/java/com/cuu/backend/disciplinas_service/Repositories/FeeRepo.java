@@ -3,18 +3,54 @@ package com.cuu.backend.disciplinas_service.Repositories;
 import com.cuu.backend.disciplinas_service.Models.Entities.Fee;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
+import com.cuu.backend.disciplinas_service.Models.KPIs.KpiRevenuePerPeriodDistribution;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface FeeRepo extends JpaRepository<Fee, UUID> {
+
+    @Query("SELECT COALESCE(SUM(f.amount), 0) " +
+            "FROM Fee f " +
+            "WHERE f.paid = true " +
+            "AND f.feeType = :feeType")
+    BigDecimal sumPaidAmountsByFeeType(@Param("feeType") FeeType feeType);
+
+    @Query("SELECT COALESCE(SUM(f.amount), 0) " +
+            "FROM Fee f " +
+            "WHERE f.paid = true " +
+            "AND f.feeType = :feeType " +
+            "AND f.disciplineId = :disciplineId ")
+    BigDecimal sumPaidAmountsByFeeTypeAndDisciplineId(@Param("feeType") FeeType feeType, @Param("disciplineId") UUID disciplineId);
+
+    @Query("SELECT f.paymentDate as paymentDate, SUM(f.amount) as revenue " +
+            "FROM Fee f " +
+            "WHERE f.paid = true " +
+            "AND (:feeType IS NULL OR f.feeType = :feeType) " +
+            "GROUP BY f.paymentDate " +
+            "ORDER BY f.paymentDate")
+    List<Object[]> findRevenueDistributionByPeriodFiltered(
+            @Param("feeType") FeeType feeType);
+
+    @Query("SELECT f.paymentDate as paymentDate, SUM(f.amount) as revenue " +
+            "FROM Fee f " +
+            "WHERE f.paid = true " +
+            "AND (:feeType IS NULL OR f.feeType = :feeType) " +
+            "AND (:disciplineId IS NULL OR f.disciplineId = :disciplineId) " +
+            "GROUP BY f.paymentDate " +
+            "ORDER BY f.paymentDate")
+    List<Object[]> findRevenueDistributionByPeriodAndDisciplineIdFiltered(
+            @Param("feeType") FeeType feeType,
+            @Param("disciplineId") UUID disciplineId);
+
     List<Fee> findByFeeType(FeeType feeType);
     List<Fee> findByUser(User user);
     List<Fee> findByUserKeycloakId(String userKeycloakId);

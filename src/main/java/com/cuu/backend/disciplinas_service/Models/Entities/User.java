@@ -56,4 +56,7 @@ public class User {
     private List<Discipline> teacherDisciplines;
     @OneToMany(mappedBy = "user")
     private Set<Fee> fees;
+    @Column(nullable = true, name = "created_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate createdDate;
 }

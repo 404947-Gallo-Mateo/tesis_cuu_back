@@ -389,6 +389,7 @@ public class UserServiceImpl implements UserService {
                     newUser.setLastName(lastName != null ? lastName : "-");
                     newUser.setBirthDate(birthDate);
                     newUser.setGenre(genre);
+                    newUser.setCreatedDate(LocalDate.now());
 
                     //crea y devuelve el mismo User pero con los datos de la DB de este MS
                     return userRepo.save(newUser);

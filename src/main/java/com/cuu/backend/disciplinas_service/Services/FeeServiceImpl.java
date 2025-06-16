@@ -117,7 +117,7 @@ public class FeeServiceImpl implements FeeService {
 
                 Fee newFee = new Fee(null, FeeType.SOCIAL, BigDecimal.valueOf(5000), LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
                                     oldestPeriod, student, studentKCID, student.getEmail(), null, null, false, FeeState.UNPAID,
-                                    null, LocalDateTime.now(), description);
+                                    null, null, LocalDateTime.now(), description);
 
                 Fee savedFee = feeRepo.save(newFee);
 
@@ -191,7 +191,7 @@ public class FeeServiceImpl implements FeeService {
 
                     Fee newFee = new Fee(null, FeeType.DISCIPLINE, categoryMonthlyFee, LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
                             oldestPeriod, student, studentKCID, student.getEmail(), disciplineId, categoryId, false, FeeState.UNPAID,
-                            null, LocalDateTime.now(), description);
+                            null, null, LocalDateTime.now(), description);
 
                     Fee savedFee = feeRepo.save(newFee);
 
@@ -232,6 +232,7 @@ public class FeeServiceImpl implements FeeService {
         PaymentProof newPaymentProof = new PaymentProof(null, feeToUpdate, feeToUpdate.getUserKeycloakId(), LocalDateTime.now(), null, PaymentType.CASH, null, "approved", feeToUpdate.getPayerEmail());
         feeToUpdate.setPaid(true);
         feeToUpdate.setFeeState(FeeState.PAID);
+        feeToUpdate.setPaymentDate(LocalDate.now());
         feeToUpdate.setPaymentProof(newPaymentProof);
 
         Fee savedFee = feeRepo.save(feeToUpdate);
@@ -256,6 +257,7 @@ public class FeeServiceImpl implements FeeService {
 
         PaymentProof newPaymentProof = new PaymentProof(null, feeToUpdate, feeToUpdate.getUserKeycloakId(), LocalDateTime.now(), merchantOrderId.toString(), PaymentType.MERCADO_PAGO, null, "approved", feeToUpdate.getPayerEmail());
         feeToUpdate.setPaid(true);
+        feeToUpdate.setPaymentDate(LocalDate.now());
         feeToUpdate.setFeeState(FeeState.PAID);
         feeToUpdate.setPaymentProof(newPaymentProof);
 
