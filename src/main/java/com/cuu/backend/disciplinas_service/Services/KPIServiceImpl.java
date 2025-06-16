@@ -26,27 +26,25 @@ public class KPIServiceImpl implements KPIService {
     @Autowired
     private UserRepo userRepo;
     @Autowired
-    private UserService userService;
-    @Autowired
     private StudentInscriptionRepo studentInscriptionRepo;
     @Autowired
     private FeeRepo feeRepo;
 
     @Override
-    public Long kpiUserGetQuantity() {
-        return userRepo.countUsers();
+    public Long kpiUserGetQuantity(LocalDate start, LocalDate end) {
+        return userRepo.countUsers(start, end);
     }
 
     @Override
-    public KpiGenreQuantities kpiUserGetQuantityForeachGender() {
-        return new KpiGenreQuantities(userRepo.countMaleUsers(), userRepo.countFemaleUsers());
+    public KpiGenreQuantities kpiUserGetQuantityForeachGender(LocalDate start, LocalDate end) {
+        return new KpiGenreQuantities(userRepo.countMaleUsers(start, end), userRepo.countFemaleUsers(start, end));
     }
 
     @Override
-    public List<KpiAgeDistribution> kpiUserGetAgeDistribution() {
+    public List<KpiAgeDistribution> kpiUserGetAgeDistribution(LocalDate start, LocalDate end) {
         LocalDate now = LocalDate.now();
 
-        Map<Integer, Long> ageDistribution = userRepo.findAll()
+        Map<Integer, Long> ageDistribution = userRepo.findAllBetweenDates(start, end)
                 .stream()
                 .filter(user -> user.getBirthDate() != null)
                 .collect(Collectors.groupingBy(
@@ -63,35 +61,47 @@ public class KPIServiceImpl implements KPIService {
     }
 
     @Override
-    public KpiDebtorsQuantity kpiFeeSocialGetDebtorsAndUpToDateQuantities() {
-        return new KpiDebtorsQuantity(userRepo.countSocialDebtors(), userRepo.countSocialUpToDateUsers());
+    public KpiDebtorsQuantity kpiFeeSocialGetDebtorsAndUpToDateQuantities(LocalDate start, LocalDate end) {
+        YearMonth startYM = YearMonth.of(start.getYear(), start.getMonth());
+        YearMonth endYM = YearMonth.of(end.getYear(), end.getMonth());
+        return new KpiDebtorsQuantity(userRepo.countSocialDebtors(startYM, endYM), userRepo.countSocialUpToDateUsers(startYM, endYM));
     }
 
     @Override
-    public BigDecimal kpiFeeSocialGetRevenueAmount() {
-        return feeRepo.sumPaidAmountsByFeeType(FeeType.SOCIAL);
+    public BigDecimal kpiFeeSocialGetRevenueAmount(LocalDate start, LocalDate end) {
+//        YearMonth startYM = YearMonth.of(start.getYear(), start.getMonth());
+//        YearMonth endYM = YearMonth.of(end.getYear(), end.getMonth());
+        return feeRepo.sumPaidAmountsByFeeType(FeeType.SOCIAL, start, end);
     }
 
     @Override
-    public List<KpiRevenuePerPeriodDistribution> kpiFeeSocialGetRevenuePerPeriod() {
-        List<Object[]> results = feeRepo.findRevenueDistributionByPeriodFiltered(FeeType.SOCIAL);
+    public List<KpiRevenuePerPeriodDistribution> kpiFeeSocialGetRevenuePerPeriod(LocalDate start, LocalDate end) {
+//        YearMonth startYM = YearMonth.of(start.getYear(), start.getMonth());
+//        YearMonth endYM = YearMonth.of(end.getYear(), end.getMonth());
+        List<Object[]> results = feeRepo.findRevenueDistributionByPeriodFiltered(FeeType.SOCIAL, start, end);
         return mapResultsToDto(results);
     }
 
     @Override
-    public KpiDebtorsQuantity kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(UUID disciplineId) {
-        return new KpiDebtorsQuantity(userRepo.countDisciplineDebtors(disciplineId), userRepo.countDisciplineUpToDateUsers(disciplineId));
+    public KpiDebtorsQuantity kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(UUID disciplineId, LocalDate start, LocalDate end) {
+        YearMonth startYM = YearMonth.of(start.getYear(), start.getMonth());
+        YearMonth endYM = YearMonth.of(end.getYear(), end.getMonth());
+        return new KpiDebtorsQuantity(userRepo.countDisciplineDebtors(disciplineId, startYM, endYM), userRepo.countDisciplineUpToDateUsers(disciplineId, startYM, endYM));
     }
 
     @Override
-    public BigDecimal kpiFeeDisciplineGetRevenueAmount(UUID disciplineId) {
-        return feeRepo.sumPaidAmountsByFeeTypeAndDisciplineId(FeeType.DISCIPLINE, disciplineId);
+    public BigDecimal kpiFeeDisciplineGetRevenueAmount(UUID disciplineId, LocalDate start, LocalDate end) {
+//        YearMonth startYM = YearMonth.of(start.getYear(), start.getMonth());
+//        YearMonth endYM = YearMonth.of(end.getYear(), end.getMonth());
+        return feeRepo.sumPaidAmountsByFeeTypeAndDisciplineId(FeeType.DISCIPLINE, disciplineId, start, end);
     }
 
     @Override
-    public List<KpiRevenuePerPeriodDistribution> kpiFeeDisciplineGetRevenuePerPeriod(UUID disciplineId) {
+    public List<KpiRevenuePerPeriodDistribution> kpiFeeDisciplineGetRevenuePerPeriod(UUID disciplineId, LocalDate start, LocalDate end) {
+//        YearMonth startYM = YearMonth.of(start.getYear(), start.getMonth());
+//        YearMonth endYM = YearMonth.of(end.getYear(), end.getMonth());
         List<Object[]> results = feeRepo.findRevenueDistributionByPeriodAndDisciplineIdFiltered(
-                FeeType.DISCIPLINE, disciplineId);
+                FeeType.DISCIPLINE, disciplineId, start, end);
         return mapResultsToDto(results);
     }
 
@@ -105,21 +115,21 @@ public class KPIServiceImpl implements KPIService {
     }
 
     @Override
-    public Long kpiDisciplineGetInscriptionsQuantity(UUID disciplineId) {
-        return studentInscriptionRepo.countInscriptionsAmount(disciplineId);
+    public Long kpiDisciplineGetInscriptionsQuantity(UUID disciplineId, LocalDate start, LocalDate end) {
+        return studentInscriptionRepo.countInscriptionsAmount(disciplineId, start, end);
     }
 
     @Override
-    public KpiGenreQuantities kpiDisciplineGetInscriptionsQuantityForeachGender(UUID disciplineId) {
-        return new KpiGenreQuantities(studentInscriptionRepo.countMaleUsers(disciplineId), studentInscriptionRepo.countFemaleUsers(disciplineId));
+    public KpiGenreQuantities kpiDisciplineGetInscriptionsQuantityForeachGender(UUID disciplineId, LocalDate start, LocalDate end) {
+        return new KpiGenreQuantities(studentInscriptionRepo.countMaleUsers(disciplineId, start, end), studentInscriptionRepo.countFemaleUsers(disciplineId, start, end));
 
     }
 
     @Override
-    public List<KpiAgeDistribution> kpiDisciplineGetAgeDistribution(UUID disciplineId) {
+    public List<KpiAgeDistribution> kpiDisciplineGetAgeDistribution(UUID disciplineId, LocalDate start, LocalDate end) {
         LocalDate now = LocalDate.now();
 
-        Map<Integer, Long> ageDistribution = studentInscriptionRepo.findDistinctStudentsByDisciplineId(disciplineId)
+        Map<Integer, Long> ageDistribution = studentInscriptionRepo.findDistinctStudentsByDisciplineId(disciplineId, start, end)
                 .stream()
                 .filter(user -> user.getBirthDate() != null)
                 .collect(Collectors.groupingBy(

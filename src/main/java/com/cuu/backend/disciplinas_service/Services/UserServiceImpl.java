@@ -241,20 +241,25 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     private ExpandedUserDTO updateKeycloakUserInLocalDb(ExpandedUserDTO expandedUserDTO){
-        Optional<User> oldUser = userRepo.findByKeycloakId(expandedUserDTO.getKeycloakId());
+        Optional<User> oldUserOpt = userRepo.findByKeycloakId(expandedUserDTO.getKeycloakId());
 
-        if (oldUser.isEmpty()){
+        if (oldUserOpt.isEmpty()){
             throw new CustomException("No se encontro el Usuario", HttpStatus.BAD_REQUEST);
         }
 
-        User updatedUser = mapper.map(expandedUserDTO, User.class);
-        updatedUser.setId(oldUser.get().getId());
+        User oldUserUpdated = oldUserOpt.get();
+        oldUserUpdated.setFirstName(expandedUserDTO.getFirstName());
+        oldUserUpdated.setLastName(expandedUserDTO.getLastName());
+        oldUserUpdated.setEmail(expandedUserDTO.getEmail());
+        oldUserUpdated.setBirthDate(expandedUserDTO.getBirthDate());
+        oldUserUpdated.setGenre(expandedUserDTO.getGenre());
 
-        User saved = userRepo.save(updatedUser);
+        User saved = userRepo.save(oldUserUpdated);
 
         ExpandedUserDTO expandedUserDTOSaved = mapper.map(saved, ExpandedUserDTO.class);
 
         expandedUserDTO.setStudentCategories(this.getAllStudentCategories(expandedUserDTOSaved.getKeycloakId()));
+        expandedUserDTO.setTeacherDisciplines(this.getAllTeacherDisciplines(saved.getTeacherDisciplines()));
 
         return expandedUserDTOSaved;
     }
@@ -402,6 +407,7 @@ public class UserServiceImpl implements UserService {
         //agrega las categories donde esta inscripto el User
         ExpandedUserDTO expandedCurrentUser = mapper.map(currentUser, ExpandedUserDTO.class);
         expandedCurrentUser.setStudentCategories(this.getAllStudentCategories(keycloakId));
+        expandedCurrentUser.setTeacherDisciplines(getAllTeacherDisciplines(userRepo.findByKeycloakId(currentUser.getKeycloakId()).get().getTeacherDisciplines()));
 
         return expandedCurrentUser;
     }

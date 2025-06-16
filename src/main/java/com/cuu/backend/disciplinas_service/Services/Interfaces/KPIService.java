@@ -15,23 +15,36 @@ import java.util.UUID;
 
 public interface KPIService {
     //KPIs de Users
-    Long kpiUserGetQuantity();
-    KpiGenreQuantities kpiUserGetQuantityForeachGender();
-    List<KpiAgeDistribution> kpiUserGetAgeDistribution();
+//    Long kpiUserGetQuantity();
+//    KpiGenreQuantities kpiUserGetQuantityForeachGender();
+//    List<KpiAgeDistribution> kpiUserGetAgeDistribution();
+    Long kpiUserGetQuantity(LocalDate start, LocalDate end);
+    KpiGenreQuantities kpiUserGetQuantityForeachGender(LocalDate start, LocalDate end);
+    List<KpiAgeDistribution> kpiUserGetAgeDistribution(LocalDate start, LocalDate end);
+
 
     //KPIs de Fees SOCIAL
-    KpiDebtorsQuantity kpiFeeSocialGetDebtorsAndUpToDateQuantities();
-    BigDecimal kpiFeeSocialGetRevenueAmount();
-    List<KpiRevenuePerPeriodDistribution> kpiFeeSocialGetRevenuePerPeriod();
+//    KpiDebtorsQuantity kpiFeeSocialGetDebtorsAndUpToDateQuantities();
+//    BigDecimal kpiFeeSocialGetRevenueAmount();
+//    List<KpiRevenuePerPeriodDistribution> kpiFeeSocialGetRevenuePerPeriod();
+    KpiDebtorsQuantity kpiFeeSocialGetDebtorsAndUpToDateQuantities(LocalDate start, LocalDate end);
+    BigDecimal kpiFeeSocialGetRevenueAmount(LocalDate start, LocalDate end);
+    List<KpiRevenuePerPeriodDistribution> kpiFeeSocialGetRevenuePerPeriod(LocalDate start, LocalDate end);
 
     //KPIs de Fees DISCIPLINE
-    KpiDebtorsQuantity kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(UUID disciplineId);
-    BigDecimal kpiFeeDisciplineGetRevenueAmount(UUID disciplineId);
-    List<KpiRevenuePerPeriodDistribution> kpiFeeDisciplineGetRevenuePerPeriod(UUID disciplineId);
+//    KpiDebtorsQuantity kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(UUID disciplineId);
+//    BigDecimal kpiFeeDisciplineGetRevenueAmount(UUID disciplineId);
+//    List<KpiRevenuePerPeriodDistribution> kpiFeeDisciplineGetRevenuePerPeriod(UUID disciplineId);
+    KpiDebtorsQuantity kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(UUID disciplineId, LocalDate start, LocalDate end);
+    BigDecimal kpiFeeDisciplineGetRevenueAmount(UUID disciplineId, LocalDate start, LocalDate end);
+    List<KpiRevenuePerPeriodDistribution> kpiFeeDisciplineGetRevenuePerPeriod(UUID disciplineId, LocalDate start, LocalDate end);
 
 
     //KPIs de Discipline
-    Long kpiDisciplineGetInscriptionsQuantity(UUID disciplineId);
-    KpiGenreQuantities kpiDisciplineGetInscriptionsQuantityForeachGender(UUID disciplineId);
-    List<KpiAgeDistribution> kpiDisciplineGetAgeDistribution(UUID disciplineId);
+//    Long kpiDisciplineGetInscriptionsQuantity(UUID disciplineId);
+//    KpiGenreQuantities kpiDisciplineGetInscriptionsQuantityForeachGender(UUID disciplineId);
+//    List<KpiAgeDistribution> kpiDisciplineGetAgeDistribution(UUID disciplineId);
+    Long kpiDisciplineGetInscriptionsQuantity(UUID disciplineId, LocalDate start, LocalDate end);
+    KpiGenreQuantities kpiDisciplineGetInscriptionsQuantityForeachGender(UUID disciplineId, LocalDate start, LocalDate end);
+    List<KpiAgeDistribution> kpiDisciplineGetAgeDistribution(UUID disciplineId, LocalDate start, LocalDate end);
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,77 +26,77 @@ public class KPIController {
     private KPIService kpiService;
 
     @GetMapping("/user/get-quantity")
-    public ResponseEntity<Long> kpiUserGetQuantity(){
+    public ResponseEntity<Long> kpiUserGetQuantity(@RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiUserGetQuantity());
+        return ResponseEntity.ok(kpiService.kpiUserGetQuantity(start, end));
     }
 
     @GetMapping("/user/get-quantity-for-each-gender")
-    public ResponseEntity<KpiGenreQuantities> kpiUserGetQuantityForeachGender(){
+    public ResponseEntity<KpiGenreQuantities> kpiUserGetQuantityForeachGender(@RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiUserGetQuantityForeachGender());
+        return ResponseEntity.ok(kpiService.kpiUserGetQuantityForeachGender(start, end));
     }
 
     @GetMapping("/user/get-age-distribution")
-    public ResponseEntity<List<KpiAgeDistribution>> kpiUserGetAgeDistribution(){
+    public ResponseEntity<List<KpiAgeDistribution>> kpiUserGetAgeDistribution(@RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiUserGetAgeDistribution());
+        return ResponseEntity.ok(kpiService.kpiUserGetAgeDistribution(start, end));
     }
 
     //Fee SOCIAL
     @GetMapping("/fee-social/get-debtor-and-uptodate")
-    public ResponseEntity<KpiDebtorsQuantity> kpiFeeSocialGetDebtorsAndUpToDateQuantities(){
+    public ResponseEntity<KpiDebtorsQuantity> kpiFeeSocialGetDebtorsAndUpToDateQuantities(@RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiFeeSocialGetDebtorsAndUpToDateQuantities());
+        return ResponseEntity.ok(kpiService.kpiFeeSocialGetDebtorsAndUpToDateQuantities(start, end));
     }
 
     @GetMapping("/fee-social/get-revenue")
-    public ResponseEntity<BigDecimal> kpiFeeSocialGetRevenueAmount(){
+    public ResponseEntity<BigDecimal> kpiFeeSocialGetRevenueAmount(@RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiFeeSocialGetRevenueAmount());
+        return ResponseEntity.ok(kpiService.kpiFeeSocialGetRevenueAmount(start, end));
     }
 
     @GetMapping("/fee-social/get-revenue-per-period")
-    public ResponseEntity<List<KpiRevenuePerPeriodDistribution>> kpiFeeSocialGetRevenuePerPeriod(){
+    public ResponseEntity<List<KpiRevenuePerPeriodDistribution>> kpiFeeSocialGetRevenuePerPeriod(@RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiFeeSocialGetRevenuePerPeriod());
+        return ResponseEntity.ok(kpiService.kpiFeeSocialGetRevenuePerPeriod(start, end));
     }
 
     //Fee Discipline
     @GetMapping("/fee-discipline/get-debtor-and-uptodate/{disciplineId}")
-    public ResponseEntity<KpiDebtorsQuantity> kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(@PathVariable("disciplineId")UUID disciplineId){
+    public ResponseEntity<KpiDebtorsQuantity> kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(@PathVariable("disciplineId")UUID disciplineId, @RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(disciplineId));
+        return ResponseEntity.ok(kpiService.kpiFeeDisciplineGetDebtorsAndUpToDateQuantities(disciplineId, start, end));
     }
 
     @GetMapping("/fee-discipline/get-revenue/{disciplineId}")
-    public ResponseEntity<BigDecimal> kpiFeeDisciplineGetRevenueAmount(@PathVariable("disciplineId")UUID disciplineId){
+    public ResponseEntity<BigDecimal> kpiFeeDisciplineGetRevenueAmount(@PathVariable("disciplineId")UUID disciplineId, @RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiFeeDisciplineGetRevenueAmount(disciplineId));
+        return ResponseEntity.ok(kpiService.kpiFeeDisciplineGetRevenueAmount(disciplineId, start, end));
     }
 
     @GetMapping("/fee-discipline/get-revenue-per-period/{disciplineId}")
-    public ResponseEntity<List<KpiRevenuePerPeriodDistribution>> kpiFeeDisciplineGetRevenuePerPeriod(@PathVariable("disciplineId")UUID disciplineId){
+    public ResponseEntity<List<KpiRevenuePerPeriodDistribution>> kpiFeeDisciplineGetRevenuePerPeriod(@PathVariable("disciplineId")UUID disciplineId, @RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiFeeDisciplineGetRevenuePerPeriod(disciplineId));
+        return ResponseEntity.ok(kpiService.kpiFeeDisciplineGetRevenuePerPeriod(disciplineId, start, end));
     }
 
     // Discipline
     @GetMapping("/discipline/get-inscriptions/{disciplineId}")
-    public ResponseEntity<Long> kpiDisciplineGetInscriptionsQuantity(@PathVariable("disciplineId")UUID disciplineId){
+    public ResponseEntity<Long> kpiDisciplineGetInscriptionsQuantity(@PathVariable("disciplineId")UUID disciplineId, @RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiDisciplineGetInscriptionsQuantity(disciplineId));
+        return ResponseEntity.ok(kpiService.kpiDisciplineGetInscriptionsQuantity(disciplineId, start, end));
     }
 
     @GetMapping("/discipline/get-inscriptions-foreach-gender/{disciplineId}")
-    public ResponseEntity<KpiGenreQuantities> kpiDisciplineGetInscriptionsQuantityForeachGender(@PathVariable("disciplineId")UUID disciplineId){
+    public ResponseEntity<KpiGenreQuantities> kpiDisciplineGetInscriptionsQuantityForeachGender(@PathVariable("disciplineId")UUID disciplineId, @RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiDisciplineGetInscriptionsQuantityForeachGender(disciplineId));
+        return ResponseEntity.ok(kpiService.kpiDisciplineGetInscriptionsQuantityForeachGender(disciplineId, start, end));
     }
 
     @GetMapping("/discipline/get-age-distribution/{disciplineId}")
-    public ResponseEntity<List<KpiAgeDistribution>> kpiDisciplineGetAgeDistribution(@PathVariable("disciplineId")UUID disciplineId){
+    public ResponseEntity<List<KpiAgeDistribution>> kpiDisciplineGetAgeDistribution(@PathVariable("disciplineId")UUID disciplineId, @RequestParam LocalDate start, @RequestParam LocalDate end){
 
-        return ResponseEntity.ok(kpiService.kpiDisciplineGetAgeDistribution(disciplineId));
+        return ResponseEntity.ok(kpiService.kpiDisciplineGetAgeDistribution(disciplineId, start, end));
     }
 }
