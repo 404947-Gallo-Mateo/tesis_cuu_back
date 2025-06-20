@@ -55,7 +55,7 @@ public class ComplexMapper {
 
         if (fee.getPaymentProof() != null){
             PaymentProof feePaymentProof = fee.getPaymentProof();
-            PaymentProofDTO paymentProofDTO = new PaymentProofDTO(feePaymentProof.getUserKeycloakId(), feePaymentProof.getPaymentDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")), feePaymentProof.getTransactionId(), feePaymentProof.getPaymentMethod(), feePaymentProof.getPaymentProofUrl(), feePaymentProof.getStatus(), feePaymentProof.getPayerEmail());
+            PaymentProofDTO paymentProofDTO = new PaymentProofDTO(feePaymentProof.getUserKeycloakId(), feePaymentProof.getPaymentDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")), feePaymentProof.getPaymentDate().toLocalDate(), feePaymentProof.getTransactionId(), feePaymentProof.getPaymentMethod(), feePaymentProof.getPaymentProofUrl(), feePaymentProof.getStatus(), feePaymentProof.getPayerEmail());
 
             feeDTO.setPaymentProof(paymentProofDTO);
         }

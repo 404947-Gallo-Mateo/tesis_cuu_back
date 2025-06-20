@@ -23,4 +23,7 @@ public class ExpandedStudentInscriptionDTO {
     private LocalDate createdDate;
     private LocalDate updatedDate;
     private List<FeeDTO> inscriptionFees;
+    private Long paidFeesQuantity;
+    private Long unPaidFeesQuantity;
+    private Long latePaidFeesQuantity;
 }
