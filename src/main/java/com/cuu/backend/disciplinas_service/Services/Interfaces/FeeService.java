@@ -5,6 +5,7 @@ import com.cuu.backend.disciplinas_service.Models.Entities.Fee;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
+import jakarta.mail.MessagingException;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -15,7 +16,7 @@ public interface FeeService {
 
     List<FeeDTO> Test_GetAllFees();
     User CreateFeesForStudent(User student);
-    FeeDTO UpdateFeePaidState(String userKeycloakId, FeeType feeType, UUID disciplineId, YearMonth period, Role userResponsibleRole);
+    FeeDTO UpdateFeePaidState(String userKeycloakId, FeeType feeType, UUID disciplineId, YearMonth period, Role userResponsibleRole) throws MessagingException;
     boolean MPUpdateFeePaidState(Long merchantOrderId, UUID feeId);
     boolean MPUpdateFeePaidStateToCancelled(Long merchantOrderId, UUID feeId);
     List<FeeDTO> GetFeesByStudentKeycloakId(String userKeycloakId);

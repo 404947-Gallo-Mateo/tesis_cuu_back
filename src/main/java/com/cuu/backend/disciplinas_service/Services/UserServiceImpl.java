@@ -14,10 +14,12 @@ import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.*;
+import com.cuu.backend.disciplinas_service.Services.Interfaces.EmailService;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.FeeService;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.UserService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
 import com.cuu.backend.disciplinas_service.Services.RestClients.KeycloakAdminClient;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,8 @@ public class UserServiceImpl implements UserService {
     private DisciplineTeachersRepo disciplineTeachersRepo;
     @Autowired
     private FeeService feeService;
-
+    @Autowired
+    private EmailService emailService;
     @Autowired
     private CategoryRepo categoryRepo;
     @Autowired
@@ -276,6 +279,16 @@ public class UserServiceImpl implements UserService {
            disciplineTeachersRepo.deleteTeacherUserDisciplineRelations(user.get().getId());
 
             userRepo.delete(user.get());
+
+            try {
+                String userFullName = " " + user.get().getFirstName() + " " + user.get().getLastName();
+                emailService.sendAccountDeletionConfirmationEmail(user.get().getEmail(), userFullName);
+            } catch (MessagingException e) {
+                // Puedes loguear el error pero no interrumpir el proceso
+                System.out.println("Error al enviar email de confirmación de eliminación de cuenta. error: " + e.getMessage());
+            }
+
+
             return true;
         }
 
@@ -407,7 +420,14 @@ public class UserServiceImpl implements UserService {
         //agrega las categories donde esta inscripto el User
         ExpandedUserDTO expandedCurrentUser = mapper.map(currentUser, ExpandedUserDTO.class);
         expandedCurrentUser.setStudentCategories(this.getAllStudentCategories(keycloakId));
-        expandedCurrentUser.setTeacherDisciplines(getAllTeacherDisciplines(userRepo.findByKeycloakId(currentUser.getKeycloakId()).get().getTeacherDisciplines()));
+
+        //agrega las disciplinas del profe, si corresponde
+        if (currentUser.getRole() != Role.STUDENT){
+            Optional<User> savedCurrentUserOpt = userRepo.findByKeycloakId(currentUser.getKeycloakId());
+            if (savedCurrentUserOpt.isPresent() && savedCurrentUserOpt.get().getTeacherDisciplines() != null){
+                expandedCurrentUser.setTeacherDisciplines(getAllTeacherDisciplines(savedCurrentUserOpt.get().getTeacherDisciplines()));
+            }
+        }
 
         return expandedCurrentUser;
     }
