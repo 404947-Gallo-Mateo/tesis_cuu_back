@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class KpiDebtorsQuantity {
-    Long debtorsAmount;
-    Long upToDateAmount;
+    protected Long debtorsAmount;
+    protected Long upToDateAmount;
 }

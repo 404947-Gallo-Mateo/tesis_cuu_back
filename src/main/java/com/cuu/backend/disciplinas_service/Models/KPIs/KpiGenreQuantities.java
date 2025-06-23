@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class KpiGenreQuantities {
-    Long maleQuantity;
-    Long femaleQuantity;
+    private Long maleQuantity;
+    private Long femaleQuantity;
 }
