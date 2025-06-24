@@ -231,9 +231,11 @@ public class ComplexMapper {
         List<Category> categories = new ArrayList<>();
 
         for (PutCategoryDTO updatedcategory : updatedDisciplineDTO.getCategories()) {
-            Optional<Category> optionalCategory = categoryRepo.findById(updatedcategory.getId());
 
-                Category category;
+            Category category;
+
+            if  (updatedcategory.getId() != null){
+                Optional<Category> optionalCategory = categoryRepo.findById(updatedcategory.getId());
 
                 if (optionalCategory.isPresent()) {
                     category = optionalCategory.get();
@@ -260,6 +262,22 @@ public class ComplexMapper {
                 }
 
                 categories.add(category);
+            }
+            else {
+                category = new Category(
+                        null,
+                        updatedcategory.getName(),
+                        updatedcategory.getDescription(),
+                        updatedcategory.getMonthlyFee(),
+                        oldDiscipline,
+                        updatedcategory.getAvailableSpaces(),
+                        updatedcategory.getAgeRange(),
+                        updatedcategory.getSchedules(),
+                        updatedcategory.getAllowedGenre()
+                );
+                categories.add(category);
+            }
+
         }
 
         return categories;
