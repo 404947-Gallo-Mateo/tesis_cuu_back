@@ -133,12 +133,14 @@ public class UserServiceImpl implements UserService {
                     Map.of("id", roleId, "name", newRole.name())
             );
 
-            restTemplate.exchange(
+            ResponseEntity<Void> keycloakResponse = restTemplate.exchange(
                     roleMappingUrl,
                     HttpMethod.POST,
                     new HttpEntity<>(rolesToAdd, headers),
                     Void.class
             );
+
+
         } catch (Exception e) {
             throw new CustomException("Error al actualizar rol en Keycloak: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -256,6 +258,10 @@ public class UserServiceImpl implements UserService {
         oldUserUpdated.setEmail(expandedUserDTO.getEmail());
         oldUserUpdated.setBirthDate(expandedUserDTO.getBirthDate());
         oldUserUpdated.setGenre(expandedUserDTO.getGenre());
+
+        if (oldUserOpt.get().getRole() != expandedUserDTO.getRole()){
+            oldUserUpdated.setRole(expandedUserDTO.getRole());
+        }
 
         User saved = userRepo.save(oldUserUpdated);
 
