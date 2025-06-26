@@ -189,7 +189,7 @@ public class EmailServiceImpl implements EmailService {
             
             <div class="content">
                 <p>Hola""" + fullName + """
-                ,</p>
+                </p>
                 
                 <p>Queremos informarte que tu cuenta en el Club Unión Unquillo ha sido eliminada de nuestros sistemas.</p>
                 

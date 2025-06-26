@@ -284,7 +284,7 @@ public class UserServiceImpl implements UserService {
            disciplineRepo.deleteDisciplineTeacherUserRelations(user.get().getId());
            disciplineTeachersRepo.deleteTeacherUserDisciplineRelations(user.get().getId());
 
-            userRepo.delete(user.get());
+            userRepo.deleteById(user.get().getId());
 
             try {
                 String userFullName = " " + user.get().getFirstName() + " " + user.get().getLastName();

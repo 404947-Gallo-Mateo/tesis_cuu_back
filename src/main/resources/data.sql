@@ -105,10 +105,10 @@ VALUES
 -- USERS
 INSERT INTO users (id, keycloak_id, role, username, email, first_name, last_name, birth_date, genre, created_date)
 VALUES
-  ('99999999-1111-1111-1111-111111111111', 'a1d5ca02-e4e8-41d2-9fff-de744a3b782e', 'ADMIN_CUU', 'soyAdmin', 'aaaa@example.com', 'no', 'tampoco', '2004-10-16', 'MALE', '2020-05-12'),
-  ('99999999-3333-3333-3333-333333333333', '3a07120e-0b2d-4edf-9560-33d17a43660e', 'STUDENT', 'juanjo', 'Juan@example.com', 'Juan', 'Pérez', '2010-04-15', 'MALE', '2022-10-22'),
-  ('99999999-4444-4444-4444-444444444444', 'kc-teacher-uuid-22222222', 'TEACHER', 'Profe Lucia', 'Lucia@example.com', 'Lucía', 'Gómez', '1985-09-30', 'FEMALE', '2024-02-11'),
-  ('99999999-5555-5555-5555-555555555555', '2915b895-b362-4f5f-ac0a-7d1018575c7f', 'TEACHER', 'Profe SOR', 'profe@kc.com', 'profe', 'keycloak', '1985-09-30', 'MALE', '2025-05-30');
+  ('99999999-1111-1111-1111-111111111111', 'a1d5ca02-e4e8-41d2-9fff-de744a3b782e', 'ADMIN_CUU', 'soyAdmin', 'aaaa@example.com', 'insert', 'tampoco', '2004-10-16', 'MALE', '2020-05-12'),
+  ('99999999-3333-3333-3333-333333333333', '12a21ee2-8a42-47f9-a030-9d7f67fe9c22', 'STUDENT', 'juanjo', 'Juan@example.com', 'insert', 'Pérez', '2010-04-15', 'MALE', '2022-10-22'),
+  ('99999999-4444-4444-4444-444444444444', 'kc-teacher-uuid-22222222', 'TEACHER', 'Profe Lucia', 'Lucia@example.com', 'insert', 'Gómez', '1985-09-30', 'FEMALE', '2024-02-11'),
+  ('99999999-5555-5555-5555-555555555555', '2915b895-b362-4f5f-ac0a-7d1018575c7f', 'TEACHER', 'Profe SOR', 'profe@kc.com', 'insert', 'keycloak', '1985-09-30', 'MALE', '2025-05-30');
 
 
 -- STUDENT INSCRIPTIONS
