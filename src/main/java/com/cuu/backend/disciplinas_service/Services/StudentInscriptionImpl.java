@@ -162,7 +162,7 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
                     paidFeesQuantity++;
 
                     //calculo de Long latePaidFeesQuantity;
-                    if (f.getPaymentProof().getPaymentDateLocalDate() != null && f.getDueDate().isBefore(f.getPaymentProof().getPaymentDateLocalDate())) {
+                    if (f.getPaymentDate() != null && f.getDueDate().isBefore(f.getPaymentDate())) {
                         latePaidFeesQuantity++;
                     }
 

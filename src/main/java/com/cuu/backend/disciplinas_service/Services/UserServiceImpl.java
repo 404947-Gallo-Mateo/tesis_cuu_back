@@ -230,12 +230,13 @@ public class UserServiceImpl implements UserService {
                     Void.class
             );
 
-            if (keycloakResponse.getStatusCode().is2xxSuccessful()) {
-                // Solo si se borra correctamente en Keycloak, se borra en tu DB
-                return this.deleteKeycloakUserInLocalDb(userKeycloakId);
-            } else {
+            this.deleteKeycloakUserInLocalDb(userKeycloakId);
+
+            if (!keycloakResponse.getStatusCode().is2xxSuccessful()) {
                 throw new CustomException("Error al eliminar el usuario en Keycloak", HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
+            return true;
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             throw new CustomException("Error al eliminar el usuario en Keycloak: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -275,7 +276,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Transactional
-    private boolean deleteKeycloakUserInLocalDb(String userKeycloakId){
+    private void deleteKeycloakUserInLocalDb(String userKeycloakId){
         Optional<User> user = userRepo.findByKeycloakId(userKeycloakId);
 
         if (user.isPresent()){
@@ -295,10 +296,8 @@ public class UserServiceImpl implements UserService {
             }
 
 
-            return true;
         }
 
-        return false;
     }
 
     @Override

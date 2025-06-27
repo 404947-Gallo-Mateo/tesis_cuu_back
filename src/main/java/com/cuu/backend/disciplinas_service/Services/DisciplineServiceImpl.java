@@ -8,6 +8,7 @@ import com.cuu.backend.disciplinas_service.Models.DTOs.forPost.PutDisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
+import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import com.cuu.backend.disciplinas_service.Repositories.*;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.DisciplineService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,6 +94,46 @@ public class DisciplineServiceImpl implements DisciplineService {
             // Flush para asegurar que las eliminaciones se ejecuten antes del mapeo
             studentInscriptionRepo.flush();
         }
+
+        // Eliminar relación entre TEACHERS y la Discipline (en caso de que hayan cambiado los TEACHERS asignados)
+        List<User> oldTeachers = new ArrayList<>(oldDiscipline.getTeachers());
+        List<String> updatedTeachers = disciplineDTO.getTeacherIds();
+
+        // Identificar profesores a remover
+                List<User> teachersToRemove = oldTeachers.stream()
+                        .filter(oldTeach -> updatedTeachers.stream()
+                                .noneMatch(updatedTeach ->
+                                        updatedTeach != null &&
+                                                updatedTeach.equals(oldTeach.getId().toString())
+                                )
+                        )
+                        .toList();
+
+        // Remover relación desde el lado del profesor
+                if (!teachersToRemove.isEmpty()) {
+                    for (User teacher : teachersToRemove) {
+                        List<Discipline> teacherDisciplines = new ArrayList<>(teacher.getTeacherDisciplines()); // Crear copia mutable
+
+                        // Buscar índice de la disciplina a eliminar
+                        int indexToRemove = -1;
+                        for (int i = 0; i < teacherDisciplines.size(); i++) {
+                            Discipline disc = teacherDisciplines.get(i);
+                            if (disc.getId() != null && disc.getId().equals(disciplineDTO.getId())) {
+                                indexToRemove = i;
+                                break;
+                            }
+                        }
+
+                        // Eliminar por índice si se encontró
+                        if (indexToRemove != -1) {
+                            teacherDisciplines.remove(indexToRemove);
+                            teacher.setTeacherDisciplines(teacherDisciplines); // Actualizar lista
+                            userRepo.save(teacher); // Guardar cambios
+                        }
+                    }
+                }
+        // FIN relación entre TEACHERS y la Discipline
+
 
         // SEGUNDO: Ahora mapear y actualizar la disciplina (esto eliminará las categorías)
         Discipline updatedDiscipline = complexMapper.mapDisciplineDTOToDiscipline(disciplineDTO, oldDiscipline);

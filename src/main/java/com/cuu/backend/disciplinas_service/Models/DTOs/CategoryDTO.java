@@ -24,6 +24,7 @@ public class CategoryDTO implements ICategorySummary {
     private UUID disciplineId;
     private String disciplineName;
     private Long availableSpaces;
+    private Long remainingSpaces;
     private AgeRange ageRange;
     private List<Schedule> schedules;
     @Enumerated(EnumType.STRING)

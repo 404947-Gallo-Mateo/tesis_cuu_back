@@ -12,6 +12,7 @@ import com.cuu.backend.disciplinas_service.Models.Entities.*;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
+import com.cuu.backend.disciplinas_service.Repositories.StudentInscriptionRepo;
 import com.cuu.backend.disciplinas_service.Repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,8 @@ public class ComplexMapper {
     private UserRepo userRepo;
     @Autowired
     private CategoryRepo categoryRepo;
+    @Autowired
+    private StudentInscriptionRepo studentInscriptionRepo;
 
     public FeeDTO mapFeeEntityToFeeDTO(Fee fee){
 
@@ -87,7 +90,8 @@ public class ComplexMapper {
                 null, fee.getUserKeycloakId(), fee.getPayerEmail(),
                 fee.getDisciplineId(), fee.getCategoryId(),
                 disciplineName, categoryName, fee.isPaid(), fee.getFeeState(),
-                null, fee.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")), fee.getDescription());
+                null, null,
+                fee.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")), fee.getDescription());
     }
 
     public DisciplineDTO mapDisciplineEntityToDisciplineDTO(Discipline discipline){
@@ -101,7 +105,13 @@ public class ComplexMapper {
         List<ICategorySummary> categoriesDTOList = new ArrayList<>();
 
         for (Category c : disciplineCategories){
-            CategoryDTO dto = new CategoryDTO(c.getId(), c.getName(), c.getDescription(), c.getMonthlyFee(), c.getDiscipline().getId(), c.getDiscipline().getName(), c.getAvailableSpaces(), c.getAgeRange(), c.getSchedules(), c.getAllowedGenre());
+            Long remainingSpaces = c.getAvailableSpaces();
+
+            if (c.getId() != null){
+                remainingSpaces -= studentInscriptionRepo.countByCategoryId(c.getId());
+            }
+
+            CategoryDTO dto = new CategoryDTO(c.getId(), c.getName(), c.getDescription(), c.getMonthlyFee(), c.getDiscipline().getId(), c.getDiscipline().getName(), c.getAvailableSpaces(), remainingSpaces, c.getAgeRange(), c.getSchedules(), c.getAllowedGenre());
             categoriesDTOList.add(dto);
         }
 
