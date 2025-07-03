@@ -3,15 +3,18 @@ package com.cuu.backend.disciplinas_service.Services;
 import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisplayOnFrontend.ExpandedUserDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.FeeDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
-import com.cuu.backend.disciplinas_service.Models.DTOs.UserDTO;
+import com.cuu.backend.disciplinas_service.Models.DTOs.UserWithFeesDTO;
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.*;
+import com.cuu.backend.disciplinas_service.Services.Interfaces.FeeService;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.UserService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
 import com.cuu.backend.disciplinas_service.Services.RestClients.KeycloakAdminClient;
@@ -31,17 +34,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
-
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserRepo userRepo;
     @Autowired
     private DisciplineRepo disciplineRepo;
     @Autowired
     private DisciplineTeachersRepo disciplineTeachersRepo;
+    @Autowired
+    private FeeService feeService;
 
     @Autowired
     private CategoryRepo categoryRepo;
@@ -300,6 +302,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserWithFeesDTO> getAllUsersWithSocialFees() {
+        List<User> users = userRepo.getAllOrdered();
+        List<UserWithFeesDTO> userDTOList = new ArrayList<>();
+
+        for (User u : users){
+            List<FeeDTO> userFees = feeService.findByFeeTypeAndUserKeycloakId(FeeType.SOCIAL, u.getKeycloakId());
+
+            boolean isDebtor = false;
+
+            for (FeeDTO f : userFees){ if (f.isDue()){ isDebtor = true; break;} }
+
+            UserWithFeesDTO userDTO = new UserWithFeesDTO(isDebtor, u.getKeycloakId(), u.getRole(), u.getUsername(), u.getEmail(), u.getFirstName(), u.getLastName(), u.getBirthDate(), u.getGenre() , userFees);
+
+            userDTOList.add(userDTO);
+        }
+
+        return userDTOList;
+    }
+
+    @Override
     public List<ExpandedUserDTO> getAllUsersByRole(Role role) {
         List<User> users = userRepo.getAllByRoleOrdered(role);
         List<ExpandedUserDTO> userDTOList = new ArrayList<>();
@@ -371,6 +393,10 @@ public class UserServiceImpl implements UserService {
                     //crea y devuelve el mismo User pero con los datos de la DB de este MS
                     return userRepo.save(newUser);
                 });
+
+        //todo crear cuotas
+        currentUser = feeService.CreateFeesForStudent(currentUser);
+        userRepo.save(currentUser);
 
         //agrega las categories donde esta inscripto el User
         ExpandedUserDTO expandedCurrentUser = mapper.map(currentUser, ExpandedUserDTO.class);

@@ -60,6 +60,12 @@ public interface StudentInscriptionRepo extends JpaRepository<StudentInscription
     @Transactional
     @Query("DELETE FROM StudentInscription si WHERE si.student.id = :userId")
     void deleteByUserId(@Param("userId") UUID userId);
+
+    @Query("SELECT si FROM StudentInscription si " +
+            "WHERE si.student.keycloakId = :studentKeycloakId " +
+            "ORDER BY si.createdDate ASC LIMIT 1")
+    Optional<StudentInscription> findOldestByStudentKeycloakId(@Param("studentKeycloakId") String studentKeycloakId);
+
     //traen solo el ID de StudentInscription
 //    @Query("SELECT si.id FROM StudentInscription si WHERE si.student.id = :studentId")
 //    List<UUID> findIdsByStudentId(@Param("studentId") UUID studentId);
