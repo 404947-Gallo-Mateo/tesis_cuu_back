@@ -2,6 +2,8 @@ package com.cuu.backend.disciplinas_service.Services.Interfaces;
 
 import com.cuu.backend.disciplinas_service.Models.DTOs.ExpandedStudentInscriptionDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;

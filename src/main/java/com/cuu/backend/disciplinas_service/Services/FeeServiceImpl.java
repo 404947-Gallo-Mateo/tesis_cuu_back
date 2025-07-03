@@ -11,8 +11,11 @@ import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
 import com.cuu.backend.disciplinas_service.Repositories.FeeRepo;
 import com.cuu.backend.disciplinas_service.Repositories.StudentInscriptionRepo;
+import com.cuu.backend.disciplinas_service.Repositories.UserRepo;
+import com.cuu.backend.disciplinas_service.Services.Interfaces.EmailService;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.FeeService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +35,13 @@ public class FeeServiceImpl implements FeeService {
     @Autowired
     private FeeRepo feeRepo;
     @Autowired
+    private UserRepo userRepo;
+    @Autowired
     private StudentInscriptionRepo studentInscriptionRepo;
     @Autowired
     private DisciplineRepo disciplineRepo;
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private ComplexMapper complexMapper;
@@ -51,27 +58,30 @@ public class FeeServiceImpl implements FeeService {
             feeDTOList.add(complexMapper.mapFeeEntityToFeeDTO(f));
         }
 
-        return feeDTOList;    }
+        return feeDTOList;
+    }
+
 
     @Override
     @Transactional
     public User CreateFeesForStudent(User student) {
-
         if (student == null || student.getKeycloakId() == null) {
             throw new IllegalArgumentException("Estudiante o Keycloak ID no pueden ser nulos");
         }
 
-        String studentKCID = student.getKeycloakId();
+        // 1. Busca el usuario gestionado en la base de datos
+        User managedStudent = userRepo.findByKeycloakId(student.getKeycloakId())
+                .orElseThrow(() -> new CustomException("Usuario no encontrado", HttpStatus.NOT_FOUND));
 
+        // 2. Usa el usuario gestionado para las operaciones
+        String studentKCID = managedStudent.getKeycloakId();
         List<StudentInscription> userInscriptions = studentInscriptionRepo.findAllByStudentKeycloakId(studentKCID);
 
-        // si NO tiene inscripciones, NO se le generan cuotas (de ningun FeeType)
-        if (!userInscriptions.isEmpty()){
-            //generar Cuotas de FeeType SOCIAL
-            GenerateSocialFeesForStudent(student, studentKCID, userInscriptions);
-            GenerateDisciplineFeesForStudent(student, studentKCID, userInscriptions);
+        if (!userInscriptions.isEmpty()) {
+            GenerateSocialFeesForStudent(managedStudent, studentKCID, userInscriptions);
+            GenerateDisciplineFeesForStudent(managedStudent, studentKCID, userInscriptions);
         }
-        return student;
+        return managedStudent;
     }
 
     @Transactional
@@ -117,7 +127,7 @@ public class FeeServiceImpl implements FeeService {
 
                 Fee newFee = new Fee(null, FeeType.SOCIAL, BigDecimal.valueOf(5000), LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
                                     oldestPeriod, student, studentKCID, student.getEmail(), null, null, false, FeeState.UNPAID,
-                                    null, LocalDateTime.now(), description);
+                                    null, null, LocalDateTime.now(), description);
 
                 Fee savedFee = feeRepo.save(newFee);
 
@@ -191,7 +201,7 @@ public class FeeServiceImpl implements FeeService {
 
                     Fee newFee = new Fee(null, FeeType.DISCIPLINE, categoryMonthlyFee, LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
                             oldestPeriod, student, studentKCID, student.getEmail(), disciplineId, categoryId, false, FeeState.UNPAID,
-                            null, LocalDateTime.now(), description);
+                            null, null, LocalDateTime.now(), description);
 
                     Fee savedFee = feeRepo.save(newFee);
 
@@ -207,7 +217,7 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public FeeDTO UpdateFeePaidState(String userKeycloakId, FeeType feeType, UUID disciplineId, YearMonth period, Role userResponsibleRole){
+    public FeeDTO UpdateFeePaidState(String userKeycloakId, FeeType feeType, UUID disciplineId, YearMonth period, Role userResponsibleRole) {
         Optional<Fee> feeOptional = feeRepo.findByUserKeycloakIdAndFeeTypeAndDisciplineIdAndPeriod(userKeycloakId, feeType, disciplineId, period);
 
         if (feeOptional.isEmpty()){
@@ -232,9 +242,17 @@ public class FeeServiceImpl implements FeeService {
         PaymentProof newPaymentProof = new PaymentProof(null, feeToUpdate, feeToUpdate.getUserKeycloakId(), LocalDateTime.now(), null, PaymentType.CASH, null, "approved", feeToUpdate.getPayerEmail());
         feeToUpdate.setPaid(true);
         feeToUpdate.setFeeState(FeeState.PAID);
+        feeToUpdate.setPaymentDate(LocalDate.now());
         feeToUpdate.setPaymentProof(newPaymentProof);
 
         Fee savedFee = feeRepo.save(feeToUpdate);
+
+        try {
+            emailService.sendPaymentReceiptEmail(savedFee, savedFee.getPaymentProof());
+        }
+        catch (Exception e){
+            System.out.println("No se pudo enviar el comprobante de pago. Error: " + e.getMessage());
+        }
 
         return complexMapper.mapFeeEntityToFeeDTO(savedFee);
     }
@@ -256,10 +274,18 @@ public class FeeServiceImpl implements FeeService {
 
         PaymentProof newPaymentProof = new PaymentProof(null, feeToUpdate, feeToUpdate.getUserKeycloakId(), LocalDateTime.now(), merchantOrderId.toString(), PaymentType.MERCADO_PAGO, null, "approved", feeToUpdate.getPayerEmail());
         feeToUpdate.setPaid(true);
+        feeToUpdate.setPaymentDate(LocalDate.now());
         feeToUpdate.setFeeState(FeeState.PAID);
         feeToUpdate.setPaymentProof(newPaymentProof);
 
         Fee savedFee = feeRepo.save(feeToUpdate);
+
+        try {
+            emailService.sendPaymentReceiptEmail(savedFee, savedFee.getPaymentProof());
+        }
+        catch (Exception e){
+            System.out.println("No se pudo enviar el comprobante de pago. Error: " + e.getMessage());
+        }
 
         return savedFee.isPaid();
     }

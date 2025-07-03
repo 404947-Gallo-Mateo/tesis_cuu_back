@@ -14,10 +14,12 @@ import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
 import com.cuu.backend.disciplinas_service.Repositories.*;
+import com.cuu.backend.disciplinas_service.Services.Interfaces.EmailService;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.FeeService;
 import com.cuu.backend.disciplinas_service.Services.Interfaces.UserService;
 import com.cuu.backend.disciplinas_service.Services.Mappers.ComplexMapper;
 import com.cuu.backend.disciplinas_service.Services.RestClients.KeycloakAdminClient;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,8 @@ public class UserServiceImpl implements UserService {
     private DisciplineTeachersRepo disciplineTeachersRepo;
     @Autowired
     private FeeService feeService;
-
+    @Autowired
+    private EmailService emailService;
     @Autowired
     private CategoryRepo categoryRepo;
     @Autowired
@@ -130,12 +133,14 @@ public class UserServiceImpl implements UserService {
                     Map.of("id", roleId, "name", newRole.name())
             );
 
-            restTemplate.exchange(
+            ResponseEntity<Void> keycloakResponse = restTemplate.exchange(
                     roleMappingUrl,
                     HttpMethod.POST,
                     new HttpEntity<>(rolesToAdd, headers),
                     Void.class
             );
+
+
         } catch (Exception e) {
             throw new CustomException("Error al actualizar rol en Keycloak: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -225,12 +230,13 @@ public class UserServiceImpl implements UserService {
                     Void.class
             );
 
-            if (keycloakResponse.getStatusCode().is2xxSuccessful()) {
-                // Solo si se borra correctamente en Keycloak, se borra en tu DB
-                return this.deleteKeycloakUserInLocalDb(userKeycloakId);
-            } else {
+            this.deleteKeycloakUserInLocalDb(userKeycloakId);
+
+            if (!keycloakResponse.getStatusCode().is2xxSuccessful()) {
                 throw new CustomException("Error al eliminar el usuario en Keycloak", HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
+            return true;
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             throw new CustomException("Error al eliminar el usuario en Keycloak: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -241,27 +247,36 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     private ExpandedUserDTO updateKeycloakUserInLocalDb(ExpandedUserDTO expandedUserDTO){
-        Optional<User> oldUser = userRepo.findByKeycloakId(expandedUserDTO.getKeycloakId());
+        Optional<User> oldUserOpt = userRepo.findByKeycloakId(expandedUserDTO.getKeycloakId());
 
-        if (oldUser.isEmpty()){
+        if (oldUserOpt.isEmpty()){
             throw new CustomException("No se encontro el Usuario", HttpStatus.BAD_REQUEST);
         }
 
-        User updatedUser = mapper.map(expandedUserDTO, User.class);
-        updatedUser.setId(oldUser.get().getId());
+        User oldUserUpdated = oldUserOpt.get();
+        oldUserUpdated.setFirstName(expandedUserDTO.getFirstName());
+        oldUserUpdated.setLastName(expandedUserDTO.getLastName());
+        oldUserUpdated.setEmail(expandedUserDTO.getEmail());
+        oldUserUpdated.setBirthDate(expandedUserDTO.getBirthDate());
+        oldUserUpdated.setGenre(expandedUserDTO.getGenre());
 
-        User saved = userRepo.save(updatedUser);
+        if (oldUserOpt.get().getRole() != expandedUserDTO.getRole()){
+            oldUserUpdated.setRole(expandedUserDTO.getRole());
+        }
+
+        User saved = userRepo.save(oldUserUpdated);
 
         ExpandedUserDTO expandedUserDTOSaved = mapper.map(saved, ExpandedUserDTO.class);
 
         expandedUserDTO.setStudentCategories(this.getAllStudentCategories(expandedUserDTOSaved.getKeycloakId()));
+        expandedUserDTO.setTeacherDisciplines(this.getAllTeacherDisciplines(saved.getTeacherDisciplines()));
 
         return expandedUserDTOSaved;
     }
 
 
     @Transactional
-    private boolean deleteKeycloakUserInLocalDb(String userKeycloakId){
+    private void deleteKeycloakUserInLocalDb(String userKeycloakId){
         Optional<User> user = userRepo.findByKeycloakId(userKeycloakId);
 
         if (user.isPresent()){
@@ -270,11 +285,19 @@ public class UserServiceImpl implements UserService {
            disciplineRepo.deleteDisciplineTeacherUserRelations(user.get().getId());
            disciplineTeachersRepo.deleteTeacherUserDisciplineRelations(user.get().getId());
 
-            userRepo.delete(user.get());
-            return true;
+            userRepo.deleteById(user.get().getId());
+
+            try {
+                String userFullName = " " + user.get().getFirstName() + " " + user.get().getLastName();
+                emailService.sendAccountDeletionConfirmationEmail(user.get().getEmail(), userFullName);
+            } catch (MessagingException e) {
+                // Puedes loguear el error pero no interrumpir el proceso
+                System.out.println("Error al enviar email de confirmación de eliminación de cuenta. error: " + e.getMessage());
+            }
+
+
         }
 
-        return false;
     }
 
     @Override
@@ -389,6 +412,7 @@ public class UserServiceImpl implements UserService {
                     newUser.setLastName(lastName != null ? lastName : "-");
                     newUser.setBirthDate(birthDate);
                     newUser.setGenre(genre);
+                    newUser.setCreatedDate(LocalDate.now());
 
                     //crea y devuelve el mismo User pero con los datos de la DB de este MS
                     return userRepo.save(newUser);
@@ -401,6 +425,14 @@ public class UserServiceImpl implements UserService {
         //agrega las categories donde esta inscripto el User
         ExpandedUserDTO expandedCurrentUser = mapper.map(currentUser, ExpandedUserDTO.class);
         expandedCurrentUser.setStudentCategories(this.getAllStudentCategories(keycloakId));
+
+        //agrega las disciplinas del profe, si corresponde
+        if (currentUser.getRole() != Role.STUDENT){
+            Optional<User> savedCurrentUserOpt = userRepo.findByKeycloakId(currentUser.getKeycloakId());
+            if (savedCurrentUserOpt.isPresent() && savedCurrentUserOpt.get().getTeacherDisciplines() != null){
+                expandedCurrentUser.setTeacherDisciplines(getAllTeacherDisciplines(savedCurrentUserOpt.get().getTeacherDisciplines()));
+            }
+        }
 
         return expandedCurrentUser;
     }

@@ -3,6 +3,7 @@ package com.cuu.backend.disciplinas_service.Repositories;
 
 import com.cuu.backend.disciplinas_service.Models.Entities.Category;
 import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
+import com.cuu.backend.disciplinas_service.Models.Entities.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,12 +11,36 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public interface StudentInscriptionRepo extends JpaRepository<StudentInscription, UUID> {
+
+    //queries KPI Discipline
+    @Query("SELECT COUNT(si) FROM StudentInscription si " +
+            "WHERE si.discipline.id = :disciplineId " +
+            "AND si.createdDate BETWEEN :start AND :end")
+    long countInscriptionsAmount(@Param("disciplineId") UUID disciplineId, @Param("start") LocalDate start, @Param("end") LocalDate end);
+    @Query("SELECT COUNT(si) FROM StudentInscription si " +
+            "WHERE si.student.genre = 'MALE' " +
+            "AND si.discipline.id = :disciplineId " +
+            "AND si.createdDate BETWEEN :start AND :end")
+    long countMaleUsers(@Param("disciplineId") UUID disciplineId, @Param("start") LocalDate start, @Param("end") LocalDate end);
+    @Query("SELECT COUNT(si) FROM StudentInscription si " +
+            "WHERE si.student.genre = 'FEMALE' " +
+            "AND si.discipline.id = :disciplineId " +
+            "AND si.createdDate BETWEEN :start AND :end")
+    long countFemaleUsers(@Param("disciplineId") UUID disciplineId, @Param("start") LocalDate start, @Param("end") LocalDate end);
+    @Query("SELECT DISTINCT si.student FROM StudentInscription si " +
+            "WHERE si.discipline.id = :disciplineId " +
+            "AND si.createdDate BETWEEN :start AND :end")
+    Set<User> findDistinctStudentsByDisciplineId(@Param("disciplineId") UUID disciplineId, @Param("start") LocalDate start, @Param("end") LocalDate end);
+    //
+
     //traen el objeto entero
     @Query("SELECT si FROM StudentInscription si " +
             "WHERE si.student.keycloakId = :studentKeycloakId " +
