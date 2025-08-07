@@ -45,6 +45,7 @@ public class FeeDTO {
     private FeeState feeState;
 
     private PaymentProofDTO paymentProof;
+    private LocalDate paymentDate;
 
     private String createdAt; // es LocalDateTime en Fee
 

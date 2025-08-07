@@ -2,7 +2,7 @@
 MERGE INTO disciplines (id, name, description)
 VALUES
   ('11111111-1111-1111-1111-111111111111', 'Basquet', 'Básquet para todas las edades, con una división de Primera Categoría para los grandes talentos'),
-  ('22222222-2222-2222-2222-222222222222', 'Boxeo', 'Boxeo para recreativo para niños y Boxeo competitivo para los adultos.'),
+  ('22222222-2222-2222-2222-222222222222', 'Boxeo', 'Boxeo recreativo para niños y Boxeo competitivo para los adultos.'),
   ('33333333-3333-3333-3333-333333333333', 'Gimnasia Rítmica', 'Gimnasia Rítmica para todas las edades.'),
   ('44444444-4444-4444-4444-444444444444', 'Karate Do', 'Karate del mejor nivel continental, para todas las edades.');
 
@@ -20,13 +20,13 @@ VALUES
 -- CATEGORIES Boxeo (22222222-2222-2222-2222-222222222222)
 MERGE INTO categories (id, name, description, monthly_fee, discipline_id, available_spaces, min_age, max_age, allowed_genre)
 VALUES
-  ('bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Recreativo', 'Recreativo básica para niños.', 12000.00, '22222222-2222-2222-2222-222222222222', 0, 10, 18, 'MIXED'),
+  ('bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Recreativo', 'Recreativo básica para niños.', 12000.00, '22222222-2222-2222-2222-222222222222', 0, 10, 18, 'MALE'),
   ('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Competitivo', 'Competitivo avanzado para adultos.', 15000.00, '22222222-2222-2222-2222-222222222222', 0, 18, 55, 'MIXED');
 
 -- CATEGORIES Gimnasia Ritmica (33333333-3333-3333-3333-333333333333)
 MERGE INTO categories (id, name, description, monthly_fee, discipline_id, available_spaces, min_age, max_age, allowed_genre)
 VALUES
-  ('ccccccc2-cccc-cccc-cccc-cccccccccccc', 'Medio', 'Intermedio para niños de 6 o más años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 6, 18, 'MIXED'),
+  ('ccccccc2-cccc-cccc-cccc-cccccccccccc', 'Medio', 'Intermedio para niños de 6 o más años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 6, 18, 'FEMALE'),
   ('ccccccc1-cccc-cccc-cccc-cccccccccccc', 'Inicial', 'Recreativo básica para niños menores de 5 años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 3, 5, 'MIXED'),
   ('ccccccc3-cccc-cccc-cccc-cccccccccccc', 'Avanzado', 'Nivel avanzado para mayores de 12 años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 18, 55, 'MIXED');
 
@@ -34,7 +34,7 @@ VALUES
 MERGE INTO categories (id, name, description, monthly_fee, discipline_id, available_spaces, min_age, max_age, allowed_genre)
 VALUES
   ('fffffff1-ffff-ffff-ffff-ffffffffffff', 'Karate Tradicional', 'Karate Tradicional para todas las edades, a partir de los 5 años.', 15000.00, '44444444-4444-4444-4444-444444444444', 0, 5, 55, 'MIXED'),
-  ('fffffff2-ffff-ffff-ffff-ffffffffffff', 'Deportivo', 'Karate Deportivo, a partir de los 5 años.', 15000.00, '44444444-4444-4444-4444-444444444444', 0, 5, 55, 'MIXED');
+  ('fffffff2-ffff-ffff-ffff-ffffffffffff', 'Deportivo', 'Karate Deportivo, a partir de los 5 años.', 15000.00, '44444444-4444-4444-4444-444444444444', 0, 5, 55, 'MALE');
 
 
 -- SCHEDULES
@@ -103,12 +103,12 @@ VALUES
   ('fffffff2-ffff-ffff-ffff-ffffffffffff', 'SATURDAY', '10:00:00', '12:00:00');
 
 -- USERS
-INSERT INTO users (id, keycloak_id, role, username, email, first_name, last_name, birth_date, genre)
+INSERT INTO users (id, keycloak_id, role, username, email, first_name, last_name, birth_date, genre, created_date)
 VALUES
-  ('99999999-1111-1111-1111-111111111111', 'a1d5ca02-e4e8-41d2-9fff-de744a3b782e', 'ADMIN_CUU', 'soyAdmin', 'aaaa@example.com', 'no', 'tampoco', '2004-10-16', 'MALE'),
-  ('99999999-3333-3333-3333-333333333333', '3a07120e-0b2d-4edf-9560-33d17a43660e', 'STUDENT', 'juanjo', 'Juan@example.com', 'Juan', 'Pérez', '2010-04-15', 'MALE'),
-  ('99999999-4444-4444-4444-444444444444', 'kc-teacher-uuid-22222222', 'TEACHER', 'Profe Lucia', 'Lucia@example.com', 'Lucía', 'Gómez', '1985-09-30', 'FEMALE'),
-  ('99999999-5555-5555-5555-555555555555', '2915b895-b362-4f5f-ac0a-7d1018575c7f', 'TEACHER', 'Profe SOR', 'profe@kc.com', 'profe', 'keycloak', '1985-09-30', 'MALE');
+  ('99999999-1111-1111-1111-111111111111', 'a1d5ca02-e4e8-41d2-9fff-de744a3b782e', 'ADMIN_CUU', 'soyAdmin', 'aaaa@example.com', 'insert', 'tampoco', '2004-10-16', 'MALE', '2020-05-12'),
+  ('99999999-3333-3333-3333-333333333333', '12a21ee2-8a42-47f9-a030-9d7f67fe9c22', 'STUDENT', 'juanjo', 'Juan@example.com', 'insert', 'Pérez', '2010-04-15', 'MALE', '2022-10-22'),
+  ('99999999-4444-4444-4444-444444444444', 'kc-teacher-uuid-22222222', 'TEACHER', 'Profe Lucia', 'Lucia@example.com', 'insert', 'Gómez', '1985-09-30', 'FEMALE', '2024-02-11'),
+  ('99999999-5555-5555-5555-555555555555', '2915b895-b362-4f5f-ac0a-7d1018575c7f', 'TEACHER', 'Profe SOR', 'profe@kc.com', 'insert', 'keycloak', '1985-09-30', 'MALE', '2025-05-30');
 
 
 -- STUDENT INSCRIPTIONS

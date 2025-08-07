@@ -62,6 +62,8 @@ public class Fee {
 
     @OneToOne(mappedBy = "fee", cascade = CascadeType.ALL)
     private PaymentProof paymentProof;
+    @Column(nullable = true)
+    private LocalDate paymentDate;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -148,13 +149,35 @@ public class StudentInscriptionImpl implements StudentInscriptionService {
             expandedDTO.setInscriptionFees(unpaidFees);
 
             //se determina si el Student de esta Inscription es deudor (debtor == true), si alguna Fee tiene isDue == true, es deudor.
-            boolean isDebtor = false;
 
+
+            boolean isDebtor = false;
+            long paidFeesQuantity = 0; long unPaidFeesQuantity = 0; long latePaidFeesQuantity = 0;
             for (FeeDTO f: unpaidFees){
-                if (f.isDue()){{ isDebtor = true; break; }}
+                if (f.isDue()){
+                    isDebtor = true;
+                }
+                //calculo de Long payedFeesQuantity;
+                if (f.isPaid()) {
+                    paidFeesQuantity++;
+
+                    //calculo de Long latePaidFeesQuantity;
+                    if (f.getPaymentDate() != null && f.getDueDate().isBefore(f.getPaymentDate())) {
+                        latePaidFeesQuantity++;
+                    }
+
+                }
+                else
+                {
+                    //calculo de Long unPayedFeesQuantity;
+                    unPaidFeesQuantity++;
+                }
             }
 
             expandedDTO.setDebtor(isDebtor);
+            expandedDTO.setPaidFeesQuantity(paidFeesQuantity);
+            expandedDTO.setUnPaidFeesQuantity(unPaidFeesQuantity);
+            expandedDTO.setLatePaidFeesQuantity(latePaidFeesQuantity);
 
             studentInscriptionDTOList.add(expandedDTO);
         }

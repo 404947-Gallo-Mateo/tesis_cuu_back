@@ -5,6 +5,7 @@ import com.cuu.backend.disciplinas_service.Models.Enums.PaymentType;
 import jakarta.persistence.Column;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class PaymentProofDTO {
     private String userKeycloakId;
 
     private String paymentDate; // LocalDateTime en PaymentProof
-
+    private LocalDate paymentDateLocalDate;
     private String transactionId; // ID de transacción de Mercado Pago
 
     private PaymentType paymentMethod; // Ej: "credit_card", "debit_card", "mercado_pago"
