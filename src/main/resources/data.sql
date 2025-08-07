@@ -110,7 +110,6 @@ VALUES
   ('99999999-4444-4444-4444-444444444444', 'kc-teacher-uuid-22222222', 'TEACHER', 'Profe Lucia', 'Lucia@example.com', 'insert', 'Gómez', '1985-09-30', 'FEMALE', '2024-02-11'),
   ('99999999-5555-5555-5555-555555555555', '2915b895-b362-4f5f-ac0a-7d1018575c7f', 'TEACHER', 'Profe SOR', 'profe@kc.com', 'insert', 'keycloak', '1985-09-30', 'MALE', '2025-05-30');
 
-
 -- STUDENT INSCRIPTIONS
 INSERT INTO student_inscriptions (id, student_id, discipline_id, category_id, created_date)
 VALUES
@@ -121,6 +120,42 @@ VALUES
   ('11111111-8888-8888-8888-888888888888', '99999999-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'aaaaaaa6-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2025-04-12'), -- Basquet Primera
   ('11111111-9999-9999-9999-999999999999', '99999999-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '2025-03-12'), -- Boxeo Recreativo
   ('11111111-2222-2222-2222-222222222222', '99999999-4444-4444-4444-444444444444', '44444444-4444-4444-4444-444444444444', 'fffffff1-ffff-ffff-ffff-ffffffffffff', '2025-02-12'); -- Karate Do Karate Tradicional
+
+
+-- Nuevos USERS
+INSERT INTO users (id, keycloak_id, role, username, email, first_name, last_name, birth_date, genre, created_date)
+VALUES
+  ('88888888-1111-1111-1111-111111111111', 'kc-student-uuid-11111111', 'STUDENT', 'maria_g', 'maria.g@example.com', 'María', 'González', '2016-05-10', 'FEMALE', '2023-01-15'),
+  ('88888888-2222-2222-2222-222222222222', 'kc-student-uuid-22222222', 'STUDENT', 'carlos_m', 'carlos.m@example.com', 'Carlos', 'Martínez', '2012-08-22', 'MALE', '2023-02-20'),
+  ('88888888-3333-3333-3333-333333333333', 'kc-student-uuid-33333333', 'STUDENT', 'lucia_r', 'lucia.r@example.com', 'Lucía', 'Rodríguez', '2009-11-05', 'FEMALE', '2023-03-10'),
+  ('88888888-4444-4444-4444-444444444444', 'kc-student-uuid-44444444', 'STUDENT', 'javier_l', 'javier.l@example.com', 'Javier', 'López', '2007-04-18', 'MALE', '2023-04-05'),
+  ('88888888-5555-5555-5555-555555555555', 'kc-student-uuid-55555555', 'STUDENT', 'sofia_c', 'sofia.c@example.com', 'Sofía', 'Castro', '2005-09-30', 'FEMALE', '2023-05-12'),
+  ('88888888-6666-6666-6666-666666666666', 'kc-student-uuid-66666666', 'STUDENT', 'diego_p', 'diego.p@example.com', 'Diego', 'Pérez', '2003-12-15', 'MALE', '2023-06-18'),
+  ('88888888-7777-7777-7777-777777777777', 'kc-student-uuid-77777777', 'STUDENT', 'valeria_v', 'valeria.v@example.com', 'Valeria', 'Vargas', '2001-07-08', 'FEMALE', '2023-07-22'),
+  ('88888888-8888-8888-8888-888888888888', 'kc-student-uuid-88888888', 'STUDENT', 'mateo_s', 'mateo.s@example.com', 'Mateo', 'Sánchez', '1999-03-25', 'MALE', '2023-08-30'),
+  ('88888888-9999-9999-9999-999999999999', 'kc-student-uuid-99999999', 'STUDENT', 'isabella_g', 'isabella.g@example.com', 'Isabella', 'Gómez', '2018-10-12', 'FEMALE', '2023-09-05'),
+  ('77777777-1111-1111-1111-111111111111', 'kc-student-uuid-10101010', 'STUDENT', 'alejandro_f', 'alejandro.f@example.com', 'Alejandro', 'Fernández', '2014-02-28', 'MALE', '2023-10-10');
+
+-- Nuevas Inscripciones
+INSERT INTO student_inscriptions (id, student_id, discipline_id, category_id, created_date)
+VALUES
+  -- Basquet
+  ('22222222-1111-1111-1111-111111111111', '88888888-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2023-11-15'), -- U7-U9
+  ('22222222-2222-2222-2222-222222222222', '88888888-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'aaaaaaa2-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2023-11-16'), -- U11-U13
+  ('22222222-3333-3333-3333-333333333333', '88888888-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111', 'aaaaaaa3-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2023-11-17'), -- U15
+  ('22222222-4444-4444-4444-444444444444', '88888888-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111', 'aaaaaaa4-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2023-11-18'), -- U17
+  ('22222222-5555-5555-5555-555555555555', '88888888-5555-5555-5555-555555555555', '11111111-1111-1111-1111-111111111111', 'aaaaaaa5-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2023-11-19'), -- U21
+  ('22222222-6666-6666-6666-666666666666', '88888888-6666-6666-6666-666666666666', '11111111-1111-1111-1111-111111111111', 'aaaaaaa6-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2023-11-20'), -- Primera
+  -- Boxeo
+  ('22222222-7777-7777-7777-777777777777', '88888888-2222-2222-2222-222222222222', '22222222-2222-2222-2222-222222222222', 'bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '2023-12-01'), -- Recreativo
+  ('22222222-8888-8888-8888-888888888888', '88888888-7777-7777-7777-777777777777', '22222222-2222-2222-2222-222222222222', 'bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '2023-12-02'), -- Competitivo
+  -- Gimnasia Rítmica
+  ('22222222-9999-9999-9999-999999999999', '88888888-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', 'ccccccc1-cccc-cccc-cccc-cccccccccccc', '2023-12-03'), -- Inicial
+  ('33333333-1111-1111-1111-111111111111', '88888888-1111-1111-1111-111111111111', '33333333-3333-3333-3333-333333333333', 'ccccccc2-cccc-cccc-cccc-cccccccccccc', '2023-12-04'), -- Medio
+  ('33333333-2222-2222-2222-222222222222', '88888888-7777-7777-7777-777777777777', '33333333-3333-3333-3333-333333333333', 'ccccccc3-cccc-cccc-cccc-cccccccccccc', '2023-12-05'), -- Avanzado
+  -- Karate Do
+  ('33333333-3333-3333-3333-333333333333', '77777777-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', 'fffffff1-ffff-ffff-ffff-ffffffffffff', '2023-12-06'), -- Tradicional
+  ('33333333-4444-4444-4444-444444444444', '88888888-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', 'fffffff2-ffff-ffff-ffff-ffffffffffff', '2023-12-07'); -- Deportivo
 
 -- TEACHER DISCIPLINES
 INSERT INTO teacher_disciplines (teacher_id, discipline_id)
