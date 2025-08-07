@@ -47,12 +47,17 @@ public interface UserRepo extends JpaRepository<User, UUID> {
             "AND f.paymentDate IS NULL " +
             "AND f.period BETWEEN :start AND :end")
     Long countSocialDebtors(@Param("start") YearMonth start, @Param("end") YearMonth end);
+//    @Query("SELECT COUNT(DISTINCT u.id) " +
+//            "FROM User u " +
+//            "JOIN u.fees f " +
+//            "WHERE f.feeType = 'SOCIAL' " +
+//            "AND (f.dueDate >= CURRENT_DATE OR f.paymentDate IS NOT NULL) " +
+//            "AND f.period BETWEEN :start AND :end")
+//    Long countSocialUpToDateUsers(@Param("start") YearMonth start, @Param("end") YearMonth end);
     @Query("SELECT COUNT(DISTINCT u.id) " +
             "FROM User u " +
-            "JOIN u.fees f " +
-            "WHERE f.feeType = 'SOCIAL' " +
-            "AND (f.dueDate >= CURRENT_DATE OR f.paymentDate IS NOT NULL) " +
-            "AND f.period BETWEEN :start AND :end")
+            "LEFT JOIN u.fees f WITH f.feeType = 'SOCIAL' AND f.period BETWEEN :start AND :end " +
+            "WHERE (f IS NULL OR (f.feeType = 'SOCIAL' AND (f.dueDate >= CURRENT_DATE OR f.paymentDate IS NOT NULL)))")
     Long countSocialUpToDateUsers(@Param("start") YearMonth start, @Param("end") YearMonth end);
 
     @Query("SELECT COUNT(DISTINCT u.id) " +
@@ -63,12 +68,18 @@ public interface UserRepo extends JpaRepository<User, UUID> {
             "AND f.paymentDate IS NULL " +
             "AND f.period BETWEEN :start AND :end")
     Long countDisciplineDebtors(@Param("disciplineId") UUID disciplineId, @Param("start") YearMonth start, @Param("end") YearMonth end);
+//    @Query("SELECT COUNT(DISTINCT u.id) " +
+//            "FROM User u " +
+//            "JOIN u.fees f " +
+//            "WHERE f.disciplineId = :disciplineId " +
+//            "AND (f.dueDate >= CURRENT_DATE OR f.paymentDate IS NOT NULL) " +
+//            "AND f.period BETWEEN :start AND :end")
+//    Long countDisciplineUpToDateUsers(@Param("disciplineId") UUID disciplineId, @Param("start") YearMonth start, @Param("end") YearMonth end);
+
     @Query("SELECT COUNT(DISTINCT u.id) " +
             "FROM User u " +
-            "JOIN u.fees f " +
-            "WHERE f.disciplineId = :disciplineId " +
-            "AND (f.dueDate >= CURRENT_DATE OR f.paymentDate IS NOT NULL) " +
-            "AND f.period BETWEEN :start AND :end")
+            "LEFT JOIN u.fees f WITH f.disciplineId = :disciplineId AND f.period BETWEEN :start AND :end " +
+            "WHERE (f IS NULL OR (f.disciplineId = :disciplineId AND (f.dueDate >= CURRENT_DATE OR f.paymentDate IS NOT NULL)))")
     Long countDisciplineUpToDateUsers(@Param("disciplineId") UUID disciplineId, @Param("start") YearMonth start, @Param("end") YearMonth end);
     //
 
