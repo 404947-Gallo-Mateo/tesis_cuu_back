@@ -10,31 +10,31 @@ VALUES
 -- CATEGORIES Basquet (11111111-1111-1111-1111-111111111111)
 MERGE INTO categories (id, name, description, monthly_fee, discipline_id, available_spaces, min_age, max_age, allowed_genre)
 VALUES
-  ('aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U7 - U9', 'Categoría para niños de 7 a 9 años.', 14000.00, '11111111-1111-1111-1111-111111111111', 20, 7, 9, 'MIXED'),
-  ('aaaaaaa2-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U11 - U13', 'Categoría para niños de 11 a 13 años.', 14500.00, '11111111-1111-1111-1111-111111111111', 25, 11, 13, 'MIXED'),
-  ('aaaaaaa3-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U15', 'Categoría para adolescentes de 14 a 15 años.', 15000.00, '11111111-1111-1111-1111-111111111111', 25, 14, 15, 'MIXED'),
-  ('aaaaaaa4-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U17', 'Categoría para adolescentes de 16 a 17 años.', 15500.00, '11111111-1111-1111-1111-111111111111', 25, 16, 17, 'MIXED'),
-  ('aaaaaaa5-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U21', 'Categoría para adolescentes y jóvenes de 18 a 21 años.', 16000.00, '11111111-1111-1111-1111-111111111111', 25, 18, 21, 'MIXED'),
-  ('aaaaaaa6-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Primera', 'Categoría para adultos de 21 años en adelante.', 16500.00, '11111111-1111-1111-1111-111111111111', 20, 21, 40, 'MIXED');
+  ('aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U7 - U9', 'Categoría para niños de 7 a 9 años.', 140.00, '11111111-1111-1111-1111-111111111111', 20, 7, 9, 'MIXED'),
+  ('aaaaaaa2-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U11 - U13', 'Categoría para niños de 11 a 13 años.', 145.00, '11111111-1111-1111-1111-111111111111', 25, 11, 13, 'MIXED'),
+  ('aaaaaaa3-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U15', 'Categoría para adolescentes de 14 a 15 años.', 150.00, '11111111-1111-1111-1111-111111111111', 25, 14, 15, 'MIXED'),
+  ('aaaaaaa4-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U17', 'Categoría para adolescentes de 16 a 17 años.', 155.00, '11111111-1111-1111-1111-111111111111', 25, 16, 17, 'MIXED'),
+  ('aaaaaaa5-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'U21', 'Categoría para adolescentes y jóvenes de 18 a 21 años.', 160.00, '11111111-1111-1111-1111-111111111111', 25, 18, 21, 'MIXED'),
+  ('aaaaaaa6-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Primera', 'Categoría para adultos de 21 años en adelante.', 165.00, '11111111-1111-1111-1111-111111111111', 20, 21, 40, 'MIXED');
 
 -- CATEGORIES Boxeo (22222222-2222-2222-2222-222222222222)
 MERGE INTO categories (id, name, description, monthly_fee, discipline_id, available_spaces, min_age, max_age, allowed_genre)
 VALUES
-  ('bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Recreativo', 'Recreativo básica para niños.', 12000.00, '22222222-2222-2222-2222-222222222222', 0, 10, 18, 'MALE'),
-  ('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Competitivo', 'Competitivo avanzado para adultos.', 15000.00, '22222222-2222-2222-2222-222222222222', 0, 18, 55, 'MIXED');
+  ('bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Recreativo', 'Recreativo básica para niños.', 120.00, '22222222-2222-2222-2222-222222222222', 0, 10, 18, 'MALE'),
+  ('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Competitivo', 'Competitivo avanzado para adultos.', 150.00, '22222222-2222-2222-2222-222222222222', 0, 18, 55, 'MIXED');
 
 -- CATEGORIES Gimnasia Ritmica (33333333-3333-3333-3333-333333333333)
 MERGE INTO categories (id, name, description, monthly_fee, discipline_id, available_spaces, min_age, max_age, allowed_genre)
 VALUES
-  ('ccccccc2-cccc-cccc-cccc-cccccccccccc', 'Medio', 'Intermedio para niños de 6 o más años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 6, 18, 'FEMALE'),
-  ('ccccccc1-cccc-cccc-cccc-cccccccccccc', 'Inicial', 'Recreativo básica para niños menores de 5 años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 3, 5, 'MIXED'),
-  ('ccccccc3-cccc-cccc-cccc-cccccccccccc', 'Avanzado', 'Nivel avanzado para mayores de 12 años.', 12000.00, '33333333-3333-3333-3333-333333333333', 0, 18, 55, 'MIXED');
+  ('ccccccc2-cccc-cccc-cccc-cccccccccccc', 'Medio', 'Intermedio para niños de 6 o más años.', 120.00, '33333333-3333-3333-3333-333333333333', 0, 6, 18, 'FEMALE'),
+  ('ccccccc1-cccc-cccc-cccc-cccccccccccc', 'Inicial', 'Recreativo básica para niños menores de 5 años.', 120.00, '33333333-3333-3333-3333-333333333333', 0, 3, 5, 'MIXED'),
+  ('ccccccc3-cccc-cccc-cccc-cccccccccccc', 'Avanzado', 'Nivel avanzado para mayores de 12 años.', 120.00, '33333333-3333-3333-3333-333333333333', 0, 18, 55, 'MIXED');
 
 -- CATEGORIES Karate Do (44444444-4444-4444-4444-444444444444)
 MERGE INTO categories (id, name, description, monthly_fee, discipline_id, available_spaces, min_age, max_age, allowed_genre)
 VALUES
-  ('fffffff1-ffff-ffff-ffff-ffffffffffff', 'Karate Tradicional', 'Karate Tradicional para todas las edades, a partir de los 5 años.', 15000.00, '44444444-4444-4444-4444-444444444444', 0, 5, 55, 'MIXED'),
-  ('fffffff2-ffff-ffff-ffff-ffffffffffff', 'Deportivo', 'Karate Deportivo, a partir de los 5 años.', 15000.00, '44444444-4444-4444-4444-444444444444', 0, 5, 55, 'MALE');
+  ('fffffff1-ffff-ffff-ffff-ffffffffffff', 'Karate Tradicional', 'Karate Tradicional para todas las edades, a partir de los 5 años.', 150.00, '44444444-4444-4444-4444-444444444444', 0, 5, 55, 'MIXED'),
+  ('fffffff2-ffff-ffff-ffff-ffffffffffff', 'Deportivo', 'Karate Deportivo, a partir de los 5 años.', 150.00, '44444444-4444-4444-4444-444444444444', 0, 5, 55, 'MALE');
 
 
 -- SCHEDULES

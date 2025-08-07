@@ -25,7 +25,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO createCategory(PostCategoryDTO categoryDTO) {
-        //todo validar
         Category newCategory = mapper.map(categoryDTO, Category.class);
         Category createdCategory = categoryRepo.save(newCategory);
         return mapper.map(createdCategory, CategoryDTO.class);
@@ -34,7 +33,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
         Optional<Category> oldCategory = categoryRepo.findById(categoryDTO.getId());
-        //todo validar
         Category updatedCategory = mapper.map(categoryDTO, Category.class);
         updatedCategory.setId(oldCategory.get().getId());
         Category savedCategory = categoryRepo.save(updatedCategory);

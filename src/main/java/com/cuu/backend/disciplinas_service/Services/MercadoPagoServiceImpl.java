@@ -80,9 +80,9 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
 
         //TODO URL MODIFICAR
         PreferenceBackUrlsRequest preferenceBackUrlsRequest = PreferenceBackUrlsRequest.builder()
-                .success("https://d1d6-177-37-40-2.ngrok-free.app/mis-cuotas") //TODO CAMBIAR POR MIS URL NGROK HTTPS DEL FRONT
-                .pending("https://d1d6-177-37-40-2.ngrok-free.app/pendiente") //TODO CAMBIAR POR MIS URL NGROK HTTPS DEL FRONT
-                .failure("https://d1d6-177-37-40-2.ngrok-free.app/cancelado") //TODO CAMBIAR POR MIS URL NGROK HTTPS DEL FRONT
+                .success("https://b189f4a1f62b.ngrok-free.app/mis-cuotas") //TODO CAMBIAR POR MIS URL NGROK HTTPS DEL FRONT
+                .pending("https://b189f4a1f62b.ngrok-free.app/pendiente") //TODO CAMBIAR POR MIS URL NGROK HTTPS DEL FRONT
+                .failure("https://b189f4a1f62b.ngrok-free.app/cancelado") //TODO CAMBIAR POR MIS URL NGROK HTTPS DEL FRONT
                 .build();
 
         String notificationUrl = BACK_URL + "mercado-pago/" + fee.getId();

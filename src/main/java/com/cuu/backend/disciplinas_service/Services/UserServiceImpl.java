@@ -428,7 +428,6 @@ public class UserServiceImpl implements UserService {
                     return userRepo.save(newUser);
                 });
 
-        //todo crear cuotas
         currentUser = feeService.CreateFeesForStudent(currentUser);
         userRepo.save(currentUser);
 
