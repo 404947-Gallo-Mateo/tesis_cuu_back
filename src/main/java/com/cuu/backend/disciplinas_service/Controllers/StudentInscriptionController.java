@@ -47,7 +47,8 @@ public class StudentInscriptionController {
             return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error interno del servidor");
-        }    }
+        }
+    }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Boolean> deleteStudentInscriptionByMultipleIDs(@RequestParam String studentKeycloakId, @RequestParam UUID disciplineId, @RequestParam UUID categoryId){

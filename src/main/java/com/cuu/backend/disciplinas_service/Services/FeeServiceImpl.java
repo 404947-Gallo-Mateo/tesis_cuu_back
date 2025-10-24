@@ -125,7 +125,7 @@ public class FeeServiceImpl implements FeeService {
 
                 String description = "Cuota Social del Club - " + oldestPeriod.format(PERIOD_FORMATTER);
 
-                Fee newFee = new Fee(null, FeeType.SOCIAL, BigDecimal.valueOf(5000), LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
+                Fee newFee = new Fee(null, FeeType.SOCIAL, BigDecimal.valueOf(50), LocalDate.of(oldestPeriod.getYear(), oldestPeriod.getMonth().plus(1), 10),
                                     oldestPeriod, student, studentKCID, student.getEmail(), null, null, false, FeeState.UNPAID,
                                     null, null, LocalDateTime.now(), description);
 

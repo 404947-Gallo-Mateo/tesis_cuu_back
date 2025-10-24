@@ -6,10 +6,7 @@ import com.cuu.backend.disciplinas_service.Models.DTOs.DisplayOnFrontend.Expande
 import com.cuu.backend.disciplinas_service.Models.DTOs.FeeDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.Summary.DisciplineSummaryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.UserWithFeesDTO;
-import com.cuu.backend.disciplinas_service.Models.Entities.Category;
-import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
-import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
-import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Entities.*;
 import com.cuu.backend.disciplinas_service.Models.Enums.FeeType;
 import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Models.Enums.Role;
@@ -40,6 +37,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private FeeRepo feeRepo;
     @Autowired
     private DisciplineRepo disciplineRepo;
     @Autowired
@@ -277,25 +276,36 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     private void deleteKeycloakUserInLocalDb(String userKeycloakId){
-        Optional<User> user = userRepo.findByKeycloakId(userKeycloakId);
+        Optional<User> userOpt = userRepo.findByKeycloakId(userKeycloakId);
 
-        if (user.isPresent()){
+        if (userOpt.isPresent()){
 
-           studentInscriptionRepo.deleteByUserId(user.get().getId());
-           disciplineRepo.deleteDisciplineTeacherUserRelations(user.get().getId());
-           disciplineTeachersRepo.deleteTeacherUserDisciplineRelations(user.get().getId());
+            User user = userOpt.get();
 
-            userRepo.deleteById(user.get().getId());
+            if (!user.getFees().isEmpty()){
+                for (Fee f : user.getFees()){
+                    f.setUser(null);
+                }
+            }
+
+            if (!user.getFees().isEmpty()) {
+                userRepo.save(user);
+                userRepo.flush();
+            }
+
+            studentInscriptionRepo.deleteByUserId(user.getId());
+            disciplineRepo.deleteDisciplineTeacherUserRelations(user.getId());
+            disciplineTeachersRepo.deleteTeacherUserDisciplineRelations(user.getId());
+
+            userRepo.deleteById(user.getId());
 
             try {
-                String userFullName = " " + user.get().getFirstName() + " " + user.get().getLastName();
-                emailService.sendAccountDeletionConfirmationEmail(user.get().getEmail(), userFullName);
+                String userFullName = " " + user.getFirstName() + " " + user.getLastName();
+                emailService.sendAccountDeletionConfirmationEmail(user.getEmail(), userFullName);
             } catch (MessagingException e) {
                 // Puedes loguear el error pero no interrumpir el proceso
                 System.out.println("Error al enviar email de confirmación de eliminación de cuenta. error: " + e.getMessage());
             }
-
-
         }
 
     }
@@ -418,7 +428,6 @@ public class UserServiceImpl implements UserService {
                     return userRepo.save(newUser);
                 });
 
-        //todo crear cuotas
         currentUser = feeService.CreateFeesForStudent(currentUser);
         userRepo.save(currentUser);
 

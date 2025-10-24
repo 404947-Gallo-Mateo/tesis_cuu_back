@@ -9,6 +9,7 @@ import com.cuu.backend.disciplinas_service.Models.Entities.Discipline;
 import com.cuu.backend.disciplinas_service.Models.Entities.Embeddables.Schedule;
 import com.cuu.backend.disciplinas_service.Models.Entities.StudentInscription;
 import com.cuu.backend.disciplinas_service.Models.Entities.User;
+import com.cuu.backend.disciplinas_service.Models.Enums.Genre;
 import com.cuu.backend.disciplinas_service.Repositories.CategoryRepo;
 import com.cuu.backend.disciplinas_service.Repositories.DisciplineRepo;
 import com.cuu.backend.disciplinas_service.Repositories.StudentInscriptionRepo;
@@ -65,7 +66,7 @@ public class StudentInscriptionValidatorImpl {
 
         //valida q la Category pertenece a la Discipline
         if (!newStudentInscription.getCategory().getDiscipline().getId().equals(newStudentInscription.getDiscipline().getId())){
-            throw new CustomException("La nueva Category " + newStudentInscription.getCategory().getName() + "no es parte de la Discipline" + newStudentInscription.getDiscipline().getName(),
+            throw new CustomException("La nueva Categoría " + newStudentInscription.getCategory().getName() + " a la cual se quiere inscribir, no es parte de la Disciplina" + newStudentInscription.getDiscipline().getName(),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -74,8 +75,14 @@ public class StudentInscriptionValidatorImpl {
             long minAge = category.get().getAgeRange().getMinAge();
             long maxAge = category.get().getAgeRange().getMaxAge();
             int userAge = Period.between(student.get().getBirthDate(), LocalDate.now()).getYears();
-            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría: Mínimo: " + minAge + " | Máximo: " + maxAge + " | Su Edad: " + userAge,
+            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría. Desde " + minAge + " años hasta " + maxAge + " años | Su Edad: " + userAge,
                     HttpStatus.CONFLICT);
+        }
+
+        if (category.get().getAllowedGenre() != Genre.MIXED){
+            if(!student.get().getGenre().equals(category.get().getAllowedGenre())){
+                throw new CustomException("Usted no cumple con el Género permitido de la Categoría.", HttpStatus.CONFLICT);
+            }
         }
 
         if (!thereAreAvailablePlaces(category.get())){
@@ -134,7 +141,7 @@ public class StudentInscriptionValidatorImpl {
 
         //valida q la Category pertenece a la Discipline
         if (!updatedStudentInscription.getCategory().getDiscipline().getId().equals(updatedStudentInscription.getDiscipline().getId())){
-            throw new CustomException("La nueva Category " + updatedStudentInscription.getCategory().getName() + " no es parte de la Discipline " + updatedStudentInscription.getDiscipline().getName(),
+            throw new CustomException("La nueva Categoría " + updatedStudentInscription.getCategory().getName() + " a la cual se quiere inscribir, no es parte de la Disciplina" + updatedStudentInscription.getDiscipline().getName(),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -143,8 +150,14 @@ public class StudentInscriptionValidatorImpl {
             long minAge = category.get().getAgeRange().getMinAge();
             long maxAge = category.get().getAgeRange().getMaxAge();
             int userAge = Period.between(student.get().getBirthDate(), LocalDate.now()).getYears();
-            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría: Mínimo: " + minAge + " | Máximo: " + maxAge + " | Su Edad: " + userAge,
+            throw new CustomException("Usted no cumple con el rango de Edad de la Categoría. Desde " + minAge + " años hasta " + maxAge + " años | Su Edad: " + userAge,
                     HttpStatus.CONFLICT);
+        }
+
+        if (category.get().getAllowedGenre() != Genre.MIXED){
+            if(!student.get().getGenre().equals(category.get().getAllowedGenre())){
+                throw new CustomException("Usted no cumple con el Género permitido de la Categoría.", HttpStatus.CONFLICT);
+            }
         }
 
         if (!thereAreAvailablePlaces(updatedStudentInscription.getCategory())){

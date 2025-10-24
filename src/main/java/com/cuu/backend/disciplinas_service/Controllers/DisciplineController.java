@@ -1,5 +1,6 @@
 package com.cuu.backend.disciplinas_service.Controllers;
 
+import com.cuu.backend.disciplinas_service.Controllers.ManageExceptions.CustomException;
 import com.cuu.backend.disciplinas_service.Models.DTOs.CategoryDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.DisciplineDTO;
 import com.cuu.backend.disciplinas_service.Models.DTOs.StudentInscriptionDTO;
@@ -25,15 +26,29 @@ public class DisciplineController {
     private DisciplineService disciplineService;
 
     @PostMapping("/create")
-    public ResponseEntity<DisciplineDTO> createDiscipline(@RequestBody PostDisciplineDTO disciplineDTO){
+    public ResponseEntity<?> createDiscipline(@RequestBody PostDisciplineDTO disciplineDTO){
 
-        return ResponseEntity.ok(disciplineService.createDiscipline(disciplineDTO));
+        try {
+            DisciplineDTO dto = disciplineService.createDiscipline(disciplineDTO);
+            return ResponseEntity.ok(dto);
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error interno del servidor");
+        }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<DisciplineDTO> updateDiscipline(@RequestBody PutDisciplineDTO disciplineDTO){
+    public ResponseEntity<?> updateDiscipline(@RequestBody PutDisciplineDTO disciplineDTO){
 
-        return ResponseEntity.ok(disciplineService.updateDiscipline(disciplineDTO));
+        try {
+            DisciplineDTO dto = disciplineService.updateDiscipline(disciplineDTO);
+            return ResponseEntity.ok(dto);
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error interno del servidor");
+        }
     }
 
     @DeleteMapping("/delete")
